@@ -1,0 +1,144 @@
+2026-10-09 22:48:14 | DEBUG    | HMS.Test | Debugging the application
+2026-10-09 22:48:14 | INFO     | HMS.Test | HMS backend started
+2026-10-09 22:48:14 | WARNING  | HMS.Test | OTP attempts are approaching the limit
+2026-10-09 22:48:14 | ERROR    | HMS.Test | Redis connection failed
+2026-10-09 22:48:14 | CRITICAL | HMS.Test | Critical application failure
+2026-10-09 22:48:14 | ERROR    | HMS.Test | An unexpected calculation error occurred
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\test.py", line 13, in <module>
+    1 / 0
+    ~~^~~
+ZeroDivisionError: division by zero
+2026-10-09 22:49:28 | ERROR    | Router.Login | Development login credentials are not configured.
+2026-10-09 23:02:34 | ERROR    | Router.Login | Development login credentials are not configured.
+2026-10-09 23:03:25 | ERROR    | Router.Login | Development login credentials are not configured.
+2026-10-09 23:03:38 | ERROR    | Router.Login | Unable to create login session.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1055, in connect_check_health
+    sock = self._connect()
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1617, in _connect
+    raise err
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1601, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Login.py", line 171, in login
+    redis_client.setex(
+    ~~~~~~~~~~~~~~~~~~^
+        get_session_key(session_id),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        SESSION_TTL_SECONDS,
+        ^^^^^^^^^^^^^^^^^^^^
+        json.dumps(session_data),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 164, in wrapper
+    return func(*args, **kwargs)
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\commands\core.py", line 4512, in setex
+    return self.execute_command("SETEX", name, time, value)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 867, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 873, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 258, in wrapper
+    return func(*args, **kwargs)
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 3273, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1028, in connect
+    self.retry.call_with_retry(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        lambda: self.connect_check_health(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        lambda error: self.disconnect(error),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 132, in call_with_retry
+    raise error
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 120, in call_with_retry
+    return do()
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1029, in <lambda>
+    lambda: self.connect_check_health(
+            ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        check_health=True, retry_socket_connect=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1077, in connect_check_health
+    raise e
+redis.exceptions.ConnectionError: Error 10061 connecting to localhost:6379. No connection could be made because the target machine actively refused it.
+2026-10-09 23:03:50 | ERROR    | Router.Login | Unable to create login session.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1055, in connect_check_health
+    sock = self._connect()
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1617, in _connect
+    raise err
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1601, in _connect
+    sock.connect(socket_address)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Login.py", line 171, in login
+    redis_client.setex(
+    ~~~~~~~~~~~~~~~~~~^
+        get_session_key(session_id),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        SESSION_TTL_SECONDS,
+        ^^^^^^^^^^^^^^^^^^^^
+        json.dumps(session_data),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 164, in wrapper
+    return func(*args, **kwargs)
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\commands\core.py", line 4512, in setex
+    return self.execute_command("SETEX", name, time, value)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 867, in execute_command
+    return self._execute_command(*args, **options)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 873, in _execute_command
+    conn = self.connection or pool.get_connection()
+                              ~~~~~~~~~~~~~~~~~~~^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 258, in wrapper
+    return func(*args, **kwargs)
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 3273, in get_connection
+    connection.connect()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1028, in connect
+    self.retry.call_with_retry(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        lambda: self.connect_check_health(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        lambda error: self.disconnect(error),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 132, in call_with_retry
+    raise error
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 120, in call_with_retry
+    return do()
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1029, in <lambda>
+    lambda: self.connect_check_health(
+            ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        check_health=True, retry_socket_connect=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1077, in connect_check_health
+    raise e
+redis.exceptions.ConnectionError: Error 10061 connecting to localhost:6379. No connection could be made because the target machine actively refused it.

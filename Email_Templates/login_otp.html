@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Maarga Mindcare - Login Verification</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: #f1f0ff;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #292b38;
+    "
+  >
+    <!-- Full-width email wrapper -->
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="width: 100%; border-collapse: collapse; background-color: #f1f0ff"
+    >
+      <tr>
+        <td align="center" style="padding: 0">
+          <!-- Header -->
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              background-color: #3e439c;
+            "
+          >
+            <tr>
+              <td style="padding: 32px 6%">
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                >
+                  <tr>
+                    <td valign="middle" style="width: 56px">
+                      <!-- Replace with a hosted logo URL if required -->
+                      <table
+                        role="presentation"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                      >
+                        <tr>
+                          <td
+                            align="center"
+                            valign="middle"
+                            width="48"
+                            height="48"
+                            style="
+                              width: 48px;
+                              height: 48px;
+                              background-color: transparent;
+                              border-radius: 10px;
+                              color: #3e439c;
+                              font-size: 25px;
+                              font-weight: bold;
+                            "
+                          >
+                            <img
+                              src="https://supermindsbymaarga.com/assets/images/maarga_rings.png"
+                              alt="Maarga Mindcare"
+                              width="48"
+                              height="48"
+                              style="
+                                display: block;
+                                width: 48px;
+                                height: 48px;
+                                object-fit: contain;
+                                border: 0;
+                              "
+                            />
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+
+                    <td valign="middle" style="padding-left: 12px">
+                      <h1
+                        style="
+                          margin: 0;
+                          color: #ffffff;
+                          font-size: 23px;
+                          line-height: 30px;
+                          font-weight: 700;
+                        "
+                      >
+                        Maarga Mindcare
+                      </h1>
+                      <p
+                        style="
+                          margin: 4px 0 0;
+                          color: #e3e4ff;
+                          font-size: 13px;
+                          line-height: 20px;
+                        "
+                      >
+                        Hospital Management System
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <div
+                  style="
+                    height: 1px;
+                    margin: 28px 0 20px;
+                    background-color: #777bc5;
+                    line-height: 1px;
+                    font-size: 1px;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <p
+                  style="
+                    margin: 0;
+                    color: #e3e4ff;
+                    font-size: 11px;
+                    line-height: 18px;
+                    font-weight: 700;
+                    letter-spacing: 1.5px;
+                  "
+                >
+                  ACCOUNT SECURITY &nbsp; / &nbsp; EMAIL VERIFICATION
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Main email content -->
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              background-color: #ffffff;
+            "
+          >
+            <tr>
+              <td style="padding: 44px 6% 48px">
+                <p
+                  style="
+                    margin: 0 0 12px;
+                    color: #3e439c;
+                    font-size: 12px;
+                    line-height: 18px;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                  "
+                >
+                  LOGIN VERIFICATION
+                </p>
+
+                <h2
+                  style="
+                    margin: 0 0 20px;
+                    color: #292b38;
+                    font-size: 32px;
+                    line-height: 40px;
+                    font-weight: 700;
+                  "
+                >
+                  Verify your identity
+                </h2>
+
+                <p
+                  style="
+                    margin: 0 0 14px;
+                    color: #505263;
+                    font-size: 16px;
+                    line-height: 26px;
+                  "
+                >
+                  Hello {{ name }},
+                </p>
+
+                <p
+                  style="
+                    margin: 0 0 32px;
+                    color: #505263;
+                    font-size: 16px;
+                    line-height: 27px;
+                  "
+                >
+                  We received a sign-in request for your Maarga Mindcare
+                  Hospital Management System account. Use the one-time password
+                  below to complete your login.
+                </p>
+
+                <!-- OTP section -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="
+                    width: 100%;
+                    border-collapse: collapse;
+                    background-color: #f1f0ff;
+                    border: 1px solid #e3e3f5;
+                  "
+                >
+                  <tr>
+                    <td align="center" style="padding: 32px 16px">
+                      <p
+                        style="
+                          margin: 0 0 16px;
+                          color: #3e439c;
+                          font-size: 12px;
+                          line-height: 18px;
+                          font-weight: 700;
+                          letter-spacing: 1.5px;
+                        "
+                      >
+                        YOUR VERIFICATION CODE
+                      </p>
+
+                      <p
+                        style="
+                          margin: 0 0 18px;
+                          color: #3e439c;
+                          font-family: Arial, Helvetica, sans-serif;
+                          font-size: 38px;
+                          line-height: 46px;
+                          font-weight: 700;
+                          letter-spacing: 8px;
+                        "
+                      >
+                        {{ otp }}
+                      </p>
+
+                      <p
+                        style="
+                          margin: 0;
+                          color: #555780;
+                          font-size: 14px;
+                          line-height: 22px;
+                        "
+                      >
+                        This code expires in
+                        <strong>{{ expiry_minutes }} minutes.</strong>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Security information -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="
+                    width: 100%;
+                    margin-top: 32px;
+                    border-collapse: collapse;
+                  "
+                >
+                  <tr>
+                    <td
+                      valign="top"
+                      width="38"
+                      style="width: 38px; padding: 2px 12px 0 0"
+                    >
+                      <div
+                        style="
+                          width: 28px;
+                          height: 28px;
+                          border-radius: 50%;
+                          background-color: #f1f0ff;
+                          color: #3e439c;
+                          text-align: center;
+                          font-size: 17px;
+                          line-height: 28px;
+                          font-weight: bold;
+                        "
+                      >
+                        !
+                      </div>
+                    </td>
+
+                    <td valign="top">
+                      <h3
+                        style="
+                          margin: 0 0 8px;
+                          color: #292b38;
+                          font-size: 16px;
+                          line-height: 23px;
+                          font-weight: 700;
+                        "
+                      >
+                        Keep your account secure
+                      </h3>
+
+                      <p
+                        style="
+                          margin: 0;
+                          color: #505263;
+                          font-size: 14px;
+                          line-height: 24px;
+                        "
+                      >
+                        Never share this code with anyone. Maarga Mindcare staff
+                        will never ask you to disclose your OTP.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <div
+                  style="
+                    height: 1px;
+                    margin: 32px 0;
+                    background-color: #e5e7eb;
+                    line-height: 1px;
+                    font-size: 1px;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <p
+                  style="
+                    margin: 0;
+                    color: #505263;
+                    font-size: 14px;
+                    line-height: 24px;
+                  "
+                >
+                  <strong>Didn't try to sign in?</strong>
+                  You can safely ignore this email. Your account will not be
+                  verified unless this code is entered during sign-in.
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Full-width footer -->
+          <table
+            role="presentation"
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              background-color: #292b38;
+            "
+          >
+            <tr>
+              <td style="padding: 32px 6%">
+                <h3
+                  style="
+                    margin: 0 0 8px;
+                    color: #ffffff;
+                    font-size: 18px;
+                    line-height: 26px;
+                    font-weight: 700;
+                  "
+                >
+                  Maarga Mindcare
+                </h3>
+
+                <p
+                  style="
+                    margin: 0 0 22px;
+                    color: #d1d5db;
+                    font-size: 13px;
+                    line-height: 22px;
+                  "
+                >
+                  Secure access for authorized hospital staff.
+                </p>
+
+                <div
+                  style="
+                    height: 1px;
+                    background-color: #505263;
+                    line-height: 1px;
+                    font-size: 1px;
+                  "
+                >
+                  &nbsp;
+                </div>
+
+                <p
+                  style="
+                    margin: 20px 0 0;
+                    color: #d1d5db;
+                    font-size: 12px;
+                    line-height: 20px;
+                  "
+                >
+                  This is an automated security notification. Please do not
+                  reply to this email.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

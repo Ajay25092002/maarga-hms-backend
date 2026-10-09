@@ -1,0 +1,5 @@
+stark/
+.git/
+__pycache__/
+.env
+.env.docker
