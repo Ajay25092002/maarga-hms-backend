@@ -5,6 +5,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from Router.Login import router as login_router
+from Router.Patient import router as patient_router
+from Router.OPBilling import router as op_billing_router
+from Router.Payments import router as payments_router
+from Router.role_router import router as role_router
+from Router.user_router import router as user_router
+from Router.dashboard_router import router as dashboard_router
+from contextlib import asynccontextmanager
+from Core.Database import initialize_database
 
 # Load environment variables from .env
 load_dotenv(override=False)
@@ -23,12 +31,26 @@ CORS_ORIGINS = os.getenv(
 )
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Runs before the application starts accepting requests.
+    initialize_database()
+    yield
+
 # Initialize FastAPI
 app = FastAPI(
     title=APP_NAME,
     version="1.0.0",
+    lifespan=lifespan,
+
 )
 app.include_router(login_router)
+app.include_router(patient_router)
+app.include_router(op_billing_router)
+app.include_router(payments_router)
+app.include_router(role_router)
+app.include_router(user_router)
+app.include_router(dashboard_router)
 
 # Configure CORS
 origins = [

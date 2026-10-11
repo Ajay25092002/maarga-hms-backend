@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IP Bill - {{ bill.bill_number or bill.id }}</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 15mm 13mm 17mm;
+    @bottom-left {
+      content: "Powered By MEDNET for MAARGA MINDCARE - GURUGRAM ( 2MG )";
+      color: #777;
+      font-size: 7pt;
+      border-top: .4pt solid #888;
+      padding-top: 4mm;
+    }
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      color: #777;
+      font-size: 7pt;
+      border-top: .4pt solid #888;
+      padding-top: 4mm;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: #171717; font-size: 8.2pt; }
+  .header { border-bottom: 1px solid #555; padding-bottom: 7px; margin-bottom: 9px; display: table; width: 100%; }
+  .logo-cell { display: table-cell; width: 64px; vertical-align: middle; }
+  .logo { width: 52px; height: 52px; object-fit: contain; }
+  .hospital-cell { display: table-cell; vertical-align: middle; }
+  .hospital-name { font-size: 12pt; font-weight: bold; margin-bottom: 5px; }
+  .hospital-address { font-size: 7.7pt; }
+  .title { text-align: center; font-size: 12pt; font-weight: bold; margin: 12px 0 13px; }
+  .patient-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  .patient-grid td { vertical-align: top; padding: 2px 3px; }
+  .left { width: 67%; }
+  .right { width: 33%; text-align: right; }
+  .patient-name { font-weight: bold; font-size: 9pt; }
+  .meta { line-height: 1.45; }
+  .rule { border-bottom: 1px dashed #666; margin: 4px 0; }
+  .items-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 3px 0 9px; }
+  .items-table th { background: #d9d9d9; border: .5px solid #777; padding: 4px 3px; text-align: left; font-size: 7.3pt; }
+  .items-table td { border: .45px solid #aaa; padding: 3px; vertical-align: top; overflow-wrap: anywhere; }
+  .items-table .num { text-align: right; white-space: nowrap; }
+  .col-date { width: 13%; } .col-desc { width: 39%; } .col-rate { width: 10%; }
+  .col-qty { width: 9%; } .col-amount { width: 12%; } .col-disc { width: 9%; } .col-net { width: 12%; }
+  .category-row td { background: #d9d9d9; font-weight: bold; padding: 4px; }
+  .category-total { text-align: right; }
+  .summary-row td { background: #e4e4e4; font-weight: bold; }
+  .section-title { background: #d9d9d9; border: .5px solid #aaa; font-weight: bold; padding: 5px; margin-top: 10px; }
+  .payments-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 0; }
+  .payments-table th, .payments-table td { border: .5px solid #aaa; padding: 4px; text-align: left; overflow-wrap: anywhere; }
+  .payments-table th { background: #e2e2e2; }
+  .payments-table .date { width: 15%; } .payments-table .receipt { width: 26%; }
+  .payments-table .notes { width: 43%; } .payments-table .amount { width: 16%; text-align: right; }
+  .financial-summary { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .financial-summary td { padding: 5px 3px; border-bottom: .5px solid #ccc; }
+  .financial-summary .label { width: 28%; font-weight: bold; }
+  .financial-summary .value { width: 72%; }
+  .remarks { margin-top: 18px; }
+  .signature-grid { width: 100%; margin-top: 38px; }
+  .signature-grid td { width: 50%; vertical-align: bottom; }
+  .signature-line { border-top: .5px solid #888; padding-top: 5px; margin-right: 20px; }
+  .right-sign { text-align: right; }
+  .small { font-size: 7pt; color: #555; }
+  .avoid-break { break-inside: avoid; }
+  .muted { color: #666; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="logo-cell"><img class="logo" src="{{ logo_uri }}" alt="Maarga logo"></div>
+  <div class="hospital-cell">
+    <div class="hospital-name">{{ hospital_name }}</div>
+    <div class="hospital-address">{{ hospital_address }}</div>
+  </div>
+</header>
+
+<div class="title">Bill</div>
+
+<table class="patient-grid">
+  <tr>
+    <td class="left">
+      <div class="patient-name">{{ (bill.patient_name or bill.name or "Patient")|upper }} [{{ bill.patient_id or bill.registration_number or "-" }}]</div>
+      <div class="meta">Address: {{ bill.address or "-" }}</div>
+      <div class="rule"></div>
+      <div class="meta">Bill No.: {{ bill.bill_number or "-" }}<br>
+      Regn No.: {{ bill.patient_registration_number or bill.registration_number or "-" }}</div>
+      <div class="meta">Bed No.: {{ bill.bed_number or "-" }}<br>
+      Discharge Date: {{ format_date(bill.discharge_date, true) if bill.discharge_date else "-" }}</div>
+    </td>
+    <td class="right">
+      <div class="meta">Age /Gender: {{ bill.age or "-" }} / {{ bill.gender or "-" }}</div>
+      <div class="meta">Contact No.: {{ bill.mobile or "-" }}</div>
+      <div class="rule"></div>
+      <div class="meta">Bill Date: {{ format_date(bill.bill_date, true) }}</div>
+      <div class="meta">Department: {{ bill.department or "-" }}</div>
+      <div class="meta">Doctor: {{ bill.doctor_name or "-" }}</div>
+      <div class="meta">Rate Category: {{ bill.rate_category or "-" }}</div>
+      <div class="meta">Category: {{ bill.patient_category or "-" }}</div>
+      <div class="meta">Adm. Date: {{ format_date(bill.admission_date, true) if bill.admission_date else "-" }}</div>
+    </td>
+  </tr>
+</table>
+
+<table class="items-table">
+  <colgroup>
+    <col class="col-date"><col class="col-desc"><col class="col-rate"><col class="col-qty">
+    <col class="col-amount"><col class="col-disc"><col class="col-net">
+  </colgroup>
+  <thead>
+    <tr><th>Date</th><th>[ Code ] Service Name (Notes)</th><th class="num">Rate</th><th class="num">Qty.</th><th class="num">Amount</th><th class="num">Disc.</th><th class="num">Net Amt.</th></tr>
+  </thead>
+  <tbody>
+  {% for group in groups %}
+    <tr class="category-row"><td colspan="7">{{ group.name }} <span class="category-total">Total Rs. {{ format_money(group.total) }}/-</span></td></tr>
+    {% for item in group.items %}
+    <tr>
+      <td>{{ format_date(item.service_date) }}</td>
+      <td>{% if item.service_code %}[{{ item.service_code }}] {% endif %}{{ item.description or "-" }}</td>
+      <td class="num">{{ format_money(item.rate) }}</td>
+      <td class="num">{{ item.quantity or 0 }}</td>
+      <td class="num">{{ format_money(item.amount) }}</td>
+      <td class="num">{{ format_money(item.discount_amount) }}</td>
+      <td class="num">{{ format_money(item.net_amount if item.net_amount is not none else item.amount) }}</td>
+    </tr>
+    {% endfor %}
+  {% endfor %}
+    <tr class="summary-row">
+      <td colspan="4">Total</td>
+      <td class="num">{{ format_money(bill_amount) }}</td>
+      <td class="num">{{ format_money(discount_amount) }}</td>
+      <td class="num">{{ format_money(net_amount) }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="section-title">Payment And Refund</div>
+<table class="payments-table">
+  <thead><tr><th class="date">Date</th><th class="receipt">Receipt / Refund</th><th class="notes">Notes</th><th class="amount">Amount</th></tr></thead>
+  <tbody>
+  {% if payments %}
+    {% for payment in payments %}
+    <tr>
+      <td>{{ format_date(payment.payment_date, true) }}</td>
+      <td>{{ payment.reference_number or ("Receipt - " ~ payment.id) }}</td>
+      <td>{{ payment.notes or ("Payment by " ~ (payment.payment_method or "unspecified method")) }}</td>
+      <td class="amount">{{ format_money(payment.amount) }}</td>
+    </tr>
+    {% endfor %}
+  {% else %}
+    <tr><td colspan="4" class="muted">No payment records available.</td></tr>
+  {% endif %}
+  </tbody>
+</table>
+
+<div class="financial-summary">
+  <table style="width:100%; border-collapse:collapse">
+    <tr><td class="label">Bill Amount</td><td class="value">{{ format_money(bill_amount) }}</td></tr>
+    <tr><td class="label">Discount</td><td class="value">{{ format_money(discount_amount) }}</td></tr>
+    <tr><td class="label">Net Amount</td><td class="value">{{ format_money(net_amount) }}</td></tr>
+    <tr><td class="label">Paid Amount</td><td class="value">{{ format_money(paid_amount) }}</td></tr>
+    <tr><td class="label">Balance</td><td class="value">{{ format_money(balance) }} ({{ payment_status }})</td></tr>
+  </table>
+</div>
+
+<div class="remarks"><strong>Remarks:</strong> {{ bill.notes or "" }}<br><span class="small">(All figures are in Rupees (INR) only)</span></div>
+
+<table class="signature-grid">
+  <tr>
+    <td><div class="signature-line">PRINTED BY<br>{{ printed_at }}</div></td>
+    <td class="right-sign"><div class="signature-line">Dr. {{ bill.doctor_name or "-" }}<br>PRIMARY DOCTOR</div></td>
+  </tr>
+</table>
+</body>
+</html>

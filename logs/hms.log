@@ -1,144 +1,654 @@
-2026-10-09 22:48:14 | DEBUG    | HMS.Test | Debugging the application
-2026-10-09 22:48:14 | INFO     | HMS.Test | HMS backend started
-2026-10-09 22:48:14 | WARNING  | HMS.Test | OTP attempts are approaching the limit
-2026-10-09 22:48:14 | ERROR    | HMS.Test | Redis connection failed
-2026-10-09 22:48:14 | CRITICAL | HMS.Test | Critical application failure
-2026-10-09 22:48:14 | ERROR    | HMS.Test | An unexpected calculation error occurred
+2026-10-10 22:04:11 | INFO     | Router.Login | User logged in: ajayjeyapal@gmail.com
+2026-10-10 22:35:29 | ERROR    | Router.Patient | Unable to list patients.
 Traceback (most recent call last):
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\test.py", line 13, in <module>
-    1 / 0
-    ~~^~~
-ZeroDivisionError: division by zero
-2026-10-09 22:49:28 | ERROR    | Router.Login | Development login credentials are not configured.
-2026-10-09 23:02:34 | ERROR    | Router.Login | Development login credentials are not configured.
-2026-10-09 23:03:25 | ERROR    | Router.Login | Development login credentials are not configured.
-2026-10-09 23:03:38 | ERROR    | Router.Login | Unable to create login session.
-Traceback (most recent call last):
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1055, in connect_check_health
-    sock = self._connect()
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1617, in _connect
-    raise err
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1601, in _connect
-    sock.connect(socket_address)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
-ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Login.py", line 171, in login
-    redis_client.setex(
-    ~~~~~~~~~~~~~~~~~~^
-        get_session_key(session_id),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        SESSION_TTL_SECONDS,
-        ^^^^^^^^^^^^^^^^^^^^
-        json.dumps(session_data),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Patient.py", line 455, in list_patients
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<8 lines>...
+        params + [page_size, offset],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 164, in wrapper
-    return func(*args, **kwargs)
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\commands\core.py", line 4512, in setex
-    return self.execute_command("SETEX", name, time, value)
-           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 867, in execute_command
-    return self._execute_command(*args, **options)
-           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 873, in _execute_command
-    conn = self.connection or pool.get_connection()
-                              ~~~~~~~~~~~~~~~~~~~^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 258, in wrapper
-    return func(*args, **kwargs)
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 3273, in get_connection
-    connection.connect()
-    ~~~~~~~~~~~~~~~~~~^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1028, in connect
-    self.retry.call_with_retry(
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        lambda: self.connect_check_health(
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<2 lines>...
-        lambda error: self.disconnect(error),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 132, in call_with_retry
-    raise error
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 120, in call_with_retry
-    return do()
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1029, in <lambda>
-    lambda: self.connect_check_health(
-            ~~~~~~~~~~~~~~~~~~~~~~~~~^
-        check_health=True, retry_socket_connect=False
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ),
-    ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1077, in connect_check_health
-    raise e
-redis.exceptions.ConnectionError: Error 10061 connecting to localhost:6379. No connection could be made because the target machine actively refused it.
-2026-10-09 23:03:50 | ERROR    | Router.Login | Unable to create login session.
-Traceback (most recent call last):
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1055, in connect_check_health
-    sock = self._connect()
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1617, in _connect
-    raise err
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1601, in _connect
-    sock.connect(socket_address)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
-ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "first_name" does not exist
+LINE 2: ...      SELECT id, patient_id, registration_number, first_name...
+                                                             ^
 
-During handling of the above exception, another exception occurred:
-
+2026-10-10 22:35:29 | ERROR    | Router.Patient | Unable to list patients.
 Traceback (most recent call last):
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Login.py", line 171, in login
-    redis_client.setex(
-    ~~~~~~~~~~~~~~~~~~^
-        get_session_key(session_id),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        SESSION_TTL_SECONDS,
-        ^^^^^^^^^^^^^^^^^^^^
-        json.dumps(session_data),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\Patient.py", line 455, in list_patients
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<8 lines>...
+        params + [page_size, offset],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 164, in wrapper
-    return func(*args, **kwargs)
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\commands\core.py", line 4512, in setex
-    return self.execute_command("SETEX", name, time, value)
-           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 867, in execute_command
-    return self._execute_command(*args, **options)
-           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\client.py", line 873, in _execute_command
-    conn = self.connection or pool.get_connection()
-                              ~~~~~~~~~~~~~~~~~~~^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\utils.py", line 258, in wrapper
-    return func(*args, **kwargs)
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 3273, in get_connection
-    connection.connect()
-    ~~~~~~~~~~~~~~~~~~^^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1028, in connect
-    self.retry.call_with_retry(
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        lambda: self.connect_check_health(
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<2 lines>...
-        lambda error: self.disconnect(error),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "first_name" does not exist
+LINE 2: ...      SELECT id, patient_id, registration_number, first_name...
+                                                             ^
+
+2026-10-10 22:42:01 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     )
     ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 132, in call_with_retry
-    raise error
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\retry.py", line 120, in call_with_retry
-    return do()
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1029, in <lambda>
-    lambda: self.connect_check_health(
-            ~~~~~~~~~~~~~~~~~~~~~~~~~^
-        check_health=True, retry_socket_connect=False
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ),
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:42:01 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
     ^
-  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\redis\connection.py", line 1077, in connect_check_health
-    raise e
-redis.exceptions.ConnectionError: Error 10061 connecting to localhost:6379. No connection could be made because the target machine actively refused it.
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:51 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:51 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:53 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:54 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:54 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:55 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:58 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:55:58 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:56:04 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 22:56:04 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 23:01:20 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 23:01:20 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 23:01:49 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 23:01:54 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-10 23:01:54 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 530, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<21 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 8:                     p.first_name,
+                            ^
+
+2026-10-11 10:42:02 | INFO     | Router.Login | User logged in: ajayjeyapal@gmail.com
+2026-10-11 11:40:04 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 11:40:05 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 11:40:05 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 11:40:07 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 11:40:09 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 11:40:12 | ERROR    | Router.OPBilling | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\OPBilling.py", line 651, in list_bills
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<28 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.first_name does not exist
+LINE 22:                     p.first_name,
+                             ^
+
+2026-10-11 13:55:11 | INFO     | Router.Login | User logged in: ajayjeyapal@gmail.com
+2026-10-11 16:06:57 | INFO     | Router.Login | User logged in: ajayjeyapal@gmail.com
+2026-10-11 16:21:54 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:21:59 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:27 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:27 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:29 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:29 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:30 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:30 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:30 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:30 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:36 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:37 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 16:30:37 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 36, in list_bills_service
+    ensure_payment_table(cursor)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Utils\billing_helpers.py", line 64, in ensure_payment_table
+    missing_receipts = cursor.fetchone()[0]
+                       ~~~~~~~~~~~~~~~~~^^^
+KeyError: 0
+2026-10-11 20:12:12 | INFO     | Router.Login | User logged in: ajayjeyapal@gmail.com
+2026-10-11 21:38:43 | ERROR    | Router.dashboard_router | Database error loading dashboard.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\dashboard_router.py", line 115, in get_dashboard
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<4 lines>...
+        """
+        ^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "created_at" does not exist
+LINE 4:                 WHERE created_at >= CURRENT_DATE
+                              ^
+
+2026-10-11 21:38:46 | ERROR    | Router.dashboard_router | Database error loading dashboard.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\dashboard_router.py", line 115, in get_dashboard
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<4 lines>...
+        """
+        ^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "created_at" does not exist
+LINE 4:                 WHERE created_at >= CURRENT_DATE
+                              ^
+
+2026-10-11 21:38:47 | ERROR    | Router.dashboard_router | Database error loading dashboard.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Router\dashboard_router.py", line 115, in get_dashboard
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<4 lines>...
+        """
+        ^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "created_at" does not exist
+LINE 4:                 WHERE created_at >= CURRENT_DATE
+                              ^
+

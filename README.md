@@ -20,7 +20,13 @@ docker build -t maarga-hms-backend .
 ## Run the Container
 
 ```powershell
-docker run -d --name maarga-hms-backend -p 8001:8001 --env-file .env.docker maarga-hms-backend
+docker run -d \
+  --name maarga-hms-backend \
+  --restart unless-stopped \
+  -p 8001:8001 \
+  --add-host=host.docker.internal:host-gateway \
+  --env-file .env.docker \
+  maarga-hms-backend
 ```
 
 The container starts the FastAPI application on port `8001`.
