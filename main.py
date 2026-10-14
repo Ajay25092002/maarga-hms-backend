@@ -23,6 +23,8 @@ from Router.PricingImport import router as pricing_import_router
 
 from contextlib import asynccontextmanager
 from Core.Database import initialize_database
+from Core.Admin_user import create_initial_admin
+
 
 # Load environment variables from .env
 load_dotenv(override=False)
@@ -45,6 +47,7 @@ CORS_ORIGINS = os.getenv(
 async def lifespan(app: FastAPI):
     # Runs before the application starts accepting requests.
     initialize_database()
+    create_initial_admin()
     yield
 
 # Initialize FastAPI
