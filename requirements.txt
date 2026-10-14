@@ -10,3 +10,4 @@ python-dotenv==1.2.4
 pydantic[email]==2.14.0
 reportlab==5.0.1
 python-multipart==0.0.32
+openpyxl==3.1.5
