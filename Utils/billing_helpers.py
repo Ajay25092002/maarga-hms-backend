@@ -133,6 +133,7 @@ def get_bill_items(cursor, bill_id: int) -> list[dict]:
             amount,
             discount_amount,
             net_amount,
+            gst_amount,
             created_at
         FROM public.bill_items
         WHERE bill_id = %s

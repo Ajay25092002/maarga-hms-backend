@@ -698,6 +698,9 @@ def initialize_database():
 
                             CHECK (discount_amount >= 0),
 
+                        gst_amount NUMERIC(12, 2) NOT NULL DEFAULT 0
+                            CHECK (gst_amount >= 0),
+
                         net_amount NUMERIC(12, 2) NOT NULL DEFAULT 0
 
                             CHECK (net_amount >= 0),

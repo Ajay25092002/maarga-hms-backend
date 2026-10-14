@@ -12,6 +12,7 @@ from pydantic import (
 )
 
 
+
 class BillItemInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -31,6 +32,14 @@ class BillItemInput(BaseModel):
         max_digits=12,
         decimal_places=2,
     )
+
+    gst_amount: Decimal = Field(
+        default=Decimal("0"),
+        ge=0,
+        max_digits=12,
+        decimal_places=2,
+    )
+
 
 
 class CreateBillRequest(BaseModel):

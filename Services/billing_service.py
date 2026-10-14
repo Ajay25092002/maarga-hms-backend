@@ -395,6 +395,7 @@ def create_bill_service(payload: CreateBillRequest):
 
                 subtotal = Decimal("0.00")
                 item_discount_total = Decimal("0.00")
+                gst_total = Decimal("0.00")
                 prepared_items = []
 
                 for item in payload.items:
@@ -414,10 +415,34 @@ def create_bill_service(payload: CreateBillRequest):
                         ),
                     )
 
+                    
                     rate = resolved["rate"]
                     quantity = item.quantity
                     amount = money(rate * quantity)
                     item_discount = money(item.discount_amount)
+
+                    # GST is permitted only for eligible IP room-rent items.
+                    gst_eligible = (
+                        payload.bill_type == "IP"
+                        and resolved["service_group_name"].strip().upper()
+                        == "ACCOMMODATION CHARGES"
+                        and resolved["service_name"].strip().upper()
+                        == "ROOM RENT"
+                    )
+
+                    requested_gst = money(item.gst_amount)
+
+                    if not gst_eligible and requested_gst > Decimal("0.00"):
+                        raise HTTPException(
+                            status_code=422,
+                            detail=(
+                                "GST is allowed only for IP Room Rent "
+                                "under Accommodation Charges."
+                            ),
+                        )
+
+                    gst_amount = requested_gst if gst_eligible else Decimal("0.00")
+
 
                     if item_discount > amount:
                         raise HTTPException(
@@ -432,6 +457,7 @@ def create_bill_service(payload: CreateBillRequest):
 
                     subtotal += amount
                     item_discount_total += item_discount
+                    gst_total += gst_amount
 
                     prepared_items.append(
                         {
@@ -446,11 +472,14 @@ def create_bill_service(payload: CreateBillRequest):
                             "amount": amount,
                             "discount_amount": item_discount,
                             "net_amount": net_amount,
+                            "gst_amount": gst_amount,
                         }
                     )
 
+                
                 subtotal = money(subtotal)
                 item_discount_total = money(item_discount_total)
+                gst_total = money(gst_total)
                 bill_discount = money(payload.discount_amount)
 
                 remaining = money(subtotal - item_discount_total)
@@ -464,7 +493,11 @@ def create_bill_service(payload: CreateBillRequest):
                         ),
                     )
 
-                total_amount = money(remaining - bill_discount)
+                # GST is added after item and bill-level discounts.
+                total_amount = money(
+                    remaining - bill_discount + gst_total
+                )
+
 
                 # The database trigger generates bill_number, op_number
                 # and ip_number. Do not generate or insert them here.
@@ -555,6 +588,7 @@ def create_bill_service(payload: CreateBillRequest):
                 for item in prepared_items:
                     cursor.execute(
                         """
+                        
                         INSERT INTO public.bill_items (
                             bill_id,
                             service_id,
@@ -567,12 +601,14 @@ def create_bill_service(payload: CreateBillRequest):
                             quantity,
                             amount,
                             discount_amount,
-                            net_amount
+                            net_amount,
+                            gst_amount
                         )
                         VALUES (
-                            %s, %s, %s, %s, %s, %s,
+                            %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, %s, %s
                         )
+
                         """,
                         (
                             bill["id"],
@@ -587,6 +623,8 @@ def create_bill_service(payload: CreateBillRequest):
                             item["amount"],
                             item["discount_amount"],
                             item["net_amount"],
+                            item["gst_amount"],
+
                         ),
                     )
 

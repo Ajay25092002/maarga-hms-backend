@@ -386,16 +386,19 @@ def _charge_table(items: list[dict], styles, op: bool):
         return table
 
 
+    
     widths = [
         12 * mm,
         23 * mm,
-        59 * mm,
+        52 * mm,
         17 * mm,
         13 * mm,
         21 * mm,
         17 * mm,
-        CONTENT_WIDTH - 162 * mm,
+        15 * mm,
+        CONTENT_WIDTH - 170 * mm,
     ]
+
 
     grouped: dict[str, list[dict]] = {}
     for item in items:
@@ -407,6 +410,7 @@ def _charge_table(items: list[dict], styles, op: bool):
     if not grouped:
         grouped["OTHER CHARGES"] = []
 
+    
     rows = [[
         _p("No.", styles["table_head"]),
         _p("Date", styles["table_head"]),
@@ -416,12 +420,15 @@ def _charge_table(items: list[dict], styles, op: bool):
         _p("Amount", styles["table_head"]),
         _p("Disc", styles["table_head"]),
         _p("Net Amt.", styles["table_head"]),
+        _p("GST", styles["table_head"]),
     ]]
+
 
     category_header_rows = []
     line_no = 0
 
     for category, category_items in grouped.items():
+        
         category_total = sum(
             _money(
                 item.get(
@@ -430,19 +437,25 @@ def _charge_table(items: list[dict], styles, op: bool):
                     - _money(item.get("discount_amount")),
                 )
             )
+            + _money(item.get("gst_amount"))
             for item in category_items
         )
 
+
         category_header_rows.append(len(rows))
+        
         rows.append([
             _p(category.upper(), styles["normal"]),
+            "",
             "",
             "",
             "",
             _p(f"Total Rs. {category_total:,.2f}/-", styles["right"]),
             "",
             "",
+            "",
         ])
+
 
         for item in category_items:
             line_no += 1
@@ -454,6 +467,7 @@ def _charge_table(items: list[dict], styles, op: bool):
             )
             discount = _money(item.get("discount_amount"))
             net = _money(item.get("net_amount", amount - discount))
+            gst = _money(item.get("gst_amount"))
             service_name = (
                 item.get("service_name")
                 or item.get("name")
@@ -463,6 +477,7 @@ def _charge_table(items: list[dict], styles, op: bool):
             )
             service_date = _date_text(item.get("service_date") or item.get("created_at"))
 
+            
             rows.append([
                 _p(line_no, styles["small"]),
                 _p(service_date, styles["small"]),
@@ -472,7 +487,9 @@ def _charge_table(items: list[dict], styles, op: bool):
                 _p(f"{amount:,.2f}", styles["right"]),
                 _p(f"{discount:,.2f}", styles["right"]),
                 _p(f"{net:,.2f}", styles["right"]),
+                _p(f"{gst:,.2f}", styles["right"]),
             ])
+
 
     table = LongTable(rows, colWidths=widths, repeatRows=1, hAlign="LEFT")
     table.setStyle(_table_style())
@@ -483,7 +500,7 @@ def _charge_table(items: list[dict], styles, op: bool):
     for row_index in category_header_rows:
         table.setStyle(TableStyle([
             ("SPAN", (0, row_index), (4, row_index)),
-            ("SPAN", (5, row_index), (7, row_index)),
+            ("SPAN", (5, row_index), (8, row_index)),
             ("BACKGROUND", (0, row_index), (-1, row_index), LIGHT_GREY),
         ]))
 
@@ -847,9 +864,16 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             Spacer(1, 3 * mm),
         ])
 
+        gst_total = sum(
+            _money(item.get("gst_amount"))
+            for item in items
+        )
+
+        
         summary = Table([
             [_p("Bill Amount", styles["normal"]), _p(f"{subtotal:,.2f}", styles["normal"])],
             [_p("Discount :", styles["normal"]), _p(f"{discount_total:,.2f}", styles["normal"])],
+            [_p("GST :", styles["normal"]), _p(f"{gst_total:,.2f}", styles["normal"])],
             [_p("Net Amount :", styles["normal"]), _p(f"{net_total:,.2f}", styles["normal"])],
             [_p("Paid Amount :", styles["normal"]), _p(f"{paid:,.2f}", styles["normal"])],
             [_p("Balance :", styles["normal"]), _p(f"{balance:,.2f}", styles["normal"])],
@@ -862,6 +886,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                 ),
             ],
         ], colWidths=[42 * mm, CONTENT_WIDTH - 42 * mm])
+
 
         summary.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
