@@ -1,22 +1,27 @@
+
 from datetime import date
 from typing import Optional
 
 import psycopg2
-from fastapi import APIRouter, HTTPException, Query, Path, status
-from Services.payment_pdf_service import generate_payment_receipt_pdf
+from fastapi import APIRouter, HTTPException, Path, Query, status
 from psycopg2.extras import RealDictCursor
 
 from Schemas.billing_schema import RecordPaymentRequest
+from Services.payment_pdf_service import generate_payment_receipt_pdf
 from Services.payment_service import record_payment_service
 from Utils.billing_helpers import get_db_connection, serialize_row
+
 
 router = APIRouter(
     prefix="/api/payments",
     tags=["Payments and Receipts"],
 )
 
+
 @router.get("/{payment_id}/receipt-pdf")
-def get_payment_receipt_pdf(payment_id: int = Path(gt=0)):
+def get_payment_receipt_pdf(
+    payment_id: int = Path(gt=0),
+):
     """Return a printable PDF for a recorded payment."""
     return generate_payment_receipt_pdf(payment_id)
 
@@ -35,6 +40,7 @@ def list_payments(
     ),
 ):
     """List recorded payments. This endpoint is read-only."""
+
     if date_from and date_to and date_from > date_to:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -45,23 +51,28 @@ def list_payments(
 
     try:
         connection = get_db_connection()
+
         where = []
         params = []
 
         if search and search.strip():
-            where.append("""
+            where.append(
+                """
                 (
                     bp.receipt_number ILIKE %s
                     OR p.patient_id ILIKE %s
-                    OR COALESCE(p.registration_number, '') ILIKE %s
                     OR p.name ILIKE %s
                     OR b.bill_number ILIKE %s
+                    OR COALESCE(b.op_number, '') ILIKE %s
+                    OR COALESCE(b.ip_number, '') ILIKE %s
                     OR COALESCE(bp.reference_number, '') ILIKE %s
                     OR CAST(bp.id AS TEXT) ILIKE %s
                 )
-            """)
+                """
+            )
+
             term = f"%{search.strip()}%"
-            params.extend([term] * 7)
+            params.extend([term] * 8)
 
         if payment_method:
             where.append("bp.payment_method = %s")
@@ -83,26 +94,33 @@ def list_payments(
 
         where_sql = (
             "WHERE " + " AND ".join(where)
-            if where else ""
+            if where
+            else ""
         )
 
         with connection.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
+
+            # Total matching payment records
             cursor.execute(
                 f"""
                 SELECT COUNT(*) AS total
                 FROM public.bill_payments bp
-                JOIN public.bills b ON b.id = bp.bill_id
-                JOIN public.patients p ON p.id = b.patient_db_id
+                JOIN public.bills b
+                    ON b.id = bp.bill_id
+                JOIN public.patients p
+                    ON p.id = b.patient_db_id
                 {where_sql}
                 """,
                 tuple(params),
             )
+
             total = cursor.fetchone()["total"]
 
             offset = (page - 1) * page_size
 
+            # Paginated payment records with bill balances
             cursor.execute(
                 f"""
                 SELECT
@@ -115,18 +133,23 @@ def list_payments(
                     bp.reference_number,
                     bp.notes,
                     bp.created_at,
+
                     b.bill_number,
                     b.bill_type,
+                    b.op_number,
+                    b.ip_number,
                     b.total_amount AS bill_total,
+
                     p.patient_id,
-                    p.registration_number,
                     p.name AS patient_name,
                     p.mobile AS patient_mobile,
+
                     COALESCE((
                         SELECT SUM(bp2.amount)
                         FROM public.bill_payments bp2
                         WHERE bp2.bill_id = b.id
                     ), 0) AS bill_amount_paid,
+
                     GREATEST(
                         b.total_amount - COALESCE((
                             SELECT SUM(bp3.amount)
@@ -135,10 +158,15 @@ def list_payments(
                         ), 0),
                         0
                     ) AS bill_outstanding_amount
+
                 FROM public.bill_payments bp
-                JOIN public.bills b ON b.id = bp.bill_id
-                JOIN public.patients p ON p.id = b.patient_db_id
+                JOIN public.bills b
+                    ON b.id = bp.bill_id
+                JOIN public.patients p
+                    ON p.id = b.patient_db_id
+
                 {where_sql}
+
                 ORDER BY bp.payment_date DESC, bp.id DESC
                 LIMIT %s OFFSET %s
                 """,
@@ -164,11 +192,13 @@ def list_payments(
 
     except HTTPException:
         raise
+
     except psycopg2.Error:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve payments.",
         )
+
     finally:
         if connection is not None:
             connection.close()
@@ -190,8 +220,11 @@ def create_payment(
 
 
 @router.get("/{payment_id}")
-def get_payment(payment_id: int = Path(gt=0)):
+def get_payment(
+    payment_id: int = Path(gt=0),
+):
     """Get one payment with its bill and patient details."""
+
     connection = None
 
     try:
@@ -200,7 +233,9 @@ def get_payment(payment_id: int = Path(gt=0)):
         with connection.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
-            cursor.execute("""
+
+            cursor.execute(
+                """
                 SELECT
                     bp.id,
                     bp.receipt_number,
@@ -211,18 +246,23 @@ def get_payment(payment_id: int = Path(gt=0)):
                     bp.reference_number,
                     bp.notes,
                     bp.created_at,
+
                     b.bill_number,
                     b.bill_type,
+                    b.op_number,
+                    b.ip_number,
                     b.total_amount AS bill_total,
+
                     p.patient_id,
-                    p.registration_number,
                     p.name AS patient_name,
                     p.mobile AS patient_mobile,
+
                     COALESCE((
                         SELECT SUM(bp2.amount)
                         FROM public.bill_payments bp2
                         WHERE bp2.bill_id = b.id
                     ), 0) AS bill_amount_paid,
+
                     GREATEST(
                         b.total_amount - COALESCE((
                             SELECT SUM(bp3.amount)
@@ -231,17 +271,23 @@ def get_payment(payment_id: int = Path(gt=0)):
                         ), 0),
                         0
                     ) AS bill_outstanding_amount
+
                 FROM public.bill_payments bp
-                JOIN public.bills b ON b.id = bp.bill_id
-                JOIN public.patients p ON p.id = b.patient_db_id
+                JOIN public.bills b
+                    ON b.id = bp.bill_id
+                JOIN public.patients p
+                    ON p.id = b.patient_db_id
+
                 WHERE bp.id = %s
-            """, (payment_id,))
+                """,
+                (payment_id,),
+            )
 
             row = cursor.fetchone()
 
             if row is None:
                 raise HTTPException(
-                    status_code=404,
+                    status_code=status.HTTP_404_NOT_FOUND,
                     detail="Payment not found.",
                 )
 
@@ -249,11 +295,13 @@ def get_payment(payment_id: int = Path(gt=0)):
 
     except HTTPException:
         raise
+
     except psycopg2.Error:
         raise HTTPException(
-            status_code=500,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve payment.",
         )
+
     finally:
         if connection is not None:
             connection.close()

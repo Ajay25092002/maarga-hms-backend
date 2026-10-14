@@ -652,3 +652,527 @@ psycopg2.errors.UndefinedColumn: column "created_at" does not exist
 LINE 4:                 WHERE created_at >= CURRENT_DATE
                               ^
 
+2026-10-14 00:56:16 | ERROR    | Services.billing_service | Database error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 321, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<4 lines>...
+        (payload.patient_id,),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "registration_number" does not exist
+LINE 2:                     SELECT id, patient_id, registration_numb...
+                                                   ^
+
+2026-10-14 00:56:26 | ERROR    | Services.billing_service | Database error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 321, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<4 lines>...
+        (payload.patient_id,),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column "registration_number" does not exist
+LINE 2:                     SELECT id, patient_id, registration_numb...
+                                                   ^
+
+2026-10-14 01:00:27 | ERROR    | Services.bill_query_service | Database error retrieving bill 1.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 193, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 11:                         p.registration_number
+                                 ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:00:30 | ERROR    | Services.bill_query_service | Database error retrieving bill 1.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 193, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 11:                         p.registration_number
+                                 ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:18 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:18 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:18 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:20 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:20 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:33 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:38 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:39 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:40 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:49 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:01:49 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 16:                 OR COALESCE(p.registration_number, '') ILIKE...
+                                     ^
+HINT:  Perhaps you meant to reference the column "b.registration_number".
+
+2026-10-14 01:05:56 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:05:58 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:05:58 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:05:58 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:05:58 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:06:08 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 01:06:09 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 49, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<4 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-14 10:32:45 | ERROR    | Services.billing_service | Database error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 471, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<79 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "bill_number" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (1, null, OP, OP-000002, null, 1, 2026-10-14 00:00:00+05:30, null, null, null, null, Dr Luv Koushik, null, Test, null, null, null, null, null, 100.00, 0.00, 100.00, New Patient, 2026-10-14 10:32:45.253665+05:30).
+
+2026-10-14 10:32:52 | ERROR    | Services.billing_service | Database error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 471, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<79 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.NotNullViolation: null value in column "bill_number" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (2, null, OP, OP-000003, null, 1, 2026-10-14 00:00:00+05:30, null, null, null, null, Dr Luv Koushik, null, Test, null, null, null, null, null, 100.00, 0.00, 100.00, New Patient, 2026-10-14 10:32:52.414428+05:30).
+
+2026-10-14 12:04:20 | ERROR    | Services.payment_pdf_service | Unable to generate payment receipt PDF for payment 1
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\payment_pdf_service.py", line 278, in generate_payment_receipt_pdf
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<27 lines>...
+        (payment_id,),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 17:                     p.registration_number,
+                             ^
+
+2026-10-14 15:38:25 | ERROR    | Services.payment_pdf_service | Unable to generate payment receipt PDF for payment 2
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\payment_pdf_service.py", line 278, in generate_payment_receipt_pdf
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<27 lines>...
+        (payment_id,),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
+LINE 17:                     p.registration_number,
+                             ^
+

@@ -11,6 +11,16 @@ from Router.Payments import router as payments_router
 from Router.role_router import router as role_router
 from Router.user_router import router as user_router
 from Router.dashboard_router import router as dashboard_router
+from Router.ServiceGroups import router as service_groups_router
+from Router.Services import router as services_router
+from Router.RoomTypes import router as room_types_router
+from Router.Doctors import router as doctors_router
+from Router.ServicePricing import router as service_pricing_router
+from Router.BillingPriceResolution import router as billing_price_resolution_router
+from Router.PricingImport import router as pricing_import_router
+
+
+
 from contextlib import asynccontextmanager
 from Core.Database import initialize_database
 
@@ -51,6 +61,15 @@ app.include_router(payments_router)
 app.include_router(role_router)
 app.include_router(user_router)
 app.include_router(dashboard_router)
+app.include_router(service_groups_router)
+app.include_router(services_router)
+app.include_router(room_types_router)
+app.include_router(doctors_router)
+app.include_router(service_pricing_router)
+app.include_router(pricing_import_router)
+
+
+app.include_router(billing_price_resolution_router)
 
 # Configure CORS
 origins = [

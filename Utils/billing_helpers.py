@@ -1,3 +1,4 @@
+
 import os
 import uuid
 from datetime import date, datetime, time, timedelta
@@ -10,44 +11,21 @@ from fastapi import HTTPException, status
 
 def get_db_connection():
     database_url = os.getenv("DATABASE_URL")
+
     if not database_url:
         raise RuntimeError("DATABASE_URL is not configured.")
+
     return psycopg2.connect(database_url)
 
 
 def ensure_payment_table(cursor):
-    """Create or safely migrate the payments table and receipt numbers."""
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS public.bill_payments (
-            id BIGSERIAL PRIMARY KEY,
-            bill_id BIGINT NOT NULL
-                REFERENCES public.bills(id) ON DELETE RESTRICT,
-            amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
-            payment_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            payment_method VARCHAR(50),
-            reference_number VARCHAR(150),
-            notes TEXT,
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        )
-    """)
+    """
+    Ensure the payment table, receipt sequence, and indexes exist.
 
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ADD COLUMN IF NOT EXISTS reference_number VARCHAR(150);
-    """)
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ADD COLUMN IF NOT EXISTS notes TEXT;
-    """)
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ
-        NOT NULL DEFAULT NOW();
-    """)
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ADD COLUMN IF NOT EXISTS receipt_number VARCHAR(30);
-    """)
+    This matches the updated bill_payments schema. It does not attempt
+    to migrate legacy tables. Run the database initialization script
+    first when recreating the database.
+    """
 
     cursor.execute("""
         CREATE SEQUENCE IF NOT EXISTS public.bill_payment_receipt_seq
@@ -57,73 +35,28 @@ def ensure_payment_table(cursor):
     """)
 
     cursor.execute("""
-        SELECT COUNT(*)
-        FROM public.bill_payments
-        WHERE receipt_number IS NULL;
-    """)
-    missing_receipts = cursor.fetchone()["count"]
-
-    if missing_receipts:
-        cursor.execute("""
-            SELECT COALESCE(
-                MAX(
-                    CASE
-                        WHEN receipt_number ~ '^RC-[0-9]+$'
-                        THEN SUBSTRING(receipt_number FROM 4)::BIGINT
-                    END
+        CREATE TABLE IF NOT EXISTS public.bill_payments (
+            id BIGSERIAL PRIMARY KEY,
+            bill_id BIGINT NOT NULL
+                REFERENCES public.bills(id) ON DELETE RESTRICT,
+            receipt_number VARCHAR(30) NOT NULL
+                DEFAULT (
+                    'RC-' || LPAD(
+                        nextval(
+                            'public.bill_payment_receipt_seq'
+                        )::TEXT,
+                        4,
+                        '0'
+                    )
                 ),
-                0
-            )
-            FROM public.bill_payments;
-        """)
-        max_receipt_number = cursor.fetchone()["max"]
-
-        if max_receipt_number > 0:
-            cursor.execute(
-                """
-                SELECT setval(
-                    'public.bill_payment_receipt_seq',
-                    %s,
-                    TRUE
-                );
-                """,
-                (max_receipt_number,),
-            )
-        else:
-            cursor.execute("""
-                SELECT setval(
-                    'public.bill_payment_receipt_seq',
-                    1,
-                    FALSE
-                );
-            """)
-
-        cursor.execute("""
-            UPDATE public.bill_payments
-            SET receipt_number =
-                'RC-' || LPAD(
-                    nextval('public.bill_payment_receipt_seq')::TEXT,
-                    4,
-                    '0'
-                )
-            WHERE receipt_number IS NULL;
-        """)
-
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ALTER COLUMN receipt_number
-        SET DEFAULT (
-            'RC-' || LPAD(
-                nextval('public.bill_payment_receipt_seq')::TEXT,
-                4,
-                '0'
-            )
+            amount NUMERIC(12, 2) NOT NULL
+                CHECK (amount > 0),
+            payment_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            payment_method VARCHAR(50),
+            reference_number VARCHAR(150),
+            notes TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
-    """)
-
-    cursor.execute("""
-        ALTER TABLE public.bill_payments
-        ALTER COLUMN receipt_number SET NOT NULL;
     """)
 
     cursor.execute("""
@@ -136,6 +69,7 @@ def ensure_payment_table(cursor):
         CREATE INDEX IF NOT EXISTS idx_bill_payments_bill_id
         ON public.bill_payments (bill_id);
     """)
+
     cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_bill_payments_payment_date
         ON public.bill_payments (payment_date);
@@ -143,17 +77,31 @@ def ensure_payment_table(cursor):
 
 
 def generate_bill_number(bill_type: str) -> str:
+    """
+    Legacy compatibility helper.
+
+    The updated billing service should let the database trigger generate
+    bill_number, op_number, and ip_number. Do not use this function in
+    the new bill-creation flow.
+    """
+
+    if bill_type not in {"OP", "IP"}:
+        raise ValueError("bill_type must be OP or IP.")
+
     prefix = "2MGOPB" if bill_type == "OP" else "2MGIPB"
     bill_date = datetime.now().strftime("%Y%m%d")
     suffix = uuid.uuid4().hex[:8].upper()
+
     return f"{prefix}-{bill_date}-{suffix}"
 
 
 def serialize_value(value):
     if isinstance(value, Decimal):
         return float(value)
+
     if isinstance(value, (datetime, date)):
         return value.isoformat()
+
     return value
 
 
@@ -165,14 +113,34 @@ def serialize_row(row: dict) -> dict:
 
 
 def get_bill_items(cursor, bill_id: int) -> list[dict]:
-    cursor.execute("""
-        SELECT id, bill_id, category, service_date, service_code,
-               description, rate, quantity, amount, discount_amount,
-               net_amount, created_at
+    """
+    Retrieve bill items using the updated bill_items schema.
+    """
+
+    cursor.execute(
+        """
+        SELECT
+            id,
+            bill_id,
+            service_id,
+            service_group_id,
+            service_price_id,
+            service_name,
+            service_group_name,
+            service_date,
+            rate,
+            quantity,
+            amount,
+            discount_amount,
+            net_amount,
+            created_at
         FROM public.bill_items
         WHERE bill_id = %s
         ORDER BY id
-    """, (bill_id,))
+        """,
+        (bill_id,),
+    )
+
     return [
         serialize_row(dict(item))
         for item in cursor.fetchall()
@@ -191,15 +159,19 @@ def get_date_range(
     if date_filter:
         if date_filter == "today":
             start_date = end_date = today
+
         elif date_filter == "7days":
             start_date = today - timedelta(days=6)
             end_date = today
+
         elif date_filter == "30days":
             start_date = today - timedelta(days=29)
             end_date = today
+
         elif date_filter == "this_month":
             start_date = today.replace(day=1)
             end_date = today
+
         else:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -211,17 +183,21 @@ def get_date_range(
 
     if start_date and end_date and start_date > end_date:
         raise HTTPException(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="date_from cannot be later than date_to.",
         )
 
     start_datetime = (
         datetime.combine(start_date, time.min)
-        if start_date else None
+        if start_date
+        else None
     )
+
+    # Exclusive upper bound includes the entire end date.
     end_datetime = (
         datetime.combine(end_date + timedelta(days=1), time.min)
-        if end_date else None
+        if end_date
+        else None
     )
 
     return start_datetime, end_datetime
@@ -229,12 +205,16 @@ def get_date_range(
 
 BILL_FROM_SQL = """
     FROM public.bills b
-    JOIN public.patients p ON p.id = b.patient_db_id
+    JOIN public.patients p
+        ON p.id = b.patient_db_id
     LEFT JOIN (
-        SELECT bill_id, SUM(amount) AS amount_paid
+        SELECT
+            bill_id,
+            SUM(amount) AS amount_paid
         FROM public.bill_payments
         GROUP BY bill_id
-    ) payments ON payments.bill_id = b.id
+    ) payments
+        ON payments.bill_id = b.id
 """
 
 
@@ -250,25 +230,39 @@ def build_bill_filters(
     parameters = []
 
     if bill_type:
+        normalized_bill_type = bill_type.strip().upper()
+
+        if normalized_bill_type not in {"OP", "IP"}:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="bill_type must be OP or IP.",
+            )
+
         conditions.append("b.bill_type = %s")
-        parameters.append(bill_type)
+        parameters.append(normalized_bill_type)
 
     if search and search.strip():
         search_value = f"%{search.strip()}%"
+
         conditions.append("""
             (
                 b.bill_number ILIKE %s
+                OR COALESCE(b.op_number, '') ILIKE %s
+                OR COALESCE(b.ip_number, '') ILIKE %s
                 OR p.patient_id ILIKE %s
-                OR COALESCE(p.registration_number, '') ILIKE %s
                 OR COALESCE(p.name, '') ILIKE %s
                 OR COALESCE(b.doctor_name, '') ILIKE %s
+                OR COALESCE(b.psychologist_name, '') ILIKE %s
                 OR COALESCE(p.mobile, '') ILIKE %s
             )
         """)
-        parameters.extend([search_value] * 6)
+
+        parameters.extend([search_value] * 8)
 
     start_datetime, end_datetime = get_date_range(
-        date_filter, date_from, date_to
+        date_filter,
+        date_from,
+        date_to,
     )
 
     if start_datetime:
@@ -283,30 +277,39 @@ def build_bill_filters(
         normalized = payment_status.strip().lower()
 
         if normalized not in {
-            "paid", "partially paid", "unpaid"
+            "paid",
+            "partially paid",
+            "unpaid",
         }:
             raise HTTPException(
-                status_code=422,
-                detail="status must be Paid, Partially Paid, or Unpaid.",
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=(
+                    "status must be Paid, Partially Paid, or Unpaid."
+                ),
             )
+
+        paid_amount = "COALESCE(payments.amount_paid, 0)"
 
         if normalized == "paid":
             conditions.append(
-                "COALESCE(payments.amount_paid, 0) >= b.total_amount"
+                f"{paid_amount} >= b.total_amount"
             )
+
         elif normalized == "partially paid":
-            conditions.append("""
-                COALESCE(payments.amount_paid, 0) > 0
-                AND COALESCE(payments.amount_paid, 0) < b.total_amount
+            conditions.append(f"""
+                {paid_amount} > 0
+                AND {paid_amount} < b.total_amount
             """)
+
         else:
             conditions.append(
-                "COALESCE(payments.amount_paid, 0) <= 0"
+                f"{paid_amount} <= 0"
             )
 
     where_clause = (
         "WHERE " + " AND ".join(conditions)
-        if conditions else ""
+        if conditions
+        else ""
     )
 
     return where_clause, parameters

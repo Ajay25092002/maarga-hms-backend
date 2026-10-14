@@ -9,3 +9,4 @@ psycopg2-binary==2.9.13
 python-dotenv==1.2.4
 pydantic[email]==2.14.0
 reportlab==5.0.1
+python-multipart==0.0.32

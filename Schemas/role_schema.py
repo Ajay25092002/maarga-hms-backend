@@ -1,3 +1,4 @@
+
 from datetime import datetime
 
 from pydantic import (
@@ -24,29 +25,35 @@ ROLE_PERMISSIONS = {
     "patients.ip.create": "Register IP Patients",
     "patients.ip.edit": "Edit IP Patient Details",
 
-    # OP Bills — View and Create only
+    # OP Bills
     "bills.op.view": "View OP Bills",
     "bills.op.create": "Create OP Bills",
 
-    # IP Bills — View and Create only
+    # IP Bills
     "bills.ip.view": "View IP Bills",
     "bills.ip.create": "Create IP Bills",
 
-    # Payments & Receipts — View and Create only
+    # Payments & Receipts
     "payments.view": "View Payments & Receipts",
     "payments.create": "Record Payments",
 
-    # Users — separate permission group
+    # Users
     "users.view": "View Users",
     "users.create": "Create Users",
     "users.edit": "Edit Users and Assign Roles",
     "users.delete": "Delete or Deactivate Users",
 
-    # Roles & Permissions — separate permission group
+    # Roles & Permissions
     "roles.view": "View Roles",
     "roles.create": "Create Roles",
     "roles.edit": "Edit Roles and Permissions",
     "roles.delete": "Delete Roles",
+
+    # Pricing Management
+    "pricing.view": "View Pricing Management",
+    "pricing.create": "Create Pricing Configuration",
+    "pricing.edit": "Edit Pricing Configuration",
+    "pricing.import": "Import Pricing from Excel",
 }
 
 
