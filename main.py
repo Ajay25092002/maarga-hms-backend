@@ -18,6 +18,9 @@ from Router.Doctors import router as doctors_router
 from Router.ServicePricing import router as service_pricing_router
 from Router.BillingPriceResolution import router as billing_price_resolution_router
 from Router.PricingImport import router as pricing_import_router
+from Router.PaymentRefunds import router as payment_refunds_router
+
+
 
 
 
@@ -70,6 +73,7 @@ app.include_router(room_types_router)
 app.include_router(doctors_router)
 app.include_router(service_pricing_router)
 app.include_router(pricing_import_router)
+app.include_router(payment_refunds_router)
 
 
 app.include_router(billing_price_resolution_router)

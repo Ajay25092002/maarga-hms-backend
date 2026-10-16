@@ -101,24 +101,46 @@ def get_dashboard(request: Request):
 
             patient_counts = cursor.fetchone()
 
-            # 3. Payments actually received today.
+            # 3. Actual payments received and refunds issued today.
             cursor.execute(
                 """
-                SELECT COALESCE(SUM(amount), 0) AS collection_today
+                SELECT COALESCE(SUM(amount), 0) AS total_payments_today
                 FROM public.bill_payments
                 WHERE payment_date >= CURRENT_DATE
                   AND payment_date < CURRENT_DATE + INTERVAL '1 day'
                 """
             )
+            payment_collection = cursor.fetchone()
 
-            collection = cursor.fetchone()
+            cursor.execute(
+                """
+                SELECT COALESCE(SUM(refund_amount), 0) AS refunds_today
+                FROM public.payment_refunds
+                WHERE created_at >= CURRENT_DATE
+                  AND created_at < CURRENT_DATE + INTERVAL '1 day'
+                """
+            )
+            refund_collection = cursor.fetchone()
 
-            # Shared payment aggregation for outstanding balances.
+            total_payments_today = float(
+                payment_collection["total_payments_today"] or 0
+            )
+            refunds_today = float(refund_collection["refunds_today"] or 0)
+            net_collection_today = total_payments_today - refunds_today
+
+            # Shared payment and refund aggregations for bill balances.
             payment_totals_sql = """
                 SELECT bill_id, SUM(amount) AS amount_paid
                 FROM public.bill_payments
                 GROUP BY bill_id
             """
+            refund_totals_sql = """
+                SELECT bp.bill_id, SUM(pr.refund_amount) AS total_refunds
+                FROM public.payment_refunds pr
+                JOIN public.bill_payments bp ON bp.id = pr.payment_id
+                GROUP BY bp.bill_id
+            """
+            net_paid_sql = "GREATEST(COALESCE(pay.amount_paid, 0) - COALESCE(ref.total_refunds, 0), 0)"
 
             # 4. Outstanding balance across all bills.
             cursor.execute(
@@ -126,21 +148,24 @@ def get_dashboard(request: Request):
                 SELECT COALESCE(
                     SUM(
                         GREATEST(
-                            b.total_amount - COALESCE(p.amount_paid, 0),
+                            b.total_amount - GREATEST(
+                                COALESCE(p.amount_paid, 0) - COALESCE(r.total_refunds, 0),
+                                0
+                            ),
                             0
                         )
                     ),
                     0
                 ) AS outstanding_amount
                 FROM public.bills b
-                LEFT JOIN ({payment_totals_sql}) p
-                    ON p.bill_id = b.id
+                LEFT JOIN ({payment_totals_sql}) p ON p.bill_id = b.id
+                LEFT JOIN ({refund_totals_sql}) r ON r.bill_id = b.id
                 """
             )
 
             outstanding = cursor.fetchone()
 
-            # 5. Daily collection trend for the last 7 days.
+            # 5. Daily net collection trend for the last 7 days.
             cursor.execute(
                 """
                 WITH days AS (
@@ -149,15 +174,27 @@ def get_dashboard(request: Request):
                         CURRENT_DATE,
                         INTERVAL '1 day'
                     )::date AS day
+                ), payments AS (
+                    SELECT payment_date::date AS day, SUM(amount) AS amount
+                    FROM public.bill_payments
+                    WHERE payment_date >= CURRENT_DATE - INTERVAL '6 days'
+                      AND payment_date < CURRENT_DATE + INTERVAL '1 day'
+                    GROUP BY payment_date::date
+                ), refunds AS (
+                    SELECT created_at::date AS day, SUM(refund_amount) AS amount
+                    FROM public.payment_refunds
+                    WHERE created_at >= CURRENT_DATE - INTERVAL '6 days'
+                      AND created_at < CURRENT_DATE + INTERVAL '1 day'
+                    GROUP BY created_at::date
                 )
                 SELECT
                     d.day,
-                    COALESCE(SUM(p.amount), 0) AS collection
+                    COALESCE(p.amount, 0) AS total_payments,
+                    COALESCE(r.amount, 0) AS total_refunds,
+                    COALESCE(p.amount, 0) - COALESCE(r.amount, 0) AS collection
                 FROM days d
-                LEFT JOIN public.bill_payments p
-                    ON p.payment_date >= d.day
-                   AND p.payment_date < d.day + INTERVAL '1 day'
-                GROUP BY d.day
+                LEFT JOIN payments p ON p.day = d.day
+                LEFT JOIN refunds r ON r.day = d.day
                 ORDER BY d.day
                 """
             )
@@ -166,6 +203,8 @@ def get_dashboard(request: Request):
                 {
                     "date": row["day"].isoformat(),
                     "amount": float(row["collection"]),
+                    "total_payments": float(row["total_payments"]),
+                    "total_refunds": float(row["total_refunds"]),
                 }
                 for row in cursor.fetchall()
             ]
@@ -224,19 +263,19 @@ def get_dashboard(request: Request):
                 SELECT
                     COUNT(*) FILTER (
                         WHERE b.total_amount <= 0
-                           OR COALESCE(p.amount_paid, 0) >= b.total_amount
+                           OR {net_paid_sql} >= b.total_amount
                     ) AS paid,
                     COUNT(*) FILTER (
-                        WHERE COALESCE(p.amount_paid, 0) > 0
-                          AND COALESCE(p.amount_paid, 0) < b.total_amount
+                        WHERE {net_paid_sql} > 0
+                          AND {net_paid_sql} < b.total_amount
                     ) AS partially_paid,
                     COUNT(*) FILTER (
-                        WHERE COALESCE(p.amount_paid, 0) <= 0
+                        WHERE {net_paid_sql} <= 0
                           AND b.total_amount > 0
                     ) AS unpaid
                 FROM public.bills b
-                LEFT JOIN ({payment_totals_sql}) p
-                    ON p.bill_id = b.id
+                LEFT JOIN ({payment_totals_sql}) pay ON pay.bill_id = b.id
+                LEFT JOIN ({refund_totals_sql}) ref ON ref.bill_id = b.id
                 """
             )
 
@@ -253,24 +292,25 @@ def get_dashboard(request: Request):
                     b.total_amount,
                     p.patient_id,
                     p.name AS patient_name,
-                    COALESCE(pay.amount_paid, 0) AS amount_paid,
+                    COALESCE(pay.amount_paid, 0) AS total_payments,
+                    COALESCE(ref.total_refunds, 0) AS total_refunds,
+                    {net_paid_sql} AS amount_paid,
                     GREATEST(
-                        b.total_amount - COALESCE(pay.amount_paid, 0),
+                        b.total_amount - ({net_paid_sql}),
                         0
                     ) AS outstanding_amount,
                     CASE
                         WHEN b.total_amount <= 0
-                          OR COALESCE(pay.amount_paid, 0) >= b.total_amount
+                          OR ({net_paid_sql}) >= b.total_amount
                             THEN 'Paid'
-                        WHEN COALESCE(pay.amount_paid, 0) > 0
+                        WHEN ({net_paid_sql}) > 0
                             THEN 'Partially Paid'
                         ELSE 'Unpaid'
                     END AS payment_status
                 FROM public.bills b
-                JOIN public.patients p
-                    ON p.id = b.patient_db_id
-                LEFT JOIN ({payment_totals_sql}) pay
-                    ON pay.bill_id = b.id
+                JOIN public.patients p ON p.id = b.patient_db_id
+                LEFT JOIN ({payment_totals_sql}) pay ON pay.bill_id = b.id
+                LEFT JOIN ({refund_totals_sql}) ref ON ref.bill_id = b.id
                 ORDER BY b.bill_date DESC, b.id DESC
                 LIMIT 10
                 """
@@ -292,6 +332,8 @@ def get_dashboard(request: Request):
                         "patient_id": row["patient_id"],
                         "patient_name": row["patient_name"],
                         "total_amount": float(row["total_amount"]),
+                        "total_payments": float(row["total_payments"]),
+                        "total_refunds": float(row["total_refunds"]),
                         "amount_paid": float(row["amount_paid"]),
                         "outstanding_amount": float(
                             row["outstanding_amount"]
@@ -307,9 +349,11 @@ def get_dashboard(request: Request):
                     ],
                     "op_bills_today": bill_counts["op_bills_today"],
                     "ip_bills_today": bill_counts["ip_bills_today"],
-                    "collection_today": float(
-                        collection["collection_today"]
-                    ),
+                    "total_payments_today": total_payments_today,
+                    "refunds_today": refunds_today,
+                    "net_collection_today": net_collection_today,
+                    # Backward-compatible field now reflects net collection.
+                    "collection_today": net_collection_today,
                     "outstanding_amount": float(
                         outstanding["outstanding_amount"]
                     ),

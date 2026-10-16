@@ -1,6 +1,8 @@
 
 from __future__ import annotations
 
+import os
+
 from datetime import date, datetime
 from io import BytesIO
 from pathlib import Path
@@ -8,6 +10,9 @@ from typing import Any
 
 from fastapi import HTTPException
 from fastapi.responses import Response
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
@@ -23,6 +28,8 @@ from reportlab.platypus import (
 )
 
 from Services.bill_query_service import get_bill_service
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ASSETS_DIR = BASE_DIR / "assets"
@@ -215,7 +222,8 @@ def _header_footer(canvas, doc, bill_type: str):
         canvas.drawString(
             left,
             page_h - 20 * mm,
-            "23/B, Sector A, Yelahanka New Town, Bengaluru, Karnataka - 560064",
+            "A-14, Golfcourse Ext road, Block A, Sushant Lok III, "
+            "Sector 57, Gurugram, Haryana, 122011",
         )
 
         if logo_path.exists():
@@ -300,25 +308,82 @@ def _table_style():
     ])
 
 
-def _calculate_totals(bill: dict, items: list[dict], payments: list[dict]):
+def _calculate_totals(
+    bill: dict,
+    items: list[dict],
+    payments: list[dict],
+    refunds: list[dict],
+):
+    # Keep the bill's original charge totals unchanged. Refunds affect net
+    # collections and outstanding balance, not the original bill value.
     subtotal = _money(bill.get("subtotal"))
-    item_discount = sum(
-        _money(item.get("discount_amount")) for item in items
-    )
+    if not subtotal:
+        subtotal = sum(
+            _money(item.get("amount", _money(item.get("rate")) * _money(item.get("quantity") or 1)))
+            for item in items
+        )
+
+    item_discount = sum(_money(item.get("discount_amount")) for item in items)
     bill_discount = _money(bill.get("discount_amount"))
+    discount_total = item_discount + bill_discount
     net_total = _money(bill.get("total_amount"))
 
-    paid = _money(bill.get("amount_paid"))
-    if not paid:
-        paid = sum(_money(payment.get("amount")) for payment in payments)
+    # Avoid stale bill.amount_paid overriding the actual payment history.
+    total_payments = sum(_money(payment.get("amount")) for payment in payments)
+    total_refunds = sum(_money(refund.get("refund_amount")) for refund in refunds)
+    net_paid = max(0.0, total_payments - total_refunds)
+    balance = max(0.0, net_total - net_paid)
 
-    return (
-        subtotal,
-        item_discount + bill_discount,
-        net_total,
-        paid,
-        max(0, net_total - paid),
+    return subtotal, discount_total, net_total, total_payments, total_refunds, net_paid, balance
+
+
+def _database_connection():
+    """Use the same standard PostgreSQL environment variables as the backend."""
+    for env_name in (
+        "DATABASE_URL",
+        "DATABASE_CONNECTION_STRING",
+        "POSTGRES_CONNECTION_STRING",
+        "POSTGRES_URL",
+    ):
+        value = os.getenv(env_name)
+        if value and value.strip():
+            return psycopg2.connect(value.strip(), connect_timeout=10)
+    raise RuntimeError(
+        "PostgreSQL connection string is not configured. "
+        "Set DATABASE_URL or a supported PostgreSQL connection variable."
     )
+
+
+def _get_bill_refunds(bill_id: int) -> list[dict]:
+    """Fetch refund transactions separately so payments are never duplicated."""
+    connection = _database_connection()
+    try:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    pr.id,
+                    pr.refund_number,
+                    pr.payment_id,
+                    pr.refund_amount,
+                    pr.refund_method,
+                    pr.reason,
+                    pr.notes,
+                    pr.created_by,
+                    pr.created_at,
+                    bp.receipt_number,
+                    bp.payment_method AS original_payment_method
+                FROM public.payment_refunds pr
+                JOIN public.bill_payments bp
+                    ON bp.id = pr.payment_id
+                WHERE bp.bill_id = %s
+                ORDER BY pr.created_at ASC, pr.id ASC
+                """,
+                (bill_id,),
+            )
+            return [dict(row) for row in cursor.fetchall()]
+    finally:
+        connection.close()
 
 
 def _charge_table(items: list[dict], styles, op: bool):
@@ -507,86 +572,74 @@ def _charge_table(items: list[dict], styles, op: bool):
     return table
 
 
-def _payment_table(payments: list[dict], styles, op: bool):
+def _transaction_table(records: list[dict], styles, op: bool, is_refund: bool = False):
     if op:
         widths = [
-            CONTENT_WIDTH * 0.28,
-            CONTENT_WIDTH * 0.18,
-            CONTENT_WIDTH * 0.18,
-            CONTENT_WIDTH * 0.22,
-            CONTENT_WIDTH * 0.14,
+            CONTENT_WIDTH * 0.23,
+            CONTENT_WIDTH * 0.17,
+            CONTENT_WIDTH * 0.17,
+            CONTENT_WIDTH * 0.23,
+            CONTENT_WIDTH * 0.20,
         ]
-        headings = ["Rec. No", "Date", "Amount", "Mode of Payment", "Status"]
+        headings = (
+            ["Refund No", "Date", "Refund Amount", "Refund Method", "Reason / Notes"]
+            if is_refund
+            else ["Receipt No", "Date", "Payment Amount", "Payment Method", "Status / Notes"]
+        )
     else:
         widths = [
+            29 * mm,
             31 * mm,
-            37 * mm,
-            32 * mm,
-            60 * mm,
-            CONTENT_WIDTH - 160 * mm,
+            28 * mm,
+            35 * mm,
+            CONTENT_WIDTH - 123 * mm,
         ]
-        headings = [
-            "Date / Time",
-            "Receipt No",
-            "Method",
-            "Notes",
-            "Amount",
-        ]
+        headings = (
+            ["Refund No", "Date / Time", "Method", "Reason", "Refund Amount"]
+            if is_refund
+            else ["Receipt No", "Date / Time", "Method", "Notes", "Payment Amount"]
+        )
 
     rows = [[_p(heading, styles["table_head"]) for heading in headings]]
-
-    for payment in payments:
-        amount = f"{_money(payment.get('amount')):,.2f}"
-
+    for record in records:
+        amount_key = "refund_amount" if is_refund else "amount"
+        amount = f"{_money(record.get(amount_key)):,.2f}"
+        if is_refund:
+            reference = record.get("refund_number") or record.get("id") or "-"
+            when = record.get("created_at")
+            method = record.get("refund_method") or "-"
+            reason = record.get("reason") or record.get("notes") or "-"
+            notes = record.get("notes") or ""
+        else:
+            reference = record.get("reference_number") or record.get("receipt_number") or record.get("id") or "-"
+            when = record.get("payment_date")
+            method = record.get("payment_method") or "-"
+            reason = record.get("notes") or "-"
+            notes = record.get("notes") or ""
         if op:
-            reference = (
-                payment.get("reference_number")
-                or payment.get("receipt_number")
-                or payment.get("id")
-                or "-"
-            )
-            method = payment.get("payment_method") or "-"
-            notes = payment.get("notes") or ""
-
             rows.append([
                 _p(reference, styles["small"]),
-                _p(_date_text(payment.get("payment_date"), True), styles["small"]),
+                _p(_date_text(when, True), styles["small"]),
                 _p(amount, styles["right"]),
-                _p(
-                    f"{method}{(': ' + notes) if notes else ''}",
-                    styles["small"],
-                ),
-                _p(payment.get("status") or "Received", styles["small"]),
+                _p(method, styles["small"]),
+                _p(reason if is_refund else (notes or record.get("status") or "Received"), styles["small"]),
             ])
         else:
             rows.append([
-                _p(_date_text(payment.get("payment_date"), True), styles["small"]),
-                _p(
-                    payment.get("reference_number")
-                    or payment.get("receipt_number")
-                    or payment.get("id")
-                    or "-",
-                    styles["small"],
-                ),
-                _p(payment.get("payment_method") or "-", styles["small"]),
-                _p(payment.get("notes") or "-", styles["small"]),
+                _p(reference, styles["small"]),
+                _p(_date_text(when, True), styles["small"]),
+                _p(method, styles["small"]),
+                _p(reason, styles["small"]),
                 _p(amount, styles["right"]),
             ])
 
     if len(rows) == 1:
-        rows.append([
-            _p("No payment records found.", styles["small"]),
-            "",
-            "",
-            "",
-            "",
-        ])
+        empty = "No refund records found." if is_refund else "No payment records found."
+        rows.append([_p(empty, styles["small"]), "", "", "", ""])
 
     table = LongTable(rows, colWidths=widths, repeatRows=1, hAlign="LEFT")
     table.setStyle(_table_style())
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), GREY),
-    ]))
+    table.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), GREY)]))
     return table
 
 
@@ -644,12 +697,19 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
 
     items = bill.get("items") or []
     payments = bill.get("payments") or []
+    # Prefer refunds supplied by the bill service if available; otherwise
+    # query the refund table directly for this bill.
+    refunds = bill.get("refunds") or bill.get("refund_history") or _get_bill_refunds(bill_id)
 
-    subtotal, discount_total, net_total, paid, balance = _calculate_totals(
-        bill,
-        items,
-        payments,
-    )
+    (
+        subtotal,
+        discount_total,
+        net_total,
+        total_payments,
+        total_refunds,
+        net_paid,
+        balance,
+    ) = _calculate_totals(bill, items, payments, refunds)
 
     styles = _styles()
     is_op = expected_type == "OP"
@@ -741,10 +801,16 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             Spacer(1, 1.5 * mm),
         ])
 
+        gst_total = sum(_money(item.get("gst_amount")) for item in items)
         totals = Table([
-            [_p("Total :", styles["bold"]), _p(f"{net_total:,.2f}", styles["right"])],
-            [_p("Paid :", styles["normal"]), _p(f"{paid:,.2f}", styles["right"])],
-            [_p("Balance :", styles["bold"]), _p(f"{balance:,.2f}", styles["right"])],
+            [_p("Subtotal :", styles["normal"]), _p(f"{subtotal:,.2f}", styles["right"])],
+            [_p("Discount :", styles["normal"]), _p(f"{discount_total:,.2f}", styles["right"])],
+            [_p("GST :", styles["normal"]), _p(f"{gst_total:,.2f}", styles["right"])],
+            [_p("Bill Total :", styles["bold"]), _p(f"{net_total:,.2f}", styles["right"])],
+            [_p("Total Payments :", styles["normal"]), _p(f"{total_payments:,.2f}", styles["right"])],
+            [_p("Total Refunds :", styles["normal"]), _p(f"{total_refunds:,.2f}", styles["right"])],
+            [_p("Net Paid :", styles["bold"]), _p(f"{net_paid:,.2f}", styles["right"])],
+            [_p("Outstanding Balance :", styles["bold"]), _p(f"{balance:,.2f}", styles["right"])],
         ], colWidths=[CONTENT_WIDTH - 38 * mm, 38 * mm], hAlign="RIGHT")
 
         totals.setStyle(TableStyle([
@@ -758,7 +824,13 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
         story.extend([
             totals,
             Spacer(1, 3 * mm),
-            _payment_table(payments, styles, True),
+            _p("PAYMENT HISTORY", styles["bold"]),
+            Spacer(1, 1 * mm),
+            _transaction_table(payments, styles, True, False),
+            Spacer(1, 2 * mm),
+            _p("REFUND HISTORY", styles["bold"]),
+            Spacer(1, 1 * mm),
+            _transaction_table(refunds, styles, True, True),
             Spacer(1, 4 * mm),
             _p(
                 f"Printed By : {_display(bill.get('printed_by') or 'System')} "
@@ -860,7 +932,13 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             Spacer(1, 2 * mm),
             _p("PAYMENT AND REFUND HISTORY", styles["bold"]),
             Spacer(1, 1 * mm),
-            _payment_table(payments, styles, False),
+            _p("PAYMENT HISTORY", styles["bold"]),
+            Spacer(1, 1 * mm),
+            _transaction_table(payments, styles, False, False),
+            Spacer(1, 2 * mm),
+            _p("REFUND HISTORY", styles["bold"]),
+            Spacer(1, 1 * mm),
+            _transaction_table(refunds, styles, False, True),
             Spacer(1, 3 * mm),
         ])
 
@@ -875,8 +953,10 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             [_p("Discount :", styles["normal"]), _p(f"{discount_total:,.2f}", styles["normal"])],
             [_p("GST :", styles["normal"]), _p(f"{gst_total:,.2f}", styles["normal"])],
             [_p("Net Amount :", styles["normal"]), _p(f"{net_total:,.2f}", styles["normal"])],
-            [_p("Paid Amount :", styles["normal"]), _p(f"{paid:,.2f}", styles["normal"])],
-            [_p("Balance :", styles["normal"]), _p(f"{balance:,.2f}", styles["normal"])],
+            [_p("Total Payments :", styles["normal"]), _p(f"{total_payments:,.2f}", styles["normal"])],
+            [_p("Total Refunds :", styles["normal"]), _p(f"{total_refunds:,.2f}", styles["normal"])],
+            [_p("Net Paid Amount :", styles["bold"]), _p(f"{net_paid:,.2f}", styles["bold"])],
+            [_p("Balance :", styles["bold"]), _p(f"{balance:,.2f}", styles["bold"])],
             [
                 _p("Remarks:", styles["normal"]),
                 _p(

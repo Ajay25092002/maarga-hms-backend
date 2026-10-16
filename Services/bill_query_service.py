@@ -1,4 +1,3 @@
-
 import psycopg2
 from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
@@ -16,6 +15,18 @@ from Utils.billing_helpers import (
 logger = get_logger(__name__)
 
 
+# Keep this expression consistent across list, summary, and detail queries.
+# Original payments are retained; refunds are deducted only when calculating
+# net paid and outstanding amounts.
+NET_PAID_SQL = """
+    GREATEST(
+        COALESCE(payments.amount_paid, 0)
+        - COALESCE(refunds.total_refunds, 0),
+        0
+    )
+"""
+
+
 def list_bills_service(
     page,
     page_size,
@@ -25,6 +36,7 @@ def list_bills_service(
     date_filter,
     date_from,
     date_to,
+    billed_by=None,
 ):
     connection = None
 
@@ -44,9 +56,11 @@ def list_bills_service(
                     date_filter,
                     date_from,
                     date_to,
+                    billed_by=billed_by,
                 )
 
-                # Total number of matching bills.
+                # Count matching bills. BILL_FROM_SQL joins only aggregate
+                # subqueries, so each bill remains one row.
                 cursor.execute(
                     f"""
                     SELECT COUNT(*) AS total
@@ -55,10 +69,9 @@ def list_bills_service(
                     """,
                     tuple(parameters),
                 )
-
                 total = cursor.fetchone()["total"]
 
-                # Financial summary for the filtered bills.
+                # Financial summary uses net paid after refunds.
                 cursor.execute(
                     f"""
                     SELECT
@@ -70,8 +83,8 @@ def list_bills_service(
                         COALESCE(
                             SUM(
                                 LEAST(
-                                    COALESCE(payments.amount_paid, 0),
-                                    b.total_amount
+                                    {NET_PAID_SQL},
+                                    GREATEST(b.total_amount, 0)
                                 )
                             ),
                             0
@@ -80,31 +93,35 @@ def list_bills_service(
                         COALESCE(
                             SUM(
                                 GREATEST(
-                                    b.total_amount
-                                    - COALESCE(payments.amount_paid, 0),
+                                    b.total_amount - ({NET_PAID_SQL}),
                                     0
                                 )
                             ),
                             0
-                        ) AS outstanding
+                        ) AS outstanding,
 
+                        COALESCE(
+                            SUM(COALESCE(refunds.total_refunds, 0)),
+                            0
+                        ) AS refunded
                     {BILL_FROM_SQL}
                     {where_clause}
                     """,
                     tuple(parameters),
                 )
-
                 summary = serialize_row(dict(cursor.fetchone()))
 
                 offset = (page - 1) * page_size
 
-                # Retrieve paginated bills with the updated bill fields.
+                # Paginated bills with payment/refund-aware financial values.
                 cursor.execute(
                     f"""
                     SELECT
                         b.id,
                         b.bill_number,
                         b.bill_type,
+                        b.created_by,
+                        bill_creator.full_name AS created_by_name,
                         b.op_number,
                         b.ip_number,
 
@@ -135,39 +152,32 @@ def list_bills_service(
                         b.discount_amount,
                         b.total_amount,
 
-                        COALESCE(
-                            payments.amount_paid,
-                            0
-                        ) AS amount_paid,
+                        COALESCE(payments.amount_paid, 0)
+                            AS total_payments,
+
+                        COALESCE(refunds.total_refunds, 0)
+                            AS total_refunds,
+
+                        {NET_PAID_SQL} AS amount_paid,
 
                         GREATEST(
-                            b.total_amount
-                            - COALESCE(payments.amount_paid, 0),
+                            b.total_amount - ({NET_PAID_SQL}),
                             0
                         ) AS outstanding_amount,
 
                         CASE
                             WHEN b.total_amount <= 0
                                 THEN 'Paid'
-
-                            WHEN COALESCE(
-                                payments.amount_paid, 0
-                            ) >= b.total_amount
+                            WHEN ({NET_PAID_SQL}) >= b.total_amount
                                 THEN 'Paid'
-
-                            WHEN COALESCE(
-                                payments.amount_paid, 0
-                            ) > 0
+                            WHEN ({NET_PAID_SQL}) > 0
                                 THEN 'Partially Paid'
-
                             ELSE 'Unpaid'
                         END AS payment_status,
 
                         b.created_at
-
                     {BILL_FROM_SQL}
                     {where_clause}
-
                     ORDER BY b.bill_date DESC, b.id DESC
                     LIMIT %s OFFSET %s
                     """,
@@ -218,6 +228,32 @@ def list_bills_service(
             connection.close()
 
 
+def list_bill_creators_service():
+    """Return users who have created at least one bill for the creator filter."""
+    connection = None
+    try:
+        connection = get_db_connection()
+        with connection:
+            with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute("""
+                    SELECT DISTINCT u.id, u.full_name
+                    FROM public.users u
+                    JOIN public.bills b ON b.created_by = u.id
+                    WHERE u.full_name IS NOT NULL
+                    ORDER BY u.full_name ASC, u.id ASC
+                """)
+                return [
+                    {"id": row["id"], "full_name": row["full_name"]}
+                    for row in cursor.fetchall()
+                ]
+    except psycopg2.Error:
+        logger.exception("Database error listing bill creators.")
+        raise HTTPException(status_code=500, detail="Unable to retrieve bill creators.")
+    finally:
+        if connection is not None:
+            connection.close()
+
+
 def get_bill_service(bill_id: int):
     connection = None
 
@@ -230,12 +266,12 @@ def get_bill_service(bill_id: int):
             ) as cursor:
                 ensure_payment_table(cursor)
 
-                # Retrieve the bill, patient, and payment summary.
-                # b.* includes the new OP/IP numbering and pricing context.
+                # Retrieve bill details and payment/refund-aware totals.
                 cursor.execute(
-                    """
+                    f"""
                     SELECT
                         b.*,
+                        bill_creator.full_name AS created_by_name,
 
                         p.patient_id,
                         p.name AS patient_name,
@@ -245,48 +281,29 @@ def get_bill_service(bill_id: int):
                         p.gender,
                         p.date_of_birth,
 
-                        COALESCE(
-                            payments.amount_paid,
-                            0
-                        ) AS amount_paid,
+                        COALESCE(payments.amount_paid, 0)
+                            AS total_payments,
+
+                        COALESCE(refunds.total_refunds, 0)
+                            AS total_refunds,
+
+                        {NET_PAID_SQL} AS amount_paid,
 
                         GREATEST(
-                            b.total_amount
-                            - COALESCE(payments.amount_paid, 0),
+                            b.total_amount - ({NET_PAID_SQL}),
                             0
                         ) AS outstanding_amount,
 
                         CASE
                             WHEN b.total_amount <= 0
                                 THEN 'Paid'
-
-                            WHEN COALESCE(
-                                payments.amount_paid, 0
-                            ) >= b.total_amount
+                            WHEN ({NET_PAID_SQL}) >= b.total_amount
                                 THEN 'Paid'
-
-                            WHEN COALESCE(
-                                payments.amount_paid, 0
-                            ) > 0
+                            WHEN ({NET_PAID_SQL}) > 0
                                 THEN 'Partially Paid'
-
                             ELSE 'Unpaid'
                         END AS payment_status
-
-                    FROM public.bills b
-
-                    JOIN public.patients p
-                        ON p.id = b.patient_db_id
-
-                    LEFT JOIN (
-                        SELECT
-                            bill_id,
-                            SUM(amount) AS amount_paid
-                        FROM public.bill_payments
-                        GROUP BY bill_id
-                    ) payments
-                        ON payments.bill_id = b.id
-
+                    {BILL_FROM_SQL}
                     WHERE b.id = %s
                     """,
                     (bill_id,),
@@ -302,13 +319,9 @@ def get_bill_service(bill_id: int):
 
                 result = serialize_row(dict(bill))
 
-                # Get bill items using the updated bill_items columns.
-                result["items"] = get_bill_items(
-                    cursor,
-                    bill_id,
-                )
+                # Bill items and original payment records remain unchanged.
+                result["items"] = get_bill_items(cursor, bill_id)
 
-                # Retrieve the bill's payment and receipt history.
                 cursor.execute(
                     """
                     SELECT
@@ -327,8 +340,35 @@ def get_bill_service(bill_id: int):
                     """,
                     (bill_id,),
                 )
-
                 result["payments"] = [
+                    serialize_row(dict(row))
+                    for row in cursor.fetchall()
+                ]
+
+                # Refunds are separate records linked to the original payment.
+                cursor.execute(
+                    """
+                    SELECT
+                        pr.id,
+                        pr.refund_number,
+                        pr.payment_id,
+                        bp.receipt_number,
+                        bp.bill_id,
+                        pr.refund_amount,
+                        pr.refund_method,
+                        pr.reason,
+                        pr.notes,
+                        pr.created_by,
+                        pr.created_at
+                    FROM public.payment_refunds pr
+                    JOIN public.bill_payments bp
+                        ON bp.id = pr.payment_id
+                    WHERE bp.bill_id = %s
+                    ORDER BY pr.created_at DESC, pr.id DESC
+                    """,
+                    (bill_id,),
+                )
+                result["refunds"] = [
                     serialize_row(dict(row))
                     for row in cursor.fetchall()
                 ]

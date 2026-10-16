@@ -37,6 +37,11 @@ ROLE_PERMISSIONS = {
     "payments.view": "View Payments & Receipts",
     "payments.create": "Record Payments",
 
+
+    # Payment Refunds
+    "refunds.view": "View Payment Refunds",
+    "refunds.create": "Create Payment Refunds",
+
     # Users
     "users.view": "View Users",
     "users.create": "Create Users",

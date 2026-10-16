@@ -1176,3 +1176,315 @@ psycopg2.errors.UndefinedColumn: column p.registration_number does not exist
 LINE 17:                     p.registration_number,
                              ^
 
+2026-10-16 22:29:32 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:29:33 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:29:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:29:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:29:36 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:29:42 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 84, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "payments" specified more than once
+
+2026-10-16 22:30:30 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:33 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:42 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:43 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:43 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-16 22:30:43 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 86, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<47 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column payments.total_payments does not exist
+LINE 6:                             SUM(COALESCE(payments.total_paym...
+                                                 ^
+
+2026-10-17 00:07:29 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 52, in list_bills_service
+    where_clause, parameters = build_bill_filters(
+                               ~~~~~~~~~~~~~~~~~~^
+        search,
+        ^^^^^^^
+    ...<5 lines>...
+        billed_by=billed_by,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'
+2026-10-17 00:07:32 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 52, in list_bills_service
+    where_clause, parameters = build_bill_filters(
+                               ~~~~~~~~~~~~~~~~~~^
+        search,
+        ^^^^^^^
+    ...<5 lines>...
+        billed_by=billed_by,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'
+2026-10-17 00:07:40 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 52, in list_bills_service
+    where_clause, parameters = build_bill_filters(
+                               ~~~~~~~~~~~~~~~~~~^
+        search,
+        ^^^^^^^
+    ...<5 lines>...
+        billed_by=billed_by,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'

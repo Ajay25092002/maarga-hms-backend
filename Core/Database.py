@@ -107,31 +107,20 @@ def initialize_database():
                 # ==========================================================
 
                 cursor.execute("""
-
                     CREATE TABLE IF NOT EXISTS public.patients (
-
                         id BIGSERIAL PRIMARY KEY,
-
                         patient_id VARCHAR(50) NOT NULL UNIQUE,
-
                         name VARCHAR(201) NOT NULL,
-
                         date_of_birth DATE,
-
                         gender VARCHAR(30),
-
                         mobile VARCHAR(20) NOT NULL,
-
                         email VARCHAR(255),
-
-                        address TEXT,
-
+                        address TEXT NOT NULL,
+                        pincode VARCHAR(10) NOT NULL,
+                        referral VARCHAR(255),
                         registered_at TIMESTAMPTZ NOT NULL
-
                             DEFAULT CURRENT_TIMESTAMP
-
                     );
-
                 """)
 
 
@@ -296,6 +285,11 @@ def initialize_database():
                 """)
 
                 cursor.execute("""
+                    CREATE SEQUENCE IF NOT EXISTS public.payment_refund_number_seq
+                    AS BIGINT START WITH 1 INCREMENT BY 1;
+                """)
+
+                cursor.execute("""
 
                     CREATE SEQUENCE IF NOT EXISTS public.op_bill_number_seq
 
@@ -353,7 +347,9 @@ def initialize_database():
 
                             ON DELETE RESTRICT,
 
-                        bill_date TIMESTAMPTZ NOT NULL
+                        
+                        created_by BIGINT,
+bill_date TIMESTAMPTZ NOT NULL
 
                             DEFAULT CURRENT_TIMESTAMP,
 
@@ -454,6 +450,12 @@ def initialize_database():
 
                     );
 
+                """)
+
+                # Add creator tracking to existing bills databases safely.
+                cursor.execute("""
+                    ALTER TABLE public.bills
+                    ADD COLUMN IF NOT EXISTS created_by BIGINT;
                 """)
 
 
@@ -851,6 +853,58 @@ def initialize_database():
 
                     );
 
+                """)
+
+
+                # ==========================================================
+                # PAYMENT REFUNDS
+                # ==========================================================
+
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS public.payment_refunds (
+                        id BIGSERIAL PRIMARY KEY,
+
+                        refund_number VARCHAR(30) NOT NULL UNIQUE
+                            DEFAULT (
+                                'REF-' || LPAD(
+                                    NEXTVAL(
+                                        'public.payment_refund_number_seq'
+                                    )::TEXT,
+                                    6,
+                                    '0'
+                                )
+                            ),
+
+                        payment_id BIGINT NOT NULL
+                            REFERENCES public.bill_payments(id)
+                            ON DELETE RESTRICT,
+
+                        refund_amount NUMERIC(12, 2) NOT NULL
+                            CHECK (refund_amount > 0),
+
+                        refund_method VARCHAR(50) NOT NULL,
+
+                        reason TEXT NOT NULL,
+
+                        notes TEXT,
+
+                        created_by BIGINT NOT NULL
+                            REFERENCES public.users(id)
+                            ON DELETE RESTRICT,
+
+                        created_at TIMESTAMPTZ NOT NULL
+                            DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_payment_refunds_payment_id
+                    ON public.payment_refunds(payment_id);
+                """)
+
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_payment_refunds_created_at
+                    ON public.payment_refunds(created_at);
                 """)
 
 

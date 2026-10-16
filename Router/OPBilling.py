@@ -1,9 +1,10 @@
-
+# OPBilling.py
 from datetime import date
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Path, Query, status
+from fastapi import APIRouter, Depends, Path, Query, status
 
+from Router.Login import get_current_user
 from Schemas.billing_schema import (
     CreateBillRequest,
     RecordPaymentRequest,
@@ -12,6 +13,7 @@ from Services.billing_service import create_bill_service
 from Services.bill_query_service import (
     get_bill_service,
     list_bills_service,
+    list_bill_creators_service,
 )
 from Services.payment_service import record_payment_service
 from Services.bill_pdf_service import (
@@ -29,9 +31,19 @@ router = APIRouter(
     "",
     status_code=status.HTTP_201_CREATED,
 )
-def create_bill(payload: CreateBillRequest):
-    """Create an OP or IP bill using database-resolved prices."""
-    return create_bill_service(payload)
+def create_bill(
+    payload: CreateBillRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """Create a bill and record the authenticated staff member."""
+    user_id = current_user["user"]["id"]
+    return create_bill_service(payload, created_by=user_id)
+
+
+@router.get("/creators")
+def list_bill_creators():
+    """List users who have created bills for the billed-by filter."""
+    return list_bill_creators_service()
 
 
 @router.get("")
@@ -47,6 +59,7 @@ def list_bills(
     date_filter: Optional[str] = Query(default=None),
     date_from: Optional[date] = Query(default=None),
     date_to: Optional[date] = Query(default=None),
+    billed_by: Optional[int] = Query(default=None, ge=1),
 ):
     """List bills with search, pagination, date, and payment filters."""
     return list_bills_service(
@@ -58,6 +71,7 @@ def list_bills(
         date_filter=date_filter,
         date_from=date_from,
         date_to=date_to,
+        billed_by=billed_by,
     )
 
 

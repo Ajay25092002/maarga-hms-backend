@@ -65,6 +65,7 @@ def get_db_connection():
 # Request validation
 # ---------------------------------------------------------
 
+
 class PatientCreate(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -73,26 +74,24 @@ class PatientCreate(BaseModel):
     gender: Optional[str] = Field(default=None, max_length=30)
     mobile: str = Field(min_length=5, max_length=25)
     email: Optional[EmailStr] = None
-    address: Optional[str] = Field(default=None, max_length=1000)
+    address: str = Field(min_length=1, max_length=1000)
+    pincode: str = Field(pattern=r"^[0-9]{6}$")
+    referral: Optional[str] = Field(default=None, max_length=255)
 
     @field_validator("name")
     @classmethod
     def validate_name(cls, value):
         value = value.strip()
-
         if not value:
             raise ValueError("Patient name cannot be empty.")
-
         return value
 
     @field_validator("mobile")
     @classmethod
     def validate_mobile(cls, value):
         value = value.strip()
-
         if not re.fullmatch(r"[0-9+() .-]{5,25}", value):
             raise ValueError("Enter a valid mobile number.")
-
         return value
 
     @field_validator("gender")
@@ -109,11 +108,35 @@ class PatientCreate(BaseModel):
         }
 
         value = value.strip().lower()
-
         if value not in allowed:
             raise ValueError("Invalid gender value.")
-
         return value
+
+    @field_validator("address")
+    @classmethod
+    def validate_address(cls, value):
+        value = value.strip()
+        if not value:
+            raise ValueError("Patient address is required.")
+        return value
+
+    @field_validator("pincode")
+    @classmethod
+    def validate_pincode(cls, value):
+        value = value.strip()
+        if not re.fullmatch(r"[0-9]{6}", value):
+            raise ValueError("Enter a valid 6-digit pincode.")
+        return value
+
+    @field_validator("referral")
+    @classmethod
+    def validate_referral(cls, value):
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
+
+
 
 
 class PatientUpdate(BaseModel):
@@ -124,26 +147,24 @@ class PatientUpdate(BaseModel):
     gender: Optional[str] = Field(default=None, max_length=30)
     mobile: str = Field(min_length=5, max_length=25)
     email: Optional[EmailStr] = None
-    address: Optional[str] = Field(default=None, max_length=1000)
+    address: str = Field(min_length=1, max_length=1000)
+    pincode: str = Field(pattern=r"^[0-9]{6}$")
+    referral: Optional[str] = Field(default=None, max_length=255)
 
     @field_validator("name")
     @classmethod
     def validate_name(cls, value):
         value = value.strip()
-
         if not value:
             raise ValueError("Patient name cannot be empty.")
-
         return value
 
     @field_validator("mobile")
     @classmethod
     def validate_mobile(cls, value):
         value = value.strip()
-
         if not re.fullmatch(r"[0-9+() .-]{5,25}", value):
             raise ValueError("Enter a valid mobile number.")
-
         return value
 
     @field_validator("gender")
@@ -160,16 +181,40 @@ class PatientUpdate(BaseModel):
         }
 
         value = value.strip().lower()
-
         if value not in allowed:
             raise ValueError("Invalid gender value.")
-
         return value
+
+    @field_validator("address")
+    @classmethod
+    def validate_address(cls, value):
+        value = value.strip()
+        if not value:
+            raise ValueError("Patient address is required.")
+        return value
+
+    @field_validator("pincode")
+    @classmethod
+    def validate_pincode(cls, value):
+        value = value.strip()
+        if not re.fullmatch(r"[0-9]{6}", value):
+            raise ValueError("Enter a valid 6-digit pincode.")
+        return value
+
+    @field_validator("referral")
+    @classmethod
+    def validate_referral(cls, value):
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
+
 
 
 # ---------------------------------------------------------
 # Schema validation
 # ---------------------------------------------------------
+
 
 EXPECTED_COLUMNS = {
     "id",
@@ -180,8 +225,11 @@ EXPECTED_COLUMNS = {
     "mobile",
     "email",
     "address",
+    "pincode",
+    "referral",
     "registered_at",
 }
+
 
 
 def validate_patient_schema(connection):
@@ -317,7 +365,7 @@ def fetch_one_patient(patient_id: str):
     try:
         with connection.cursor() as cursor:
             cursor.execute(
-                """
+                """     
                 SELECT
                     id,
                     patient_id,
@@ -327,9 +375,12 @@ def fetch_one_patient(patient_id: str):
                     mobile,
                     email,
                     address,
+                    pincode,
+                    referral,
                     registered_at
                 FROM public.patients
                 WHERE patient_id = %s
+
                 """,
                 (patient_id,),
             )
@@ -356,44 +407,50 @@ def register_patient(payload: PatientCreate):
         connection = get_db_connection()
 
         with connection:
-            with connection.cursor() as cursor:
+            with connection.cursor() as cursor: 
                 cursor.execute(
-                    """
-                    INSERT INTO public.patients (
-                        patient_id,
-                        name,
-                        date_of_birth,
-                        gender,
-                        mobile,
-                        email,
-                        address
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    RETURNING
-                        id,
-                        patient_id,
-                        name,
-                        date_of_birth,
-                        gender,
-                        mobile,
-                        email,
-                        address,
-                        registered_at
-                    """,
-                    (
-                        patient_id,
-                        patient_data["name"],
-                        patient_data["date_of_birth"],
-                        patient_data["gender"],
-                        patient_data["mobile"],
+                        """
+                        INSERT INTO public.patients (
+                            patient_id,
+                            name,
+                            date_of_birth,
+                            gender,
+                            mobile,
+                            email,
+                            address,
+                            pincode,
+                            referral
+                        )
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING
+                            id,
+                            patient_id,
+                            name,
+                            date_of_birth,
+                            gender,
+                            mobile,
+                            email,
+                            address,
+                            pincode,
+                            referral,
+                            registered_at
+                        """,
                         (
+                            patient_id,
+                            patient_data["name"],
+                            patient_data["date_of_birth"],
+                            patient_data["gender"],
+                            patient_data["mobile"],
                             str(patient_data["email"])
                             if patient_data["email"]
-                            else None
+                            else None,
+                            patient_data["address"],
+                            patient_data["pincode"],
+                            patient_data["referral"],
                         ),
-                        patient_data["address"],
-                    ),
-                )
+                    )
+
+                   
 
                 patient = cursor.fetchone()
 
@@ -486,6 +543,8 @@ def list_patients(
                     mobile,
                     email,
                     address,
+                    pincode,
+                    referral,
                     registered_at
                 FROM public.patients
                 {where_clause}
@@ -547,7 +606,7 @@ def update_patient(
         with connection:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """
+                    """               
                     UPDATE public.patients
                     SET
                         name = %s,
@@ -555,7 +614,9 @@ def update_patient(
                         gender = %s,
                         mobile = %s,
                         email = %s,
-                        address = %s
+                        address = %s,
+                        pincode = %s,
+                        referral = %s
                     WHERE patient_id = %s
                     RETURNING
                         id,
@@ -566,19 +627,23 @@ def update_patient(
                         mobile,
                         email,
                         address,
+                        pincode,
+                        referral,
                         registered_at
+
                     """,
+                    
                     (
                         patient_data["name"],
                         patient_data["date_of_birth"],
                         patient_data["gender"],
                         patient_data["mobile"],
-                        (
-                            str(patient_data["email"])
-                            if patient_data["email"]
-                            else None
-                        ),
+                        str(patient_data["email"])
+                        if patient_data["email"]
+                        else None,
                         patient_data["address"],
+                        patient_data["pincode"],
+                        patient_data["referral"],
                         patient_id,
                     ),
                 )

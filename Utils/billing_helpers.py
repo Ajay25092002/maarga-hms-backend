@@ -1,4 +1,3 @@
-
 import os
 import uuid
 from datetime import date, datetime, time, timedelta
@@ -26,7 +25,6 @@ def ensure_payment_table(cursor):
     to migrate legacy tables. Run the database initialization script
     first when recreating the database.
     """
-
     cursor.execute("""
         CREATE SEQUENCE IF NOT EXISTS public.bill_payment_receipt_seq
         AS BIGINT
@@ -84,7 +82,6 @@ def generate_bill_number(bill_type: str) -> str:
     bill_number, op_number, and ip_number. Do not use this function in
     the new bill-creation flow.
     """
-
     if bill_type not in {"OP", "IP"}:
         raise ValueError("bill_type must be OP or IP.")
 
@@ -113,10 +110,7 @@ def serialize_row(row: dict) -> dict:
 
 
 def get_bill_items(cursor, bill_id: int) -> list[dict]:
-    """
-    Retrieve bill items using the updated bill_items schema.
-    """
-
+    """Retrieve bill items using the updated bill_items schema."""
     cursor.execute(
         """
         SELECT
@@ -160,19 +154,15 @@ def get_date_range(
     if date_filter:
         if date_filter == "today":
             start_date = end_date = today
-
         elif date_filter == "7days":
             start_date = today - timedelta(days=6)
             end_date = today
-
         elif date_filter == "30days":
             start_date = today - timedelta(days=29)
             end_date = today
-
         elif date_filter == "this_month":
             start_date = today.replace(day=1)
             end_date = today
-
         else:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -193,7 +183,6 @@ def get_date_range(
         if start_date
         else None
     )
-
     # Exclusive upper bound includes the entire end date.
     end_datetime = (
         datetime.combine(end_date + timedelta(days=1), time.min)
@@ -204,10 +193,16 @@ def get_date_range(
     return start_datetime, end_datetime
 
 
+# Payment and refund totals are aggregated separately to avoid row
+# multiplication when a bill has multiple payments and multiple refunds.
 BILL_FROM_SQL = """
     FROM public.bills b
     JOIN public.patients p
         ON p.id = b.patient_db_id
+
+    LEFT JOIN public.users bill_creator
+        ON bill_creator.id = b.created_by
+
     LEFT JOIN (
         SELECT
             bill_id,
@@ -216,6 +211,17 @@ BILL_FROM_SQL = """
         GROUP BY bill_id
     ) payments
         ON payments.bill_id = b.id
+
+    LEFT JOIN (
+        SELECT
+            bp.bill_id,
+            SUM(pr.refund_amount) AS total_refunds
+        FROM public.payment_refunds pr
+        JOIN public.bill_payments bp
+            ON bp.id = pr.payment_id
+        GROUP BY bp.bill_id
+    ) refunds
+        ON refunds.bill_id = b.id
 """
 
 
@@ -226,13 +232,13 @@ def build_bill_filters(
     date_filter,
     date_from,
     date_to,
+    billed_by=None,
 ):
     conditions = []
     parameters = []
 
     if bill_type:
         normalized_bill_type = bill_type.strip().upper()
-
         if normalized_bill_type not in {"OP", "IP"}:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -244,7 +250,6 @@ def build_bill_filters(
 
     if search and search.strip():
         search_value = f"%{search.strip()}%"
-
         conditions.append("""
             (
                 b.bill_number ILIKE %s
@@ -257,7 +262,6 @@ def build_bill_filters(
                 OR COALESCE(p.mobile, '') ILIKE %s
             )
         """)
-
         parameters.extend([search_value] * 8)
 
     start_datetime, end_datetime = get_date_range(
@@ -276,36 +280,30 @@ def build_bill_filters(
 
     if payment_status:
         normalized = payment_status.strip().lower()
-
-        if normalized not in {
-            "paid",
-            "partially paid",
-            "unpaid",
-        }:
+        if normalized not in {"paid", "partially paid", "unpaid"}:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=(
-                    "status must be Paid, Partially Paid, or Unpaid."
-                ),
+                detail="status must be Paid, Partially Paid, or Unpaid.",
             )
 
-        paid_amount = "COALESCE(payments.amount_paid, 0)"
+        # Status must reflect net paid after refunds, not gross payments.
+        paid_amount = """
+            GREATEST(
+                COALESCE(payments.amount_paid, 0)
+                - COALESCE(refunds.total_refunds, 0),
+                0
+            )
+        """
 
         if normalized == "paid":
-            conditions.append(
-                f"{paid_amount} >= b.total_amount"
-            )
-
+            conditions.append(f"({paid_amount}) >= b.total_amount")
         elif normalized == "partially paid":
             conditions.append(f"""
-                {paid_amount} > 0
-                AND {paid_amount} < b.total_amount
+                ({paid_amount}) > 0
+                AND ({paid_amount}) < b.total_amount
             """)
-
         else:
-            conditions.append(
-                f"{paid_amount} <= 0"
-            )
+            conditions.append(f"({paid_amount}) <= 0")
 
     where_clause = (
         "WHERE " + " AND ".join(conditions)

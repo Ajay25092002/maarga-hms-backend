@@ -44,19 +44,35 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
                     )
 
                 cursor.execute("""
-                    SELECT COALESCE(SUM(amount), 0) AS amount_paid
-                    FROM public.bill_payments
-                    WHERE bill_id = %s
-                """, (bill_id,))
+                    SELECT
+                        COALESCE(payments.amount_paid, 0) AS gross_paid,
+                        COALESCE(refunds.total_refunded, 0) AS total_refunded
+                    FROM (SELECT %s::BIGINT AS bill_id) requested_bill
+                    LEFT JOIN (
+                        SELECT bill_id, SUM(amount) AS amount_paid
+                        FROM public.bill_payments
+                        WHERE bill_id = %s
+                        GROUP BY bill_id
+                    ) payments
+                        ON payments.bill_id = requested_bill.bill_id
+                    LEFT JOIN (
+                        SELECT bp.bill_id, SUM(pr.refund_amount) AS total_refunded
+                        FROM public.payment_refunds pr
+                        JOIN public.bill_payments bp ON bp.id = pr.payment_id
+                        WHERE bp.bill_id = %s
+                        GROUP BY bp.bill_id
+                    ) refunds
+                        ON refunds.bill_id = requested_bill.bill_id
+                """, (bill_id, bill_id, bill_id))
 
-                already_paid = Decimal(
-                    str(cursor.fetchone()["amount_paid"])
+                financials = cursor.fetchone()
+                gross_paid = Decimal(str(financials["gross_paid"] or 0))
+                total_refunded = Decimal(
+                    str(financials["total_refunded"] or 0)
                 )
+                net_paid = max(gross_paid - total_refunded, Decimal("0.00"))
                 total = Decimal(str(bill["total_amount"]))
-                outstanding = max(
-                    Decimal("0.00"),
-                    total - already_paid,
-                )
+                outstanding = max(Decimal("0.00"), total - net_paid)
 
                 if payload.amount <= 0:
                     raise HTTPException(
@@ -99,20 +115,27 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
 
                 payment = serialize_row(dict(cursor.fetchone()))
 
-                new_paid = already_paid + payload.amount
+                new_gross_paid = gross_paid + payload.amount
+                new_net_paid = max(
+                    new_gross_paid - total_refunded,
+                    Decimal("0.00"),
+                )
                 new_outstanding = max(
                     Decimal("0.00"),
-                    total - new_paid,
+                    total - new_net_paid,
                 )
 
-                if total <= 0 or new_paid >= total:
+                if total <= 0 or new_net_paid >= total:
                     payment_status = "Paid"
-                elif new_paid > 0:
+                elif new_net_paid > 0:
                     payment_status = "Partially Paid"
                 else:
                     payment_status = "Unpaid"
 
-                payment["amount_paid_after_payment"] = float(new_paid)
+                payment["gross_paid_after_payment"] = float(new_gross_paid)
+                payment["total_refunded"] = float(total_refunded)
+                payment["amount_paid_after_payment"] = float(new_net_paid)
+                payment["net_paid_after_payment"] = float(new_net_paid)
                 payment["outstanding_amount"] = float(new_outstanding)
                 payment["payment_status"] = payment_status
 

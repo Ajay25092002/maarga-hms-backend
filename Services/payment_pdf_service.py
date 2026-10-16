@@ -24,6 +24,7 @@ from reportlab.platypus import (
 )
 
 from Utils.billing_helpers import get_db_connection
+from Services.bill_query_service import get_bill_service
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -194,7 +195,8 @@ def _header_footer(canvas, doc, bill_type: str):
         canvas.drawString(
             left,
             page_h - 20 * mm,
-            "23/B, Sector A, Yelahanka New Town, Bengaluru, Karnataka - 560064",
+            "A-14, Golfcourse Ext road, Block A, Sushant Lok III, "
+            "Sector 57, Gurugram, Haryana, 122011",
         )
 
         if logo_path.exists():
@@ -290,6 +292,107 @@ def _table_style():
     )
 
 
+def _receipt_items_table(items: list[dict], styles, bill_type: str):
+    """Build an itemized service table using the same item data as the bill PDF."""
+    if bill_type == "IP":
+        widths = [
+            11 * mm,
+            21 * mm,
+            CONTENT_WIDTH - 11 * mm - 21 * mm - 46 * mm - 12 * mm - 19 * mm - 19 * mm - 20 * mm,
+            46 * mm,
+            12 * mm,
+            19 * mm,
+            19 * mm,
+            20 * mm,
+        ]
+        headings = [
+            "Sl No",
+            "Date",
+            "Service Name",
+            "Rate",
+            "Qty",
+            "Amount",
+            "Discount",
+            "Net Amount",
+        ]
+    else:
+        widths = [
+            12 * mm,
+            CONTENT_WIDTH - 12 * mm - 26 * mm - 13 * mm - 22 * mm - 22 * mm - 25 * mm,
+            26 * mm,
+            13 * mm,
+            22 * mm,
+            22 * mm,
+            25 * mm,
+        ]
+        headings = [
+            "Sl No",
+            "Service Name",
+            "Rate",
+            "Qty",
+            "Amount",
+            "Discount",
+            "Net Amount",
+        ]
+
+    rows = [[_p(heading, styles["table_head"]) for heading in headings]]
+
+    for index, item in enumerate(items, start=1):
+        quantity = _money(item.get("quantity") or 1)
+        amount = _money(
+            item.get(
+                "amount",
+                _money(item.get("rate")) * quantity,
+            )
+        )
+        discount = _money(item.get("discount_amount"))
+        net_amount = _money(item.get("net_amount", amount - discount))
+        service_name = (
+            item.get("service_name")
+            or item.get("name")
+            or item.get("description")
+            or item.get("service_code")
+            or "-"
+        )
+
+        if bill_type == "IP":
+            rows.append([
+                _p(index, styles["small"]),
+                _p(_date_text(item.get("service_date") or item.get("created_at")), styles["small"]),
+                _p(service_name, styles["small"]),
+                _p(f"{_money(item.get('rate')):,.2f}", styles["right"]),
+                _p(item.get("quantity") or 1, styles["right"]),
+                _p(f"{amount:,.2f}", styles["right"]),
+                _p(f"{discount:,.2f}", styles["right"]),
+                _p(f"{net_amount:,.2f}", styles["right"]),
+            ])
+        else:
+            rows.append([
+                _p(index, styles["small"]),
+                _p(service_name, styles["small"]),
+                _p(f"{_money(item.get('rate')):,.2f}", styles["right"]),
+                _p(item.get("quantity") or 1, styles["right"]),
+                _p(f"{amount:,.2f}", styles["right"]),
+                _p(f"{discount:,.2f}", styles["right"]),
+                _p(f"{net_amount:,.2f}", styles["right"]),
+            ])
+
+    if len(rows) == 1:
+        empty_row = [_p("No billed service items found.", styles["normal"])]
+        empty_row.extend([""] * (len(headings) - 1))
+        rows.append(empty_row)
+
+    table = Table(rows, colWidths=widths, repeatRows=1, hAlign="LEFT")
+    table.setStyle(_table_style())
+    table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), GREY),
+            ("ALIGN", (3 if bill_type == "IP" else 2, 1), (-1, -1), "RIGHT"),
+        ])
+    )
+    return table
+
+
 def generate_payment_receipt_pdf(payment_id: int) -> Response:
     """Generate a PDF receipt for an existing bill payment."""
     connection = None
@@ -328,7 +431,17 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                             WHERE p2.bill_id = b.id
                         ),
                         0
-                    ) AS bill_amount_paid
+                    ) AS bill_amount_paid,
+                    COALESCE(
+                        (
+                            SELECT SUM(pr.refund_amount)
+                            FROM public.payment_refunds pr
+                            JOIN public.bill_payments p3
+                                ON p3.id = pr.payment_id
+                            WHERE p3.bill_id = b.id
+                        ),
+                        0
+                    ) AS bill_total_refunded
 
                 FROM public.bill_payments bp
                 JOIN public.bills b
@@ -350,6 +463,11 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
 
         payment = dict(row)
 
+        # Reuse the bill query service so the receipt uses the same individual
+        # service items and item amounts as the corresponding OP/IP bill PDF.
+        bill_data = get_bill_service(int(payment["bill_id"]))
+        bill_items = bill_data.get("items") or []
+
         bill_type = str(payment.get("bill_type") or "OP").strip().upper()
         bill_type = "IP" if bill_type == "IP" else "OP"
 
@@ -367,7 +485,9 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
         )
 
         bill_total = _money(payment.get("bill_total"))
-        total_paid = _money(payment.get("bill_amount_paid"))
+        gross_paid = _money(payment.get("bill_amount_paid"))
+        total_refunded = _money(payment.get("bill_total_refunded"))
+        total_paid = max(gross_paid - total_refunded, Decimal("0.00"))
         outstanding = max(Decimal("0.00"), bill_total - total_paid)
         amount = _money(payment.get("amount"))
 
@@ -464,6 +584,13 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
 
         story.extend([info, Spacer(1, 3 * mm)])
 
+        story.extend([
+            _p("BILLED SERVICE ITEMS", styles["bold"]),
+            Spacer(1, 1 * mm),
+            _receipt_items_table(bill_items, styles, bill_type),
+            Spacer(1, 3 * mm),
+        ])
+
         details = [
             [
                 _p("Description", styles["table_head"]),
@@ -478,7 +605,15 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                 _p(f"{bill_total:,.2f}", styles["right"]),
             ],
             [
-                _p("Total paid against bill", styles["normal"]),
+                _p("Total payments recorded", styles["normal"]),
+                _p(f"{gross_paid:,.2f}", styles["right"]),
+            ],
+            [
+                _p("Total refunds", styles["normal"]),
+                _p(f"{total_refunded:,.2f}", styles["right"]),
+            ],
+            [
+                _p("Net paid against bill", styles["normal"]),
                 _p(f"{total_paid:,.2f}", styles["right"]),
             ],
             [
@@ -578,10 +713,10 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
         )
 
         raise HTTPException(
-            status_code=500,
+             status_code=500,
             detail="Unable to generate the payment receipt PDF.",
         ) from exc
 
     finally:
         if connection is not None:
-            connection.close()
+            connection.close() 

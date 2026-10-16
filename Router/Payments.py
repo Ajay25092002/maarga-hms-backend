@@ -150,12 +150,44 @@ def list_payments(
                         WHERE bp2.bill_id = b.id
                     ), 0) AS bill_amount_paid,
 
+                    COALESCE((
+                        SELECT SUM(pr2.refund_amount)
+                        FROM public.payment_refunds pr2
+                        JOIN public.bill_payments bp4
+                            ON bp4.id = pr2.payment_id
+                        WHERE bp4.bill_id = b.id
+                    ), 0) AS bill_total_refunded,
+
                     GREATEST(
-                        b.total_amount - COALESCE((
+                        COALESCE((
                             SELECT SUM(bp3.amount)
                             FROM public.bill_payments bp3
                             WHERE bp3.bill_id = b.id
+                        ), 0) - COALESCE((
+                            SELECT SUM(pr3.refund_amount)
+                            FROM public.payment_refunds pr3
+                            JOIN public.bill_payments bp5
+                                ON bp5.id = pr3.payment_id
+                            WHERE bp5.bill_id = b.id
                         ), 0),
+                        0
+                    ) AS bill_net_paid,
+
+                    GREATEST(
+                        b.total_amount - GREATEST(
+                            COALESCE((
+                                SELECT SUM(bp6.amount)
+                                FROM public.bill_payments bp6
+                                WHERE bp6.bill_id = b.id
+                            ), 0) - COALESCE((
+                                SELECT SUM(pr4.refund_amount)
+                                FROM public.payment_refunds pr4
+                                JOIN public.bill_payments bp7
+                                    ON bp7.id = pr4.payment_id
+                                WHERE bp7.bill_id = b.id
+                            ), 0),
+                            0
+                        ),
                         0
                     ) AS bill_outstanding_amount
 
@@ -263,12 +295,44 @@ def get_payment(
                         WHERE bp2.bill_id = b.id
                     ), 0) AS bill_amount_paid,
 
+                    COALESCE((
+                        SELECT SUM(pr2.refund_amount)
+                        FROM public.payment_refunds pr2
+                        JOIN public.bill_payments bp4
+                            ON bp4.id = pr2.payment_id
+                        WHERE bp4.bill_id = b.id
+                    ), 0) AS bill_total_refunded,
+
                     GREATEST(
-                        b.total_amount - COALESCE((
+                        COALESCE((
                             SELECT SUM(bp3.amount)
                             FROM public.bill_payments bp3
                             WHERE bp3.bill_id = b.id
+                        ), 0) - COALESCE((
+                            SELECT SUM(pr3.refund_amount)
+                            FROM public.payment_refunds pr3
+                            JOIN public.bill_payments bp5
+                                ON bp5.id = pr3.payment_id
+                            WHERE bp5.bill_id = b.id
                         ), 0),
+                        0
+                    ) AS bill_net_paid,
+
+                    GREATEST(
+                        b.total_amount - GREATEST(
+                            COALESCE((
+                                SELECT SUM(bp6.amount)
+                                FROM public.bill_payments bp6
+                                WHERE bp6.bill_id = b.id
+                            ), 0) - COALESCE((
+                                SELECT SUM(pr4.refund_amount)
+                                FROM public.payment_refunds pr4
+                                JOIN public.bill_payments bp7
+                                    ON bp7.id = pr4.payment_id
+                                WHERE bp7.bill_id = b.id
+                            ), 0),
+                            0
+                        ),
                         0
                     ) AS bill_outstanding_amount
 

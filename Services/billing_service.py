@@ -1,4 +1,4 @@
-
+# billing_service.py
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -350,7 +350,7 @@ def validate_pricing_context(cursor, payload: CreateBillRequest):
     return result
 
 
-def create_bill_service(payload: CreateBillRequest):
+def create_bill_service(payload: CreateBillRequest, created_by: int):
     connection = None
 
     try:
@@ -521,10 +521,12 @@ def create_bill_service(payload: CreateBillRequest):
                         admission_date,
                         discharge_date,
                         bed_number,
-                        rate_category                    )
+                        rate_category,
+                        created_by
+                    )
                     VALUES (
                         %s, %s, %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     )
                     RETURNING *
                     """,
@@ -579,6 +581,7 @@ def create_bill_service(payload: CreateBillRequest):
                             if payload.bill_type == "IP"
                             else None
                         ),
+                        created_by,
                     ),
                 )
 
