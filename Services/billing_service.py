@@ -1,5 +1,5 @@
 # billing_service.py
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal, ROUND_HALF_UP
 
 import psycopg2
@@ -533,7 +533,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                     (
                         payload.bill_type,
                         patient["id"],
-                        payload.bill_date or datetime.now(),
+                        payload.bill_date or datetime.now(timezone.utc),
                         payload.department,
                         (
                             payload.room_type_id

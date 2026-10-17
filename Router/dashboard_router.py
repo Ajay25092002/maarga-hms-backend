@@ -1,5 +1,6 @@
 
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 import psycopg2
 from fastapi import APIRouter, HTTPException, Request
@@ -364,7 +365,7 @@ def get_dashboard(request: Request):
                     },
                 },
                 "recent_bills": recent_bills,
-                "generated_at": date.today().isoformat(),
+                "generated_at": datetime.now(ZoneInfo("Asia/Kolkata")).isoformat(),
             }
 
     except HTTPException:

@@ -87,6 +87,7 @@ def get_db_connection():
 
     return psycopg2.connect(
         database_url,
+        options="-c timezone=Asia/Kolkata",
         connect_timeout=10,
         cursor_factory=RealDictCursor,
     )

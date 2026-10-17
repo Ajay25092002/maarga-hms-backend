@@ -38,6 +38,8 @@ def initialize_database():
 
     maintenance_config = config.copy()
 
+    maintenance_config["options"] = "-c timezone=Asia/Kolkata"
+
     maintenance_config["dbname"] = "postgres"
 
     maintenance_connection = None
@@ -92,6 +94,7 @@ def initialize_database():
 
     try:
 
+        config["options"] = "-c timezone=Asia/Kolkata"
         connection = psycopg2.connect(**config)
 
 

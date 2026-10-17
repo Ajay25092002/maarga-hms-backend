@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
@@ -643,7 +644,7 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                 [
                     _p(
                         f"Printed By: System    "
-                        f"Print Date: {_date_text(datetime.now(), True)}",
+                        f"Print Date: {_date_text(datetime.now(ZoneInfo("Asia/Kolkata")), True)}",
                         styles["footer"],
                     ),
                     _p(

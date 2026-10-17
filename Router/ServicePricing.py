@@ -35,7 +35,7 @@ def get_db_connection():
         )
 
     try:
-        return psycopg2.connect(database_url)
+        return psycopg2.connect(database_url, options="-c timezone=Asia/Kolkata")
     except psycopg2.Error:
         logger.exception("Failed to connect to the database.")
         raise HTTPException(

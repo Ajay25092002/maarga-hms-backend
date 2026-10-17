@@ -4,6 +4,7 @@ import uuid
 import logging
 
 from datetime import date, datetime, time, timedelta, timezone
+from zoneinfo import ZoneInfo
 from typing import Optional
 
 import psycopg2
@@ -64,6 +65,7 @@ def get_database_url() -> str:
 def get_db_connection():
     return psycopg2.connect(
         get_database_url(),
+        options="-c timezone=Asia/Kolkata",
         connect_timeout=10,
         cursor_factory=RealDictCursor,
     )
@@ -352,13 +354,13 @@ def build_filters(
         conditions.append("LOWER(gender) = LOWER(%s)")
         params.append(gender.strip())
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(ZoneInfo("Asia/Kolkata"))
 
     if registration_date == "today":
         start = datetime.combine(
             now.date(),
             time.min,
-            tzinfo=timezone.utc,
+            tzinfo=ZoneInfo("Asia/Kolkata"),
         )
 
         end = start + timedelta(days=1)
@@ -375,7 +377,7 @@ def build_filters(
         start = datetime.combine(
             start_date,
             time.min,
-            tzinfo=timezone.utc,
+            tzinfo=ZoneInfo("Asia/Kolkata"),
         )
 
         conditions.append(

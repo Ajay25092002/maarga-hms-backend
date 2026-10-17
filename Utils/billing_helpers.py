@@ -2,6 +2,7 @@
 import os
 import uuid
 from datetime import date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 from typing import Optional
 
@@ -90,7 +91,7 @@ def generate_bill_number(bill_type: str) -> str:
         raise ValueError("bill_type must be OP or IP.")
 
     prefix = "2MGOPB" if bill_type == "OP" else "2MGIPB"
-    bill_date = datetime.now().strftime("%Y%m%d")
+    bill_date = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y%m%d")
     suffix = uuid.uuid4().hex[:8].upper()
 
     return f"{prefix}-{bill_date}-{suffix}"
@@ -151,7 +152,7 @@ def get_date_range(
     date_from: Optional[date],
     date_to: Optional[date],
 ):
-    today = date.today()
+    today = datetime.now(ZoneInfo("Asia/Kolkata")).date()
     start_date = date_from
     end_date = date_to
 

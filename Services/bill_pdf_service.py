@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from io import BytesIO
 from pathlib import Path
 from typing import Any
@@ -85,7 +86,7 @@ def _calculate_age(date_of_birth):
         else:
             dob = date.fromisoformat(str(date_of_birth)[:10])
 
-        today = date.today()
+        today = datetime.now(ZoneInfo("Asia/Kolkata")).date()
 
         if dob > today:
             return "-"
@@ -347,7 +348,7 @@ def _database_connection():
     ):
         value = os.getenv(env_name)
         if value and value.strip():
-            return psycopg2.connect(value.strip(), connect_timeout=10)
+            return psycopg2.connect(value.strip(), connect_timeout=10, options="-c timezone=Asia/Kolkata")
     raise RuntimeError(
         "PostgreSQL connection string is not configured. "
         "Set DATABASE_URL or a supported PostgreSQL connection variable."
@@ -833,7 +834,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             _p(
                 f"Printed By : {_display(bill.get('printed_by') or 'System')} "
                 f"Prepared By : {_display(bill.get('prepared_by') or 'System')} "
-                f"Print Date : {_date_text(datetime.now(), True)}",
+                f"Print Date : {_date_text(datetime.now(ZoneInfo("Asia/Kolkata")), True)}",
                 styles["footer"],
             ),
             Spacer(1, 1 * mm),
@@ -988,7 +989,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                     _p("PRIMARY DOCTOR", styles["footer"]),
                 ],
                 [
-                    _p(_date_text(datetime.now(), True), styles["footer"]),
+                    _p(_date_text(datetime.now(ZoneInfo("Asia/Kolkata")), True), styles["footer"]),
                     "",
                 ],
             ], colWidths=[CONTENT_WIDTH / 2, CONTENT_WIDTH / 2]),
