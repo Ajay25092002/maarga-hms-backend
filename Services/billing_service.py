@@ -662,3 +662,158 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
     finally:
         if connection is not None:
             connection.close()
+
+
+def update_bill_service(bill_id: int, payload, updated_by: int):
+    """Update an existing OP/IP bill and its items atomically.
+
+    Payment and refund records are intentionally never modified here.
+    Service prices are re-resolved on the server and totals recalculated.
+    """
+    connection = None
+    try:
+        connection = get_db_connection()
+        with connection:
+            with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                ensure_payment_table(cursor)
+                cursor.execute("SELECT * FROM public.bills WHERE id = %s FOR UPDATE", (bill_id,))
+                bill = cursor.fetchone()
+                if not bill:
+                    raise HTTPException(status_code=404, detail="Bill not found.")
+
+                # Editing is prohibited as soon as any payment record exists,
+                # regardless of whether the bill is partially or fully paid.
+                # Check payment-record existence, not the net paid amount, so
+                # refunds do not make a previously paid bill editable again.
+                cursor.execute(
+                    """
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM public.bill_payments
+                        WHERE bill_id = %s
+                    ) AS has_registered_payment
+                    """,
+                    (bill_id,),
+                )
+                payment_check = cursor.fetchone()
+                if payment_check and payment_check["has_registered_payment"]:
+                    raise HTTPException(
+                        status_code=409,
+                        detail=(
+                            "This bill cannot be edited because a payment has "
+                            "already been registered. Bills with partial or "
+                            "full payments cannot be edited."
+                        ),
+                    )
+
+                if bill["bill_type"] != payload.bill_type:
+                    raise HTTPException(status_code=422, detail="Bill type cannot be changed.")
+                if payload.bill_type == "OP" and payload.room_type_id is not None:
+                    raise HTTPException(status_code=422, detail="Room type must not be provided for OP billing.")
+                if payload.bill_type == "IP" and payload.room_type_id != bill["room_type_id"]:
+                    raise HTTPException(status_code=422, detail="Room type cannot be changed while editing an existing bill.")
+
+                cursor.execute("SELECT id, patient_id FROM public.patients WHERE id = %s", (bill["patient_db_id"],))
+                patient = cursor.fetchone()
+                if not patient or patient["patient_id"] != payload.patient_id:
+                    raise HTTPException(status_code=422, detail="The patient linked to an existing bill cannot be changed.")
+
+                context = validate_pricing_context(cursor, payload)
+                subtotal = Decimal("0.00")
+                item_discount_total = Decimal("0.00")
+                gst_total = Decimal("0.00")
+                prepared_items = []
+                for item in payload.items:
+                    resolved = resolve_service_price(
+                        cursor=cursor,
+                        service_id=item.service_id,
+                        bill_type=payload.bill_type,
+                        doctor_id=payload.doctor_id if payload.bill_type == "OP" else None,
+                        room_type_id=payload.room_type_id if payload.bill_type == "IP" else None,
+                    )
+                    rate = resolved["rate"]
+                    quantity = item.quantity
+                    amount = money(rate * quantity)
+                    discount = money(item.discount_amount)
+                    gst_eligible = (payload.bill_type == "IP" and
+                                    resolved["service_group_name"].strip().upper() == "ACCOMMODATION CHARGES" and
+                                    resolved["service_name"].strip().upper() == "ROOM RENT")
+                    requested_gst = money(item.gst_amount)
+                    if not gst_eligible and requested_gst > 0:
+                        raise HTTPException(status_code=422, detail="GST is allowed only for IP Room Rent under Accommodation Charges.")
+                    gst = requested_gst if gst_eligible else Decimal("0.00")
+                    if discount > amount:
+                        raise HTTPException(status_code=422, detail=f"Discount exceeds the amount for '{resolved['service_name']}'.")
+                    net = money(amount - discount)
+                    subtotal += amount
+                    item_discount_total += discount
+                    gst_total += gst
+                    prepared_items.append({
+                        "service_id": resolved["service_id"],
+                        "service_group_id": resolved["service_group_id"],
+                        "service_price_id": resolved["service_price_id"],
+                        "service_name": resolved["service_name"],
+                        "service_group_name": resolved["service_group_name"],
+                        "service_date": item.service_date,
+                        "rate": rate, "quantity": quantity, "amount": amount,
+                        "discount_amount": discount, "net_amount": net, "gst_amount": gst,
+                    })
+                subtotal = money(subtotal)
+                item_discount_total = money(item_discount_total)
+                gst_total = money(gst_total)
+                bill_discount = money(payload.discount_amount)
+                remaining = money(subtotal - item_discount_total)
+                if bill_discount > remaining:
+                    raise HTTPException(status_code=422, detail="The bill discount cannot exceed the amount remaining after item discounts.")
+                total_amount = money(remaining - bill_discount + gst_total)
+
+                cursor.execute("""
+                    UPDATE public.bills SET
+                        bill_date = %s, department = %s, doctor_id = %s, doctor_name = %s,
+                        psychologist_id = %s, psychologist_name = %s, subtotal = %s,
+                        discount_amount = %s, total_amount = %s, notes = %s,
+                        admission_date = %s, discharge_date = %s, bed_number = %s,
+                        rate_category = %s,
+                        updated_by = %s,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                    RETURNING *
+                """, (
+                    payload.bill_date or bill["bill_date"], payload.department,
+                    payload.doctor_id, context.get("doctor_name") if payload.doctor_id else payload.doctor_name,
+                    payload.psychologist_id,
+                    context.get("psychologist_name") if payload.psychologist_id else payload.psychologist_name,
+                    subtotal, bill_discount, total_amount, payload.notes,
+                    payload.admission_date if payload.bill_type == "IP" else None,
+                    payload.discharge_date if payload.bill_type == "IP" else None,
+                    payload.bed_number if payload.bill_type == "IP" else None,
+                    payload.rate_category if payload.bill_type == "IP" else bill.get("rate_category"),
+                    updated_by, bill_id,
+                ))
+                updated_bill = cursor.fetchone()
+                # The transaction protects the bill and all its items as one unit.
+                cursor.execute("DELETE FROM public.bill_items WHERE bill_id = %s", (bill_id,))
+                for item in prepared_items:
+                    cursor.execute("""
+                        INSERT INTO public.bill_items (
+                            bill_id, service_id, service_group_id, service_price_id,
+                            service_name, service_group_name, service_date, rate, quantity,
+                            amount, discount_amount, net_amount, gst_amount
+                        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    """, (bill_id, item["service_id"], item["service_group_id"], item["service_price_id"],
+                          item["service_name"], item["service_group_name"], item["service_date"], item["rate"],
+                          item["quantity"], item["amount"], item["discount_amount"], item["net_amount"], item["gst_amount"]))
+                from Utils.billing_helpers import get_bill_items
+                result = serialize_row(dict(updated_bill))
+                result["items"] = get_bill_items(cursor, bill_id)
+                # updated_by and updated_at are persisted on public.bills and
+                # included in the returned bill row.
+                return result
+    except HTTPException:
+        raise
+    except psycopg2.Error:
+        logger.exception("Database error while updating bill %s", bill_id)
+        raise HTTPException(status_code=500, detail="Unable to update bill.")
+    except Exception:
+        logger.exception("Unexpected error while updating bill %s", bill_id)
+        raise HTTPException(status_code=500, detail="An unexpected error occurred while updating the bill.")

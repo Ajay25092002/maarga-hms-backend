@@ -29,6 +29,14 @@ router = APIRouter(
     tags=["Patients"],
 )
 
+SOURCE_OF_LEAD_OPTIONS = (
+    "Word of mouth",
+    "Google",
+    "Social media",
+    "Maps",
+    "Advertisement",
+)
+
 CONNECTION_ENV_NAMES = (
     "DATABASE_URL",
     "DATABASE_CONNECTION_STRING",
@@ -77,6 +85,17 @@ class PatientCreate(BaseModel):
     address: str = Field(min_length=1, max_length=1000)
     pincode: str = Field(pattern=r"^[0-9]{6}$")
     referral: Optional[str] = Field(default=None, max_length=255)
+    source_of_lead: Optional[str] = Field(default=None, max_length=50)
+
+    @field_validator("source_of_lead")
+    @classmethod
+    def validate_source_of_lead(cls, value):
+        if value is None or not value.strip():
+            return None
+        value = value.strip()
+        if value not in SOURCE_OF_LEAD_OPTIONS:
+            raise ValueError("Select a valid source of lead.")
+        return value
 
     @field_validator("name")
     @classmethod
@@ -150,6 +169,17 @@ class PatientUpdate(BaseModel):
     address: str = Field(min_length=1, max_length=1000)
     pincode: str = Field(pattern=r"^[0-9]{6}$")
     referral: Optional[str] = Field(default=None, max_length=255)
+    source_of_lead: Optional[str] = Field(default=None, max_length=50)
+
+    @field_validator("source_of_lead")
+    @classmethod
+    def validate_source_of_lead(cls, value):
+        if value is None or not value.strip():
+            return None
+        value = value.strip()
+        if value not in SOURCE_OF_LEAD_OPTIONS:
+            raise ValueError("Select a valid source of lead.")
+        return value
 
     @field_validator("name")
     @classmethod
@@ -227,6 +257,7 @@ EXPECTED_COLUMNS = {
     "address",
     "pincode",
     "referral",
+    "source_of_lead",
     "registered_at",
 }
 
@@ -265,6 +296,9 @@ def initialize_patient_table():
 
     try:
         connection = get_db_connection()
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute("ALTER TABLE public.patients ADD COLUMN IF NOT EXISTS source_of_lead VARCHAR(50)")
         validate_patient_schema(connection)
 
         logger.info("Patient database schema validated.")
@@ -377,6 +411,7 @@ def fetch_one_patient(patient_id: str):
                     address,
                     pincode,
                     referral,
+                    source_of_lead,
                     registered_at
                 FROM public.patients
                 WHERE patient_id = %s
@@ -419,9 +454,10 @@ def register_patient(payload: PatientCreate):
                             email,
                             address,
                             pincode,
-                            referral
+                            referral,
+                            source_of_lead
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING
                             id,
                             patient_id,
@@ -447,6 +483,7 @@ def register_patient(payload: PatientCreate):
                             patient_data["address"],
                             patient_data["pincode"],
                             patient_data["referral"],
+                            patient_data["source_of_lead"],
                         ),
                     )
 
@@ -545,6 +582,7 @@ def list_patients(
                     address,
                     pincode,
                     referral,
+                    source_of_lead,
                     registered_at
                 FROM public.patients
                 {where_clause}
@@ -616,7 +654,8 @@ def update_patient(
                         email = %s,
                         address = %s,
                         pincode = %s,
-                        referral = %s
+                        referral = %s,
+                        source_of_lead = %s
                     WHERE patient_id = %s
                     RETURNING
                         id,
@@ -644,6 +683,7 @@ def update_patient(
                         patient_data["address"],
                         patient_data["pincode"],
                         patient_data["referral"],
+                        patient_data["source_of_lead"],
                         patient_id,
                     ),
                 )

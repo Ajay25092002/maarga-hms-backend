@@ -7,9 +7,10 @@ from fastapi import APIRouter, Depends, Path, Query, status
 from Router.Login import get_current_user
 from Schemas.billing_schema import (
     CreateBillRequest,
+    UpdateBillRequest,
     RecordPaymentRequest,
 )
-from Services.billing_service import create_bill_service
+from Services.billing_service import create_bill_service, update_bill_service
 from Services.bill_query_service import (
     get_bill_service,
     list_bills_service,
@@ -107,6 +108,18 @@ def get_bill(
 ):
     """Retrieve bill details, service items, and payment history."""
     return get_bill_service(bill_id)
+
+
+
+@router.put("/{bill_id}")
+def update_bill(
+    payload: UpdateBillRequest,
+    bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
+):
+    """Update an existing OP/IP bill and its service items."""
+    user_id = current_user["user"]["id"]
+    return update_bill_service(bill_id, payload, updated_by=user_id)
 
 
 @router.post(

@@ -224,3 +224,8 @@ class RecordPaymentRequest(BaseModel):
 
         value = value.strip()
         return value or None
+
+
+class UpdateBillRequest(CreateBillRequest):
+    """Full editable bill snapshot; item dates are supplied per service."""
+    pass

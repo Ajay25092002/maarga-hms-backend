@@ -436,9 +436,7 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                         (
                             SELECT SUM(pr.refund_amount)
                             FROM public.payment_refunds pr
-                            JOIN public.bill_payments p3
-                                ON p3.id = pr.payment_id
-                            WHERE p3.bill_id = b.id
+                            WHERE pr.bill_id = b.id
                         ),
                         0
                     ) AS bill_total_refunded
@@ -488,7 +486,7 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
         gross_paid = _money(payment.get("bill_amount_paid"))
         total_refunded = _money(payment.get("bill_total_refunded"))
         total_paid = max(gross_paid - total_refunded, Decimal("0.00"))
-        outstanding = max(Decimal("0.00"), bill_total - total_paid)
+        outstanding = max(Decimal("0.00"), bill_total - gross_paid)
         amount = _money(payment.get("amount"))
 
         # Patient identifier is patient_id. Do not depend on the

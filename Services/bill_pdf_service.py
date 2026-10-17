@@ -315,7 +315,7 @@ def _calculate_totals(
     refunds: list[dict],
 ):
     # Keep the bill's original charge totals unchanged. Refunds affect net
-    # collections and outstanding balance, not the original bill value.
+    # retained collections, while outstanding remains based on original payments.
     subtotal = _money(bill.get("subtotal"))
     if not subtotal:
         subtotal = sum(
@@ -332,7 +332,7 @@ def _calculate_totals(
     total_payments = sum(_money(payment.get("amount")) for payment in payments)
     total_refunds = sum(_money(refund.get("refund_amount")) for refund in refunds)
     net_paid = max(0.0, total_payments - total_refunds)
-    balance = max(0.0, net_total - net_paid)
+    balance = max(0.0, net_total - total_payments)
 
     return subtotal, discount_total, net_total, total_payments, total_refunds, net_paid, balance
 
@@ -364,19 +364,17 @@ def _get_bill_refunds(bill_id: int) -> list[dict]:
                 SELECT
                     pr.id,
                     pr.refund_number,
-                    pr.payment_id,
+                    pr.bill_id,
                     pr.refund_amount,
                     pr.refund_method,
                     pr.reason,
                     pr.notes,
                     pr.created_by,
                     pr.created_at,
-                    bp.receipt_number,
-                    bp.payment_method AS original_payment_method
+                    NULL::varchar AS receipt_number,
+                    NULL::varchar AS original_payment_method
                 FROM public.payment_refunds pr
-                JOIN public.bill_payments bp
-                    ON bp.id = pr.payment_id
-                WHERE bp.bill_id = %s
+                WHERE pr.bill_id = %s
                 ORDER BY pr.created_at ASC, pr.id ASC
                 """,
                 (bill_id,),

@@ -16,7 +16,11 @@ from Utils.billing_helpers import (
 logger = get_logger(__name__)
 
 
-def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
+def record_payment_service(
+    bill_id: int,
+    payload: RecordPaymentRequest,
+    created_by: int,
+):
     connection = None
 
     try:
@@ -29,12 +33,15 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
                 ensure_payment_table(cursor)
 
                 # Lock the bill to prevent concurrent overpayments.
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT id, total_amount
                     FROM public.bills
                     WHERE id = %s
                     FOR UPDATE
-                """, (bill_id,))
+                    """,
+                    (bill_id,),
+                )
                 bill = cursor.fetchone()
 
                 if bill is None:
@@ -43,10 +50,12 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
                         detail="Bill not found.",
                     )
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     SELECT
                         COALESCE(payments.amount_paid, 0) AS gross_paid,
-                        COALESCE(refunds.total_refunded, 0) AS total_refunded
+                        COALESCE(refunds.total_refunded, 0)
+                            AS total_refunded
                     FROM (SELECT %s::BIGINT AS bill_id) requested_bill
                     LEFT JOIN (
                         SELECT bill_id, SUM(amount) AS amount_paid
@@ -56,23 +65,29 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
                     ) payments
                         ON payments.bill_id = requested_bill.bill_id
                     LEFT JOIN (
-                        SELECT bp.bill_id, SUM(pr.refund_amount) AS total_refunded
-                        FROM public.payment_refunds pr
-                        JOIN public.bill_payments bp ON bp.id = pr.payment_id
-                        WHERE bp.bill_id = %s
-                        GROUP BY bp.bill_id
+                        SELECT bill_id, SUM(refund_amount) AS total_refunded
+                        FROM public.payment_refunds
+                        WHERE bill_id = %s
+                        GROUP BY bill_id
                     ) refunds
                         ON refunds.bill_id = requested_bill.bill_id
-                """, (bill_id, bill_id, bill_id))
+                    """,
+                    (bill_id, bill_id, bill_id),
+                )
 
                 financials = cursor.fetchone()
-                gross_paid = Decimal(str(financials["gross_paid"] or 0))
+
+                gross_paid = Decimal(
+                    str(financials["gross_paid"] or 0)
+                )
                 total_refunded = Decimal(
                     str(financials["total_refunded"] or 0)
                 )
+
+                # Refunds do not reopen a bill that was already paid.
                 net_paid = max(gross_paid - total_refunded, Decimal("0.00"))
                 total = Decimal(str(bill["total_amount"]))
-                outstanding = max(Decimal("0.00"), total - net_paid)
+                outstanding = max(Decimal("0.00"), total - gross_paid)
 
                 if payload.amount <= 0:
                     raise HTTPException(
@@ -91,58 +106,66 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
                         },
                     )
 
-                # receipt_number is intentionally omitted.
-                # PostgreSQL generates it using the sequence/default.
-                cursor.execute("""
+                # Save the authenticated user's ID as the payment creator.
+                # PostgreSQL generates receipt_number automatically.
+                cursor.execute(
+                    """
                     INSERT INTO public.bill_payments (
                         bill_id,
                         amount,
                         payment_date,
                         payment_method,
                         reference_number,
-                        notes
+                        notes,
+                        created_by
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                     RETURNING *
-                """, (
-                    bill_id,
-                    payload.amount,
-                    payload.payment_date or datetime.now(),
-                    payload.payment_method,
-                    payload.reference_number,
-                    payload.notes,
-                ))
+                    """,
+                    (
+                        bill_id,
+                        payload.amount,
+                        payload.payment_date or datetime.now(),
+                        payload.payment_method,
+                        payload.reference_number,
+                        payload.notes,
+                        created_by,
+                    ),
+                )
 
                 payment = serialize_row(dict(cursor.fetchone()))
 
                 new_gross_paid = gross_paid + payload.amount
-                new_net_paid = max(
-                    new_gross_paid - total_refunded,
-                    Decimal("0.00"),
-                )
-                new_outstanding = max(
-                    Decimal("0.00"),
-                    total - new_net_paid,
-                )
+                new_net_paid = max(new_gross_paid - total_refunded, Decimal("0.00"))
+                new_outstanding = max(Decimal("0.00"), total - new_gross_paid)
 
-                if total <= 0 or new_net_paid >= total:
+                if total <= 0 or new_gross_paid >= total:
                     payment_status = "Paid"
-                elif new_net_paid > 0:
+                elif new_gross_paid > 0:
                     payment_status = "Partially Paid"
                 else:
                     payment_status = "Unpaid"
 
-                payment["gross_paid_after_payment"] = float(new_gross_paid)
+                payment["gross_paid_after_payment"] = float(
+                    new_gross_paid
+                )
                 payment["total_refunded"] = float(total_refunded)
-                payment["amount_paid_after_payment"] = float(new_net_paid)
-                payment["net_paid_after_payment"] = float(new_net_paid)
-                payment["outstanding_amount"] = float(new_outstanding)
+                payment["amount_paid_after_payment"] = float(
+                    new_net_paid
+                )
+                payment["net_paid_after_payment"] = float(
+                    new_net_paid
+                )
+                payment["outstanding_amount"] = float(
+                    new_outstanding
+                )
                 payment["payment_status"] = payment_status
 
                 return payment
 
     except HTTPException:
         raise
+
     except psycopg2.Error:
         logger.exception(
             "Database error recording payment for bill %s.",
@@ -152,6 +175,7 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
             status_code=500,
             detail="Unable to record the payment.",
         )
+
     except Exception:
         logger.exception(
             "Unexpected error recording payment for bill %s.",
@@ -159,8 +183,11 @@ def record_payment_service(bill_id: int, payload: RecordPaymentRequest):
         )
         raise HTTPException(
             status_code=500,
-            detail="An unexpected error occurred while recording the payment.",
+            detail=(
+                "An unexpected error occurred while recording the payment."
+            ),
         )
+
     finally:
         if connection is not None:
             connection.close()

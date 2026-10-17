@@ -1,3 +1,4 @@
+
 import os
 import uuid
 from datetime import date, datetime, time, timedelta
@@ -154,15 +155,19 @@ def get_date_range(
     if date_filter:
         if date_filter == "today":
             start_date = end_date = today
+
         elif date_filter == "7days":
             start_date = today - timedelta(days=6)
             end_date = today
+
         elif date_filter == "30days":
             start_date = today - timedelta(days=29)
             end_date = today
+
         elif date_filter == "this_month":
             start_date = today.replace(day=1)
             end_date = today
+
         else:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -183,9 +188,13 @@ def get_date_range(
         if start_date
         else None
     )
+
     # Exclusive upper bound includes the entire end date.
     end_datetime = (
-        datetime.combine(end_date + timedelta(days=1), time.min)
+        datetime.combine(
+            end_date + timedelta(days=1),
+            time.min,
+        )
         if end_date
         else None
     )
@@ -193,15 +202,24 @@ def get_date_range(
     return start_datetime, end_datetime
 
 
-# Payment and refund totals are aggregated separately to avoid row
-# multiplication when a bill has multiple payments and multiple refunds.
+# Shared bill query joins.
+#
+# Payment and refund totals are aggregated separately to prevent
+# row multiplication when a bill has multiple payments and refunds.
+#
+# Keep these aliases unique: do not add bill_creator or updater joins
+# again in individual service queries that use BILL_FROM_SQL.
 BILL_FROM_SQL = """
     FROM public.bills b
+
     JOIN public.patients p
         ON p.id = b.patient_db_id
 
-    LEFT JOIN public.users bill_creator
+    LEFT JOIN public.users AS bill_creator
         ON bill_creator.id = b.created_by
+
+    LEFT JOIN public.users AS updater
+        ON updater.id = b.updated_by
 
     LEFT JOIN (
         SELECT
@@ -214,31 +232,42 @@ BILL_FROM_SQL = """
 
     LEFT JOIN (
         SELECT
-            bp.bill_id,
-            SUM(pr.refund_amount) AS total_refunds
-        FROM public.payment_refunds pr
-        JOIN public.bill_payments bp
-            ON bp.id = pr.payment_id
-        GROUP BY bp.bill_id
+            bill_id,
+            SUM(refund_amount) AS total_refunds
+        FROM public.payment_refunds
+        GROUP BY bill_id
     ) refunds
         ON refunds.bill_id = b.id
 """
 
 
 def build_bill_filters(
-    search,
-    bill_type,
-    payment_status,
-    date_filter,
-    date_from,
-    date_to,
+    search=None,
+    bill_type=None,
+    payment_status=None,
+    date_filter=None,
+    date_from=None,
+    date_to=None,
     billed_by=None,
 ):
+    """
+    Build SQL filters for bill listing and reporting.
+
+    billed_by filters bills by the user who created them.
+    Returns a WHERE clause and its parameter list.
+    """
     conditions = []
     parameters = []
 
+    # Filter by the user who created the bill.
+    if billed_by is not None:
+        conditions.append("b.created_by = %s")
+        parameters.append(billed_by)
+
+    # Filter by bill type.
     if bill_type:
         normalized_bill_type = bill_type.strip().upper()
+
         if normalized_bill_type not in {"OP", "IP"}:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -248,8 +277,10 @@ def build_bill_filters(
         conditions.append("b.bill_type = %s")
         parameters.append(normalized_bill_type)
 
+    # Search across bill, patient, doctor, and contact details.
     if search and search.strip():
         search_value = f"%{search.strip()}%"
+
         conditions.append("""
             (
                 b.bill_number ILIKE %s
@@ -262,8 +293,10 @@ def build_bill_filters(
                 OR COALESCE(p.mobile, '') ILIKE %s
             )
         """)
+
         parameters.extend([search_value] * 8)
 
+    # Filter by date range.
     start_datetime, end_datetime = get_date_range(
         date_filter,
         date_from,
@@ -278,32 +311,39 @@ def build_bill_filters(
         conditions.append("b.bill_date < %s")
         parameters.append(end_datetime)
 
+    # Filter payment status from original payments; refunds do not reopen bills.
     if payment_status:
         normalized = payment_status.strip().lower()
-        if normalized not in {"paid", "partially paid", "unpaid"}:
+
+        if normalized not in {
+            "paid",
+            "partially paid",
+            "unpaid",
+        }:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="status must be Paid, Partially Paid, or Unpaid.",
+                detail=(
+                    "status must be Paid, Partially Paid, or Unpaid."
+                ),
             )
 
-        # Status must reflect net paid after refunds, not gross payments.
-        paid_amount = """
-            GREATEST(
-                COALESCE(payments.amount_paid, 0)
-                - COALESCE(refunds.total_refunds, 0),
-                0
-            )
-        """
+        paid_amount = "COALESCE(payments.amount_paid, 0)"
 
         if normalized == "paid":
-            conditions.append(f"({paid_amount}) >= b.total_amount")
+            conditions.append(
+                f"({paid_amount}) >= b.total_amount"
+            )
+
         elif normalized == "partially paid":
             conditions.append(f"""
                 ({paid_amount}) > 0
                 AND ({paid_amount}) < b.total_amount
             """)
+
         else:
-            conditions.append(f"({paid_amount}) <= 0")
+            conditions.append(
+                f"({paid_amount}) <= 0"
+            )
 
     where_clause = (
         "WHERE " + " AND ".join(conditions)

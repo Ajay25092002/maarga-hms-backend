@@ -135,12 +135,11 @@ def get_dashboard(request: Request):
                 GROUP BY bill_id
             """
             refund_totals_sql = """
-                SELECT bp.bill_id, SUM(pr.refund_amount) AS total_refunds
-                FROM public.payment_refunds pr
-                JOIN public.bill_payments bp ON bp.id = pr.payment_id
-                GROUP BY bp.bill_id
+                SELECT bill_id, SUM(refund_amount) AS total_refunds
+                FROM public.payment_refunds
+                GROUP BY bill_id
             """
-            net_paid_sql = "GREATEST(COALESCE(pay.amount_paid, 0) - COALESCE(ref.total_refunds, 0), 0)"
+            net_paid_sql = "COALESCE(pay.amount_paid, 0)"
 
             # 4. Outstanding balance across all bills.
             cursor.execute(
@@ -148,10 +147,7 @@ def get_dashboard(request: Request):
                 SELECT COALESCE(
                     SUM(
                         GREATEST(
-                            b.total_amount - GREATEST(
-                                COALESCE(p.amount_paid, 0) - COALESCE(r.total_refunds, 0),
-                                0
-                            ),
+                            b.total_amount - COALESCE(p.amount_paid, 0),
                             0
                         )
                     ),

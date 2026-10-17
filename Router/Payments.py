@@ -3,9 +3,17 @@ from datetime import date
 from typing import Optional
 
 import psycopg2
-from fastapi import APIRouter, HTTPException, Path, Query, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Path,
+    Query,
+    status,
+)
 from psycopg2.extras import RealDictCursor
 
+from Router.Login import get_current_user
 from Schemas.billing_schema import RecordPaymentRequest
 from Services.payment_pdf_service import generate_payment_receipt_pdf
 from Services.payment_service import record_payment_service
@@ -18,6 +26,56 @@ router = APIRouter(
 )
 
 
+# -------------------------------------------------------------------
+# Get payment collectors
+# GET /api/payments/collectors
+# -------------------------------------------------------------------
+
+@router.get("/collectors")
+def list_payment_collectors():
+    """Return active staff members for the Collected By filter."""
+    connection = None
+
+    try:
+        connection = get_db_connection()
+
+        with connection.cursor(
+            cursor_factory=RealDictCursor
+        ) as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    full_name
+                FROM public.users
+                WHERE is_active = TRUE
+                ORDER BY full_name ASC
+                """
+            )
+
+            return {
+                "items": [
+                    dict(row)
+                    for row in cursor.fetchall()
+                ]
+            }
+
+    except psycopg2.Error:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to retrieve payment collectors.",
+        )
+
+    finally:
+        if connection is not None:
+            connection.close()
+
+
+# -------------------------------------------------------------------
+# Get payment receipt PDF
+# GET /api/payments/{payment_id}/receipt-pdf
+# -------------------------------------------------------------------
+
 @router.get("/{payment_id}/receipt-pdf")
 def get_payment_receipt_pdf(
     payment_id: int = Path(gt=0),
@@ -25,6 +83,11 @@ def get_payment_receipt_pdf(
     """Return a printable PDF for a recorded payment."""
     return generate_payment_receipt_pdf(payment_id)
 
+
+# -------------------------------------------------------------------
+# List payments
+# GET /api/payments
+# -------------------------------------------------------------------
 
 @router.get("")
 def list_payments(
@@ -38,8 +101,9 @@ def list_payments(
         default=None,
         pattern="^(OP|IP)$",
     ),
+    created_by: Optional[int] = Query(default=None, gt=0),
 ):
-    """List recorded payments. This endpoint is read-only."""
+    """List payments with optional staff, date, and payment filters."""
 
     if date_from and date_to and date_from > date_to:
         raise HTTPException(
@@ -55,6 +119,7 @@ def list_payments(
         where = []
         params = []
 
+        # Search by patient, bill, receipt, or reference.
         if search and search.strip():
             where.append(
                 """
@@ -92,6 +157,11 @@ def list_payments(
             where.append("b.bill_type = %s")
             params.append(bill_type)
 
+        # Filter by the user who recorded the payment.
+        if created_by is not None:
+            where.append("bp.created_by = %s")
+            params.append(created_by)
+
         where_sql = (
             "WHERE " + " AND ".join(where)
             if where
@@ -102,7 +172,7 @@ def list_payments(
             cursor_factory=RealDictCursor
         ) as cursor:
 
-            # Total matching payment records
+            # Count matching payment records.
             cursor.execute(
                 f"""
                 SELECT COUNT(*) AS total
@@ -120,7 +190,7 @@ def list_payments(
 
             offset = (page - 1) * page_size
 
-            # Paginated payment records with bill balances
+            # Fetch payments with creator names and bill balances.
             cursor.execute(
                 f"""
                 SELECT
@@ -133,6 +203,8 @@ def list_payments(
                     bp.reference_number,
                     bp.notes,
                     bp.created_at,
+                    bp.created_by,
+                    u.full_name AS created_by_name,
 
                     b.bill_number,
                     b.bill_type,
@@ -153,9 +225,7 @@ def list_payments(
                     COALESCE((
                         SELECT SUM(pr2.refund_amount)
                         FROM public.payment_refunds pr2
-                        JOIN public.bill_payments bp4
-                            ON bp4.id = pr2.payment_id
-                        WHERE bp4.bill_id = b.id
+                        WHERE pr2.bill_id = b.id
                     ), 0) AS bill_total_refunded,
 
                     GREATEST(
@@ -166,28 +236,17 @@ def list_payments(
                         ), 0) - COALESCE((
                             SELECT SUM(pr3.refund_amount)
                             FROM public.payment_refunds pr3
-                            JOIN public.bill_payments bp5
-                                ON bp5.id = pr3.payment_id
-                            WHERE bp5.bill_id = b.id
+                            WHERE pr3.bill_id = b.id
                         ), 0),
                         0
                     ) AS bill_net_paid,
 
                     GREATEST(
-                        b.total_amount - GREATEST(
-                            COALESCE((
-                                SELECT SUM(bp6.amount)
-                                FROM public.bill_payments bp6
-                                WHERE bp6.bill_id = b.id
-                            ), 0) - COALESCE((
-                                SELECT SUM(pr4.refund_amount)
-                                FROM public.payment_refunds pr4
-                                JOIN public.bill_payments bp7
-                                    ON bp7.id = pr4.payment_id
-                                WHERE bp7.bill_id = b.id
-                            ), 0),
-                            0
-                        ),
+                        b.total_amount - COALESCE((
+                            SELECT SUM(bp6.amount)
+                            FROM public.bill_payments bp6
+                            WHERE bp6.bill_id = b.id
+                        ), 0),
                         0
                     ) AS bill_outstanding_amount
 
@@ -196,6 +255,8 @@ def list_payments(
                     ON b.id = bp.bill_id
                 JOIN public.patients p
                     ON p.id = b.patient_db_id
+                LEFT JOIN public.users u
+                    ON u.id = bp.created_by
 
                 {where_sql}
 
@@ -236,6 +297,11 @@ def list_payments(
             connection.close()
 
 
+# -------------------------------------------------------------------
+# Create payment
+# POST /api/payments/bills/{bill_id}
+# -------------------------------------------------------------------
+
 @router.post(
     "/bills/{bill_id}",
     status_code=status.HTTP_201_CREATED,
@@ -243,20 +309,29 @@ def list_payments(
 def create_payment(
     payload: RecordPaymentRequest,
     bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
 ):
-    """
-    Record a payment against an existing bill.
-    Payment editing is intentionally not exposed.
-    """
-    return record_payment_service(bill_id, payload)
+    """Record a payment using the authenticated user's ID."""
 
+    created_by = current_user["user"]["id"]
+
+    return record_payment_service(
+        bill_id=bill_id,
+        payload=payload,
+        created_by=created_by,
+    )
+
+
+# -------------------------------------------------------------------
+# Get payment details
+# GET /api/payments/{payment_id}
+# -------------------------------------------------------------------
 
 @router.get("/{payment_id}")
 def get_payment(
     payment_id: int = Path(gt=0),
 ):
-    """Get one payment with its bill and patient details."""
-
+    """Get one payment with creator, bill, and patient details."""
     connection = None
 
     try:
@@ -265,7 +340,6 @@ def get_payment(
         with connection.cursor(
             cursor_factory=RealDictCursor
         ) as cursor:
-
             cursor.execute(
                 """
                 SELECT
@@ -278,6 +352,8 @@ def get_payment(
                     bp.reference_number,
                     bp.notes,
                     bp.created_at,
+                    bp.created_by,
+                    u.full_name AS created_by_name,
 
                     b.bill_number,
                     b.bill_type,
@@ -298,9 +374,7 @@ def get_payment(
                     COALESCE((
                         SELECT SUM(pr2.refund_amount)
                         FROM public.payment_refunds pr2
-                        JOIN public.bill_payments bp4
-                            ON bp4.id = pr2.payment_id
-                        WHERE bp4.bill_id = b.id
+                        WHERE pr2.bill_id = b.id
                     ), 0) AS bill_total_refunded,
 
                     GREATEST(
@@ -311,28 +385,17 @@ def get_payment(
                         ), 0) - COALESCE((
                             SELECT SUM(pr3.refund_amount)
                             FROM public.payment_refunds pr3
-                            JOIN public.bill_payments bp5
-                                ON bp5.id = pr3.payment_id
-                            WHERE bp5.bill_id = b.id
+                            WHERE pr3.bill_id = b.id
                         ), 0),
                         0
                     ) AS bill_net_paid,
 
                     GREATEST(
-                        b.total_amount - GREATEST(
-                            COALESCE((
-                                SELECT SUM(bp6.amount)
-                                FROM public.bill_payments bp6
-                                WHERE bp6.bill_id = b.id
-                            ), 0) - COALESCE((
-                                SELECT SUM(pr4.refund_amount)
-                                FROM public.payment_refunds pr4
-                                JOIN public.bill_payments bp7
-                                    ON bp7.id = pr4.payment_id
-                                WHERE bp7.bill_id = b.id
-                            ), 0),
-                            0
-                        ),
+                        b.total_amount - COALESCE((
+                            SELECT SUM(bp6.amount)
+                            FROM public.bill_payments bp6
+                            WHERE bp6.bill_id = b.id
+                        ), 0),
                         0
                     ) AS bill_outstanding_amount
 
@@ -341,7 +404,8 @@ def get_payment(
                     ON b.id = bp.bill_id
                 JOIN public.patients p
                     ON p.id = b.patient_db_id
-
+                LEFT JOIN public.users u
+                    ON u.id = bp.created_by
                 WHERE bp.id = %s
                 """,
                 (payment_id,),

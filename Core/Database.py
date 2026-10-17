@@ -118,12 +118,15 @@ def initialize_database():
                         address TEXT NOT NULL,
                         pincode VARCHAR(10) NOT NULL,
                         referral VARCHAR(255),
+                        source_of_lead VARCHAR(50),
                         registered_at TIMESTAMPTZ NOT NULL
                             DEFAULT CURRENT_TIMESTAMP
                     );
                 """)
 
 
+
+               
 
                 # ==========================================================
 
@@ -317,6 +320,84 @@ def initialize_database():
 
                 # ==========================================================
 
+                # ROLES
+
+                # ==========================================================
+
+                cursor.execute("""
+
+                    CREATE TABLE IF NOT EXISTS public.roles (
+
+                        id BIGSERIAL PRIMARY KEY,
+
+                        name VARCHAR(100) NOT NULL UNIQUE,
+
+                        description TEXT,
+
+                        permissions JSONB NOT NULL DEFAULT '{}'::JSONB,
+
+                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+                        created_at TIMESTAMPTZ NOT NULL
+
+                            DEFAULT CURRENT_TIMESTAMP,
+
+                        updated_at TIMESTAMPTZ NOT NULL
+
+                            DEFAULT CURRENT_TIMESTAMP
+
+                    );
+
+                """)
+
+
+
+                # ==========================================================
+
+                # USERS
+
+                # ==========================================================
+
+                cursor.execute("""
+
+                    CREATE TABLE IF NOT EXISTS public.users (
+
+                        id BIGSERIAL PRIMARY KEY,
+
+                        full_name VARCHAR(150) NOT NULL,
+
+                        email VARCHAR(255) UNIQUE,
+
+                        password_hash TEXT NOT NULL,
+
+                        role_id BIGINT NOT NULL
+
+                            REFERENCES public.roles(id)
+
+                            ON DELETE RESTRICT,
+
+                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+                        created_at TIMESTAMPTZ NOT NULL
+
+                            DEFAULT CURRENT_TIMESTAMP,
+
+                        updated_at TIMESTAMPTZ NOT NULL
+
+                            DEFAULT CURRENT_TIMESTAMP,
+
+                        CONSTRAINT users_full_name_not_blank
+
+                            CHECK (LENGTH(TRIM(full_name)) > 0)
+
+                    );
+
+                """)
+
+
+
+                # ==========================================================
+
                 # BILLS
 
                 # Room type is required for IP and must be NULL for OP.
@@ -349,7 +430,12 @@ def initialize_database():
 
                         
                         created_by BIGINT,
-bill_date TIMESTAMPTZ NOT NULL
+
+                        updated_by BIGINT,
+
+                        updated_at TIMESTAMPTZ,
+
+                        bill_date TIMESTAMPTZ NOT NULL
 
                             DEFAULT CURRENT_TIMESTAMP,
 
@@ -452,13 +538,8 @@ bill_date TIMESTAMPTZ NOT NULL
 
                 """)
 
-                # Add creator tracking to existing bills databases safely.
-                cursor.execute("""
-                    ALTER TABLE public.bills
-                    ADD COLUMN IF NOT EXISTS created_by BIGINT;
-                """)
 
-
+            
 
                 # ==========================================================
 
@@ -724,136 +805,43 @@ bill_date TIMESTAMPTZ NOT NULL
                 # ==========================================================
 
                 cursor.execute("""
-
                     CREATE TABLE IF NOT EXISTS public.bill_payments (
-
                         id BIGSERIAL PRIMARY KEY,
 
                         bill_id BIGINT NOT NULL
-
                             REFERENCES public.bills(id)
-
                             ON DELETE RESTRICT,
 
                         receipt_number VARCHAR(30) NOT NULL UNIQUE
-
                             DEFAULT (
-
                                 'RC-' || LPAD(
-
                                     NEXTVAL(
-
                                         'public.bill_payment_receipt_seq'
-
                                     )::TEXT,
-
                                     4,
-
                                     '0'
-
                                 )
-
                             ),
 
                         amount NUMERIC(12, 2) NOT NULL
-
                             CHECK (amount > 0),
 
                         payment_date TIMESTAMPTZ NOT NULL
-
                             DEFAULT CURRENT_TIMESTAMP,
 
                         payment_method VARCHAR(50) NOT NULL,
-
                         reference_number VARCHAR(150),
-
                         notes TEXT,
 
-                        created_at TIMESTAMPTZ NOT NULL
+                        created_by BIGINT
+                            REFERENCES public.users(id)
+                            ON DELETE SET NULL,
 
+                        created_at TIMESTAMPTZ NOT NULL
                             DEFAULT CURRENT_TIMESTAMP
-
                     );
-
                 """)
 
-
-
-                # ==========================================================
-
-                # ROLES
-
-                # ==========================================================
-
-                cursor.execute("""
-
-                    CREATE TABLE IF NOT EXISTS public.roles (
-
-                        id BIGSERIAL PRIMARY KEY,
-
-                        name VARCHAR(100) NOT NULL UNIQUE,
-
-                        description TEXT,
-
-                        permissions JSONB NOT NULL DEFAULT '{}'::JSONB,
-
-                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-
-                        created_at TIMESTAMPTZ NOT NULL
-
-                            DEFAULT CURRENT_TIMESTAMP,
-
-                        updated_at TIMESTAMPTZ NOT NULL
-
-                            DEFAULT CURRENT_TIMESTAMP
-
-                    );
-
-                """)
-
-
-
-                # ==========================================================
-
-                # USERS
-
-                # ==========================================================
-
-                cursor.execute("""
-
-                    CREATE TABLE IF NOT EXISTS public.users (
-
-                        id BIGSERIAL PRIMARY KEY,
-
-                        full_name VARCHAR(150) NOT NULL,
-
-                        email VARCHAR(255) UNIQUE,
-
-                        password_hash TEXT NOT NULL,
-
-                        role_id BIGINT NOT NULL
-
-                            REFERENCES public.roles(id)
-
-                            ON DELETE RESTRICT,
-
-                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-
-                        created_at TIMESTAMPTZ NOT NULL
-
-                            DEFAULT CURRENT_TIMESTAMP,
-
-                        updated_at TIMESTAMPTZ NOT NULL
-
-                            DEFAULT CURRENT_TIMESTAMP,
-
-                        CONSTRAINT users_full_name_not_blank
-
-                            CHECK (LENGTH(TRIM(full_name)) > 0)
-
-                    );
-
-                """)
 
 
                 # ==========================================================
@@ -875,8 +863,8 @@ bill_date TIMESTAMPTZ NOT NULL
                                 )
                             ),
 
-                        payment_id BIGINT NOT NULL
-                            REFERENCES public.bill_payments(id)
+                        bill_id BIGINT NOT NULL
+                            REFERENCES public.bills(id)
                             ON DELETE RESTRICT,
 
                         refund_amount NUMERIC(12, 2) NOT NULL
@@ -898,8 +886,8 @@ bill_date TIMESTAMPTZ NOT NULL
                 """)
 
                 cursor.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_payment_refunds_payment_id
-                    ON public.payment_refunds(payment_id);
+                    CREATE INDEX IF NOT EXISTS idx_payment_refunds_bill_id
+                    ON public.payment_refunds(bill_id);
                 """)
 
                 cursor.execute("""

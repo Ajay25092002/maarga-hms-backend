@@ -25,13 +25,16 @@ ROLE_PERMISSIONS = {
     "patients.ip.create": "Register IP Patients",
     "patients.ip.edit": "Edit IP Patient Details",
 
-    # OP Bills
+        # OP Bills
     "bills.op.view": "View OP Bills",
     "bills.op.create": "Create OP Bills",
+    "bills.op.edit": "Edit OP Bills",
 
     # IP Bills
     "bills.ip.view": "View IP Bills",
     "bills.ip.create": "Create IP Bills",
+    "bills.ip.edit": "Edit IP Bills",
+    
 
     # Payments & Receipts
     "payments.view": "View Payments & Receipts",
@@ -41,6 +44,10 @@ ROLE_PERMISSIONS = {
     # Payment Refunds
     "refunds.view": "View Payment Refunds",
     "refunds.create": "Create Payment Refunds",
+
+    # Reports
+    "reports.view": "View Reports",
+    "reports.download": "Download Reports",
 
     # Users
     "users.view": "View Users",

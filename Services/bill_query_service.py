@@ -15,16 +15,9 @@ from Utils.billing_helpers import (
 logger = get_logger(__name__)
 
 
-# Keep this expression consistent across list, summary, and detail queries.
-# Original payments are retained; refunds are deducted only when calculating
-# net paid and outstanding amounts.
-NET_PAID_SQL = """
-    GREATEST(
-        COALESCE(payments.amount_paid, 0)
-        - COALESCE(refunds.total_refunds, 0),
-        0
-    )
-"""
+# Outstanding is based on original payments. Refunds are tracked separately
+# and never reopen a fully-paid bill.
+NET_PAID_SQL = "COALESCE(payments.amount_paid, 0)"
 
 
 def list_bills_service(
@@ -71,7 +64,7 @@ def list_bills_service(
                 )
                 total = cursor.fetchone()["total"]
 
-                # Financial summary uses net paid after refunds.
+                # Financial summary uses original payments for paid and outstanding totals; refunds are separate.
                 cursor.execute(
                     f"""
                     SELECT
@@ -166,17 +159,23 @@ def list_bills_service(
                         ) AS outstanding_amount,
 
                         CASE
-                            WHEN b.total_amount <= 0
-                                THEN 'Paid'
-                            WHEN ({NET_PAID_SQL}) >= b.total_amount
-                                THEN 'Paid'
-                            WHEN ({NET_PAID_SQL}) > 0
-                                THEN 'Partially Paid'
+                            WHEN b.total_amount <= 0 THEN 'Paid'
+                            WHEN COALESCE(payments.amount_paid, 0) >= b.total_amount THEN 'Paid'
+                            WHEN COALESCE(payments.amount_paid, 0) > 0 THEN 'Partially Paid'
                             ELSE 'Unpaid'
                         END AS payment_status,
+                        CASE
+                            WHEN COALESCE(refunds.total_refunds, 0) <= 0 THEN 'Not Refunded'
+                            WHEN COALESCE(refunds.total_refunds, 0) >= COALESCE(payments.amount_paid, 0) THEN 'Fully Refunded'
+                            ELSE 'Partially Refunded'
+                        END AS refund_status,
 
-                        b.created_at
+                        b.created_at,
+                        b.updated_by,
+                        b.updated_at,
+                        updater.full_name AS updated_by_name
                     {BILL_FROM_SQL}
+              
                     {where_clause}
                     ORDER BY b.bill_date DESC, b.id DESC
                     LIMIT %s OFFSET %s
@@ -272,7 +271,7 @@ def get_bill_service(bill_id: int):
                     SELECT
                         b.*,
                         bill_creator.full_name AS created_by_name,
-
+                        updater.full_name AS updated_by_name,
                         p.patient_id,
                         p.name AS patient_name,
                         p.mobile,
@@ -295,14 +294,16 @@ def get_bill_service(bill_id: int):
                         ) AS outstanding_amount,
 
                         CASE
-                            WHEN b.total_amount <= 0
-                                THEN 'Paid'
-                            WHEN ({NET_PAID_SQL}) >= b.total_amount
-                                THEN 'Paid'
-                            WHEN ({NET_PAID_SQL}) > 0
-                                THEN 'Partially Paid'
+                            WHEN b.total_amount <= 0 THEN 'Paid'
+                            WHEN ({NET_PAID_SQL}) >= b.total_amount THEN 'Paid'
+                            WHEN ({NET_PAID_SQL}) > 0 THEN 'Partially Paid'
                             ELSE 'Unpaid'
-                        END AS payment_status
+                        END AS payment_status,
+                        CASE
+                            WHEN COALESCE(refunds.total_refunds, 0) <= 0 THEN 'Not Refunded'
+                            WHEN COALESCE(refunds.total_refunds, 0) >= COALESCE(payments.amount_paid, 0) THEN 'Fully Refunded'
+                            ELSE 'Partially Refunded'
+                        END AS refund_status
                     {BILL_FROM_SQL}
                     WHERE b.id = %s
                     """,
@@ -344,27 +345,16 @@ def get_bill_service(bill_id: int):
                     serialize_row(dict(row))
                     for row in cursor.fetchall()
                 ]
+                result["has_payments"] = len(result["payments"]) > 0
 
-                # Refunds are separate records linked to the original payment.
+                # Refunds are separate bill-level transactions.
                 cursor.execute(
                     """
-                    SELECT
-                        pr.id,
-                        pr.refund_number,
-                        pr.payment_id,
-                        bp.receipt_number,
-                        bp.bill_id,
-                        pr.refund_amount,
-                        pr.refund_method,
-                        pr.reason,
-                        pr.notes,
-                        pr.created_by,
-                        pr.created_at
-                    FROM public.payment_refunds pr
-                    JOIN public.bill_payments bp
-                        ON bp.id = pr.payment_id
-                    WHERE bp.bill_id = %s
-                    ORDER BY pr.created_at DESC, pr.id DESC
+                    SELECT id, refund_number, bill_id, refund_amount,
+                           refund_method, reason, notes, created_by, created_at
+                    FROM public.payment_refunds
+                    WHERE bill_id = %s
+                    ORDER BY created_at DESC, id DESC
                     """,
                     (bill_id,),
                 )

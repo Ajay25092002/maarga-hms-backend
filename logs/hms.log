@@ -1488,3 +1488,394 @@ Traceback (most recent call last):
     )
     ^
 TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'
+2026-10-17 22:20:05 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 270, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<37 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: missing FROM-clause entry for table "updater"
+LINE 5:                         updater.full_name AS updated_by_name...
+                                ^
+
+2026-10-17 22:20:09 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 270, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<37 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: missing FROM-clause entry for table "updater"
+LINE 5:                         updater.full_name AS updated_by_name...
+                                ^
+
+2026-10-17 22:20:12 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 270, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<37 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: missing FROM-clause entry for table "updater"
+LINE 5:                         updater.full_name AS updated_by_name...
+                                ^
+
+2026-10-17 22:20:16 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 270, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<37 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: missing FROM-clause entry for table "updater"
+LINE 5:                         updater.full_name AS updated_by_name...
+                                ^
+
+2026-10-17 22:22:08 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 277, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:09 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 277, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:09 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 277, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:09 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 277, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:09 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 277, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:12 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:22:14 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:24:02 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 52, in list_bills_service
+    where_clause, parameters = build_bill_filters(
+                               ~~~~~~~~~~~~~~~~~~^
+        search,
+        ^^^^^^^
+    ...<5 lines>...
+        billed_by=billed_by,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'
+2026-10-17 22:24:04 | ERROR    | Services.bill_query_service | Unexpected error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 52, in list_bills_service
+    where_clause, parameters = build_bill_filters(
+                               ~~~~~~~~~~~~~~~~~~^
+        search,
+        ^^^^^^^
+    ...<5 lines>...
+        billed_by=billed_by,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+TypeError: build_bill_filters() got an unexpected keyword argument 'billed_by'
+2026-10-17 22:26:23 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:26:25 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:27:35 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:27:37 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:27:38 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 117, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<72 lines>...
+        tuple(parameters + [page_size, offset]),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:29:06 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 274, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:29:07 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 274, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:29:08 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 274, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:29:08 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 274, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
+2026-10-17 22:29:08 | ERROR    | Services.bill_query_service | Database error retrieving bill 2.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 274, in get_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<41 lines>...
+        (bill_id,),
+        ^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.DuplicateAlias: table name "bill_creator" specified more than once
+
