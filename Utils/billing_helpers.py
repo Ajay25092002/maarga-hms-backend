@@ -15,7 +15,10 @@ def get_db_connection():
     if not database_url:
         raise RuntimeError("DATABASE_URL is not configured.")
 
-    return psycopg2.connect(database_url)
+    return psycopg2.connect(
+        database_url,
+        options="-c timezone=Asia/Kolkata",
+    )
 
 
 def ensure_payment_table(cursor):
