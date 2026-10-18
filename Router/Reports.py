@@ -1,4 +1,6 @@
+from datetime import datetime
 from datetime import date
+from zoneinfo import ZoneInfo
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -52,13 +54,12 @@ def get_report(
         raise HTTPException(status_code=403, detail="You do not have permission to view reports.")
     if report_type not in REPORTS:
         raise HTTPException(status_code=404, detail="Report not found.")
-    # Exports must always be bounded by an explicit date range. Enforce this
-    # on the server as well as in the UI so direct API requests cannot export
-    # the entire report history accidentally.
-    if export_all and (date_from is None or date_to is None):
+    # Every report request is bounded to an explicit date range, including
+    # direct API calls. The UI supplies the last seven Indian calendar days by default.
+    if date_from is None or date_to is None:
         raise HTTPException(
             status_code=422,
-            detail="Both date_from and date_to are required to download a report.",
+            detail="Both date_from and date_to are required for a report.",
         )
     if (date_from is None) != (date_to is None):
         raise HTTPException(
@@ -67,6 +68,9 @@ def get_report(
         )
     if date_from and date_to and date_from > date_to:
         raise HTTPException(status_code=422, detail="Start date must be on or before end date.")
+    today_india = datetime.now(ZoneInfo("Asia/Kolkata")).date()
+    if date_from > today_india or date_to > today_india:
+        raise HTTPException(status_code=422, detail="Future report dates are not allowed.")
     filters = {
         "date_from": date_from.isoformat() if date_from else None,
         "date_to": date_to.isoformat() if date_to else None,

@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from decimal import Decimal
 
 import psycopg2
@@ -119,13 +118,12 @@ def record_payment_service(
                         notes,
                         created_by
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s)
                     RETURNING *
                     """,
                     (
                         bill_id,
                         payload.amount,
-                        payload.payment_date or datetime.now(timezone.utc),
                         payload.payment_method,
                         payload.reference_number,
                         payload.notes,

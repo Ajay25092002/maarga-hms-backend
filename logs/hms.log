@@ -1,0 +1,48 @@
+2026-10-19 01:03:22 | ERROR    | Services.billing_service | Unexpected error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 504, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<78 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-19 01:03:28 | ERROR    | Services.billing_service | Unexpected error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 504, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<78 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting
+2026-10-19 01:04:40 | ERROR    | Services.billing_service | Unexpected error while creating a bill.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 504, in create_bill_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<78 lines>...
+        ),
+        ^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: not all arguments converted during string formatting

@@ -525,7 +525,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         created_by
                     )
                     VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s,
+                        %s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s, %s,
                         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     )
                     RETURNING *
@@ -533,7 +533,6 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                     (
                         payload.bill_type,
                         patient["id"],
-                        payload.bill_date or datetime.now(timezone.utc),
                         payload.department,
                         (
                             payload.room_type_id
@@ -681,30 +680,24 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if not bill:
                     raise HTTPException(status_code=404, detail="Bill not found.")
 
-                # Editing is prohibited as soon as any payment record exists,
-                # regardless of whether the bill is partially or fully paid.
-                # Check payment-record existence, not the net paid amount, so
-                # refunds do not make a previously paid bill editable again.
+                # A bill may be edited after partial/full payment, but its revised
+                # total must not fall below the amount currently retained by the
+                # hospital (gross payments less bill-level refunds). The bill row
+                # is locked above, and payments/refunds lock the same bill row in
+                # their transaction workflows, preventing concurrent bypasses.
                 cursor.execute(
                     """
-                    SELECT EXISTS (
-                        SELECT 1
-                        FROM public.bill_payments
-                        WHERE bill_id = %s
-                    ) AS has_registered_payment
+                    SELECT
+                        COALESCE((SELECT SUM(amount) FROM public.bill_payments WHERE bill_id = %s), 0) AS gross_paid,
+                        COALESCE((SELECT SUM(refund_amount) FROM public.payment_refunds WHERE bill_id = %s), 0) AS total_refunded
                     """,
-                    (bill_id,),
+                    (bill_id, bill_id),
                 )
-                payment_check = cursor.fetchone()
-                if payment_check and payment_check["has_registered_payment"]:
-                    raise HTTPException(
-                        status_code=409,
-                        detail=(
-                            "This bill cannot be edited because a payment has "
-                            "already been registered. Bills with partial or "
-                            "full payments cannot be edited."
-                        ),
-                    )
+                financials = cursor.fetchone()
+                from decimal import Decimal
+                gross_paid = Decimal(str(financials["gross_paid"] or 0))
+                total_refunded = Decimal(str(financials["total_refunded"] or 0))
+                net_paid = max(gross_paid - total_refunded, Decimal("0.00"))
 
                 if bill["bill_type"] != payload.bill_type:
                     raise HTTPException(status_code=422, detail="Bill type cannot be changed.")
@@ -766,10 +759,19 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if bill_discount > remaining:
                     raise HTTPException(status_code=422, detail="The bill discount cannot exceed the amount remaining after item discounts.")
                 total_amount = money(remaining - bill_discount + gst_total)
+                if total_amount < net_paid:
+                    raise HTTPException(
+                        status_code=409,
+                        detail=(
+                            f"The revised bill total (₹{total_amount:,.2f}) cannot be less than "
+                            f"the net amount already paid (₹{net_paid:,.2f})."
+                        ),
+                    )
 
                 cursor.execute("""
                     UPDATE public.bills SET
-                        bill_date = %s, department = %s, doctor_id = %s, doctor_name = %s,
+                        -- The original bill creation timestamp is immutable.
+                        department = %s, doctor_id = %s, doctor_name = %s,
                         psychologist_id = %s, psychologist_name = %s, subtotal = %s,
                         discount_amount = %s, total_amount = %s, notes = %s,
                         admission_date = %s, discharge_date = %s, bed_number = %s,
@@ -779,7 +781,7 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     WHERE id = %s
                     RETURNING *
                 """, (
-                    payload.bill_date or bill["bill_date"], payload.department,
+                    payload.department,
                     payload.doctor_id, context.get("doctor_name") if payload.doctor_id else payload.doctor_name,
                     payload.psychologist_id,
                     context.get("psychologist_name") if payload.psychologist_id else payload.psychologist_name,

@@ -1,5 +1,6 @@
 
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 from typing import Literal, Optional
 
@@ -162,6 +163,15 @@ class CreateBillRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_bill_context(self):
+        today_india = datetime.now(ZoneInfo("Asia/Kolkata")).date()
+        for item in self.items:
+            if item.service_date and item.service_date > today_india:
+                raise ValueError("Service date cannot be in the future.")
+        for label, value in (("Admission", self.admission_date), ("Discharge", self.discharge_date)):
+            if value is not None:
+                candidate = value if value.tzinfo else value.replace(tzinfo=ZoneInfo("Asia/Kolkata"))
+                if candidate.astimezone(ZoneInfo("Asia/Kolkata")).date() > today_india:
+                    raise ValueError(f"{label} date cannot be in the future.")
         if self.bill_type == "IP":
             if self.room_type_id is None:
                 raise ValueError(
