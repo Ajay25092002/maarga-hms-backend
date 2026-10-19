@@ -46,3 +46,85 @@ Traceback (most recent call last):
     return super().execute(query, vars)
            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
 TypeError: not all arguments converted during string formatting
+2026-10-19 16:57:04 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 68, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<33 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.SyntaxError: syntax error at or near "AS"
+LINE 26:                         ) AS outstanding,
+                                   ^
+
+2026-10-19 16:57:07 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 68, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<33 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.SyntaxError: syntax error at or near "AS"
+LINE 26:                         ) AS outstanding,
+                                   ^
+
+2026-10-19 16:57:07 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 68, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<33 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.SyntaxError: syntax error at or near "AS"
+LINE 26:                         ) AS outstanding,
+                                   ^
+
+2026-10-19 16:57:08 | ERROR    | Services.bill_query_service | Database error while listing bills.
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\bill_query_service.py", line 68, in list_bills_service
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        f"""
+        ^^^^
+    ...<33 lines>...
+        tuple(parameters),
+        ^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.SyntaxError: syntax error at or near "AS"
+LINE 26:                         ) AS outstanding,
+                                   ^
+
+2026-10-19 23:03:05 | ERROR    | Services.payment_pdf_service | Unable to generate payment receipt PDF for payment 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\payment_pdf_service.py", line 497, in generate_payment_receipt_pdf
+    details.append([
+    ^^^^^^^
+UnboundLocalError: cannot access local variable 'details' where it is not associated with a value

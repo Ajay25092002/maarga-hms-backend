@@ -10,7 +10,7 @@ from Schemas.billing_schema import (
     UpdateBillRequest,
     RecordPaymentRequest,
 )
-from Services.billing_service import create_bill_service, update_bill_service
+from Services.billing_service import create_bill_service, update_bill_service, add_nurse_ip_service
 from Services.bill_query_service import (
     get_bill_service,
     list_bills_service,
@@ -61,8 +61,24 @@ def list_bills(
     date_from: Optional[date] = Query(default=None),
     date_to: Optional[date] = Query(default=None),
     billed_by: Optional[int] = Query(default=None, ge=1),
+    current_user: dict = Depends(get_current_user),
 ):
     """List bills with search, pagination, date, and payment filters."""
+    if bill_type == "IP":
+        permissions = current_user.get("user", {}).get("permissions", {})
+        has_ip_view = (
+            permissions.get("bills.ip.view") is True
+            if isinstance(permissions, dict)
+            else "bills.ip.view" in permissions
+        )
+        has_nurse_view = (
+            permissions.get("nurse.view") is True
+            if isinstance(permissions, dict)
+            else "nurse.view" in permissions
+        )
+        if not (has_ip_view or has_nurse_view):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=403, detail="You do not have permission to view IP bills or the Nurse section.")
     return list_bills_service(
         page=page,
         page_size=page_size,
@@ -102,12 +118,58 @@ def get_ip_bill_pdf_legacy(
     return generate_ip_bill_pdf(bill_id)
 
 
+@router.post("/{bill_id}/nurse-services", status_code=status.HTTP_201_CREATED)
+def add_nurse_service(
+    payload: dict,
+    bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
+):
+    """Restricted append-only endpoint for nurse service additions."""
+    permissions = current_user.get("user", {}).get("permissions", {})
+    required_permission = "nurse.add_services"
+    allowed = (
+        permissions.get(required_permission) is True
+        if isinstance(permissions, dict)
+        else required_permission in permissions
+    )
+    if not allowed:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to add services from the Nurse section.",
+        )
+    user_id = current_user["user"]["id"]
+    try:
+        service_id = int(payload.get("service_id"))
+        quantity = payload.get("quantity", 1)
+        service_date_value = payload.get("service_date")
+        from datetime import date
+        service_date = date.fromisoformat(service_date_value) if service_date_value else None
+    except (TypeError, ValueError):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=422, detail="Provide a valid service_id, quantity and service_date.") from None
+    return add_nurse_ip_service(bill_id, service_id, quantity, service_date, user_id)
+
+
 @router.get("/{bill_id}")
 def get_bill(
     bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
 ):
     """Retrieve bill details, service items, and payment history."""
-    return get_bill_service(bill_id)
+    bill = get_bill_service(bill_id)
+    permissions = current_user.get("user", {}).get("permissions", {})
+    bill_type = str(bill.get("bill_type") or "").upper()
+    if bill_type == "IP":
+        allowed_keys = ("bills.ip.view", "nurse.view")
+        allowed = any(
+            permissions.get(key) is True if isinstance(permissions, dict) else key in permissions
+            for key in allowed_keys
+        )
+        if not allowed:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=403, detail="You do not have permission to view this IP bill.")
+    return bill
 
 
 
@@ -118,6 +180,12 @@ def update_bill(
     current_user: dict = Depends(get_current_user),
 ):
     """Update an existing OP/IP bill and its service items."""
+    permissions = current_user.get("user", {}).get("permissions", {})
+    required = "bills.ip.edit" if payload.bill_type == "IP" else "bills.op.edit"
+    allowed = permissions.get(required) is True if isinstance(permissions, dict) else required in permissions
+    if not allowed:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=403, detail="You do not have permission to edit this bill.")
     user_id = current_user["user"]["id"]
     return update_bill_service(bill_id, payload, updated_by=user_id)
 
@@ -129,9 +197,12 @@ def update_bill(
 def record_payment(
     payload: RecordPaymentRequest,
     bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
 ):
     """Record a payment against an existing bill."""
+    user_id = current_user["user"]["id"]
     return record_payment_service(
         bill_id,
         payload,
+        created_by=user_id,
     )

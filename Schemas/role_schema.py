@@ -34,6 +34,10 @@ ROLE_PERMISSIONS = {
     "bills.ip.view": "View IP Bills",
     "bills.ip.create": "Create IP Bills",
     "bills.ip.edit": "Edit IP Bills",
+
+    # Nurse module (view bills separately from permission to add services)
+    "nurse.view": "View Nurse Section",
+    "nurse.add_services": "Add Services to IP Bills (Nurse)",
     
 
     # Payments & Receipts

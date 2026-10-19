@@ -819,3 +819,80 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
     except Exception:
         logger.exception("Unexpected error while updating bill %s", bill_id)
         raise HTTPException(status_code=500, detail="An unexpected error occurred while updating the bill.")
+
+
+NURSE_ALLOWED_SERVICE_GROUPS = {
+    "clinical services",
+    "medical equipment",
+    "procedures",
+    "psychiatry charges",
+    "radiology charges",
+    "pathology charges",
+}
+
+
+def add_nurse_ip_service(bill_id: int, service_id: int, quantity, service_date, updated_by: int):
+    """Append one allowed IP service without permitting nurse edits/removals."""
+    from decimal import Decimal
+    from datetime import date
+    connection = None
+    try:
+        connection = get_db_connection()
+        with connection:
+            with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute("SELECT * FROM public.bills WHERE id = %s FOR UPDATE", (bill_id,))
+                bill = cursor.fetchone()
+                if not bill:
+                    raise HTTPException(status_code=404, detail="Bill not found.")
+                if str(bill["bill_type"]).upper() != "IP":
+                    raise HTTPException(status_code=422, detail="Nurse services can only be added to IP bills.")
+                resolved = resolve_service_price(
+                    cursor, service_id, "IP", None, bill.get("room_type_id")
+                )
+                if resolved["service_group_name"].strip().lower() not in NURSE_ALLOWED_SERVICE_GROUPS:
+                    raise HTTPException(status_code=403, detail="Nurses can add services only from the six permitted service groups.")
+                qty = Decimal(str(quantity))
+                if qty <= 0:
+                    raise HTTPException(status_code=422, detail="Quantity must be greater than zero.")
+                if service_date and service_date > date.today():
+                    raise HTTPException(status_code=422, detail="Service date cannot be in the future.")
+                rate = money(resolved["rate"])
+                amount = money(rate * qty)
+                cursor.execute("""
+                    INSERT INTO public.bill_items (
+                        bill_id, service_id, service_group_id, service_price_id,
+                        service_name, service_group_name, service_date, rate, quantity,
+                        amount, discount_amount, net_amount, gst_amount
+                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,0)
+                    RETURNING id
+                """, (bill_id, resolved["service_id"], resolved["service_group_id"],
+                      resolved["service_price_id"], resolved["service_name"],
+                      resolved["service_group_name"], service_date, rate, qty, amount, amount))
+                item_id = cursor.fetchone()["id"]
+                cursor.execute("""
+                    SELECT COALESCE(SUM(amount),0) AS subtotal,
+                           COALESCE(SUM(discount_amount),0) AS item_discounts,
+                           COALESCE(SUM(gst_amount),0) AS gst_total
+                    FROM public.bill_items WHERE bill_id = %s
+                """, (bill_id,))
+                sums = cursor.fetchone()
+                subtotal = money(sums["subtotal"])
+                item_discounts = money(sums["item_discounts"])
+                gst_total = money(sums["gst_total"])
+                bill_discount = money(bill.get("discount_amount") or 0)
+                total = money(subtotal - item_discounts - bill_discount + gst_total)
+                cursor.execute("""
+                    UPDATE public.bills SET subtotal=%s, total_amount=%s,
+                        updated_by=%s, updated_at=CURRENT_TIMESTAMP
+                    WHERE id=%s
+                """, (subtotal, total, updated_by, bill_id))
+                return {"success": True, "bill_id": bill_id, "item_id": item_id,
+                        "service_name": resolved["service_name"], "total_amount": float(total)}
+    except HTTPException:
+        raise
+    except psycopg2.Error:
+        logger.exception("Database error adding nurse service to IP bill %s", bill_id)
+        raise HTTPException(status_code=500, detail="Unable to add service to IP bill.")
+    finally:
+        if connection is not None:
+            connection.close()

@@ -34,7 +34,7 @@ def record_payment_service(
                 # Lock the bill to prevent concurrent overpayments.
                 cursor.execute(
                     """
-                    SELECT id, total_amount
+                    SELECT id, total_amount, bill_type
                     FROM public.bills
                     WHERE id = %s
                     FOR UPDATE
@@ -94,16 +94,14 @@ def record_payment_service(
                         detail="Payment amount must be greater than zero.",
                     )
 
-                if payload.amount > outstanding:
-                    raise HTTPException(
-                        status_code=422,
-                        detail={
-                            "message": (
-                                "Payment exceeds the outstanding balance."
-                            ),
-                            "outstanding_amount": float(outstanding),
-                        },
-                    )
+                if str(bill.get("bill_type", "")).upper() == "OP":
+                    if gross_paid + payload.amount > total:
+                        raise HTTPException(
+                            status_code=422,
+                            detail="Payment amount cannot exceed the remaining OP bill balance.",
+                        )
+
+                # IP bills intentionally allow overpayment; retained excess is the IP deposit.
 
                 # Save the authenticated user's ID as the payment creator.
                 # PostgreSQL generates receipt_number automatically.

@@ -333,7 +333,7 @@ def _calculate_totals(
     total_payments = sum(_money(payment.get("amount")) for payment in payments)
     total_refunds = sum(_money(refund.get("refund_amount")) for refund in refunds)
     net_paid = max(0.0, total_payments - total_refunds)
-    balance = max(0.0, net_total - total_payments)
+    balance = max(0.0, net_total - net_paid)
 
     return subtotal, discount_total, net_total, total_payments, total_refunds, net_paid, balance
 
@@ -827,10 +827,15 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             Spacer(1, 1 * mm),
             _transaction_table(payments, styles, True, False),
             Spacer(1, 2 * mm),
-            _p("REFUND HISTORY", styles["bold"]),
-            Spacer(1, 1 * mm),
-            _transaction_table(refunds, styles, True, True),
-            Spacer(1, 4 * mm),
+            *(
+                [
+                    _p("REFUND HISTORY", styles["bold"]),
+                    Spacer(1, 1 * mm),
+                    _transaction_table(refunds, styles, True, True),
+                    Spacer(1, 4 * mm),
+                ]
+                if refunds else []
+            ),
             _p(
                 f"Printed By : {_display(bill.get('printed_by') or 'System')} "
                 f"Prepared By : {_display(bill.get('prepared_by') or 'System')} "
@@ -935,10 +940,15 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             Spacer(1, 1 * mm),
             _transaction_table(payments, styles, False, False),
             Spacer(1, 2 * mm),
-            _p("REFUND HISTORY", styles["bold"]),
-            Spacer(1, 1 * mm),
-            _transaction_table(refunds, styles, False, True),
-            Spacer(1, 3 * mm),
+            *(
+                [
+                    _p("REFUND HISTORY", styles["bold"]),
+                    Spacer(1, 1 * mm),
+                    _transaction_table(refunds, styles, False, True),
+                    Spacer(1, 3 * mm),
+                ]
+                if refunds else []
+            ),
         ])
 
         gst_total = sum(
@@ -955,6 +965,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             [_p("Total Payments :", styles["normal"]), _p(f"{total_payments:,.2f}", styles["normal"])],
             [_p("Total Refunds :", styles["normal"]), _p(f"{total_refunds:,.2f}", styles["normal"])],
             [_p("Net Paid Amount :", styles["bold"]), _p(f"{net_paid:,.2f}", styles["bold"])],
+            *([[ _p("Deposit Balance :", styles["bold"]), _p(f"{max(0.0, net_paid - net_total):,.2f}", styles["bold"]) ]] if not is_op else []),
             [_p("Balance :", styles["bold"]), _p(f"{balance:,.2f}", styles["bold"])],
             [
                 _p("Remarks:", styles["normal"]),

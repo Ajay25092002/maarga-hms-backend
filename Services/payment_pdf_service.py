@@ -489,6 +489,11 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
         total_paid = max(gross_paid - total_refunded, Decimal("0.00"))
         outstanding = max(Decimal("0.00"), bill_total - gross_paid)
         amount = _money(payment.get("amount"))
+        deposit_balance = max(
+            Decimal("0.00"),
+            total_paid - bill_total,
+        )
+        
 
         # Patient identifier is patient_id. Do not depend on the
         # removed registration_number database column.
@@ -620,6 +625,11 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                 _p(f"{outstanding:,.2f}", styles["right"]),
             ],
         ]
+        if bill_type == "IP":
+            details.append([
+                _p("Deposit Balance", styles["bold"]),
+                _p(f"{deposit_balance:,.2f}", styles["right"]),
+            ])
 
         detail_table = Table(
             details,
