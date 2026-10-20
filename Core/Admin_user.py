@@ -15,59 +15,52 @@ logger = logging.getLogger(__name__)
 
 ROLE_NAME = "Admin"
 
-# Preserve the Admin permissions used by the application.
+# Keep permission keys consistent with ROLE_PERMISSIONS.
 ADMIN_PERMISSIONS = {
-    "dashboard": {
-        "view": True,
-    },
-    "op_patients": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "ip_patients": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "op_bills": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "ip_bills": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "payments": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "users": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "roles": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
-    "pricing": {
-        "view": True,
-        "create": True,
-        "edit": True,
-        "delete": True,
-    },
+    "dashboard.view": True,
+
+    "patients.op.view": True,
+    "patients.op.create": True,
+    "patients.op.edit": True,
+
+    "patients.ip.view": True,
+    "patients.ip.create": True,
+    "patients.ip.edit": True,
+
+    "bills.op.view": True,
+    "bills.op.create": True,
+    "bills.op.edit": True,
+
+    "bills.ip.view": True,
+    "bills.ip.create": True,
+    "bills.ip.edit": True,
+
+    "nurse.view": True,
+    "nurse.add_services": True,
+
+    "payments.view": True,
+    "payments.create": True,
+
+    "refunds.view": True,
+    "refunds.create": True,
+
+    "reports.view": True,
+    "reports.download": True,
+
+    "users.view": True,
+    "users.create": True,
+    "users.edit": True,
+    "users.delete": True,
+
+    "roles.view": True,
+    "roles.create": True,
+    "roles.edit": True,
+    "roles.delete": True,
+
+    "pricing.view": True,
+    "pricing.create": True,
+    "pricing.edit": True,
+    "pricing.import": True,
 }
 
 
@@ -96,10 +89,11 @@ def hash_admin_password(password: str) -> str:
 
 def create_initial_admin():
     """
-    Create the initial Admin only when ADMIN_USER_ID does not already exist.
+    Create the initial Admin when the configured login ID and email
+    do not already exist.
 
-    If the configured User ID already exists, skip initial Admin creation
-    and allow the application to continue starting.
+    Existing users are not modified. The Admin role permissions are
+    synchronized when a new initial Admin user is created.
     """
 
     database_url = os.getenv("DATABASE_URL")
@@ -117,7 +111,8 @@ def create_initial_admin():
     }
 
     missing_values = [
-        key for key, value in required_values.items()
+        key
+        for key, value in required_values.items()
         if not value or not value.strip()
     ]
 
@@ -127,6 +122,10 @@ def create_initial_admin():
             + ", ".join(missing_values)
         )
 
+    admin_user_id = admin_user_id.strip()
+    admin_email = admin_email.strip()
+    admin_full_name = admin_full_name.strip()
+
     connection = None
     cursor = None
 
@@ -134,14 +133,12 @@ def create_initial_admin():
         connection = psycopg2.connect(database_url)
         cursor = connection.cursor(cursor_factory=RealDictCursor)
 
-        # ---------------------------------------------------------
-        # 1. If the configured User ID exists, skip creation.
-        # ---------------------------------------------------------
+        # 1. Check whether the configured login ID already exists.
         cursor.execute(
             """
             SELECT id, login_id
             FROM public.users
-            WHERE login_id = %s
+            WHERE LOWER(login_id) = LOWER(%s)
             LIMIT 1
             """,
             (admin_user_id,),
@@ -153,13 +150,12 @@ def create_initial_admin():
             logger.info(
                 "User ID '%s' already exists. "
                 "Skipping initial Admin creation.",
-                admin_user_id,
+                existing_user["login_id"],
             )
+            connection.rollback()
             return
 
-        # ---------------------------------------------------------
-        # 2. If the email already exists, skip creation as well.
-        # ---------------------------------------------------------
+        # 2. Prevent duplicate email addresses.
         cursor.execute(
             """
             SELECT id, login_id
@@ -179,11 +175,10 @@ def create_initial_admin():
                 admin_email,
                 existing_email["login_id"],
             )
+            connection.rollback()
             return
 
-        # ---------------------------------------------------------
         # 3. Find or create the Admin role.
-        # ---------------------------------------------------------
         cursor.execute(
             """
             SELECT id, name
@@ -199,11 +194,12 @@ def create_initial_admin():
         if admin_role:
             role_id = admin_role["id"]
 
-            # Preserve/update the permissions required for Admin.
+            # Synchronize permissions with the canonical catalog.
             cursor.execute(
                 """
                 UPDATE public.roles
-                SET permissions = %s
+                SET permissions = %s,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
                 """,
                 (Json(ADMIN_PERMISSIONS), role_id),
@@ -222,14 +218,10 @@ def create_initial_admin():
             admin_role = cursor.fetchone()
             role_id = admin_role["id"]
 
-        # ---------------------------------------------------------
-        # 4. Hash the password.
-        # ---------------------------------------------------------
+        # 4. Hash the configured Admin password.
         password_hash = hash_admin_password(admin_password)
 
-        # ---------------------------------------------------------
         # 5. Create the initial Admin user.
-        # ---------------------------------------------------------
         cursor.execute(
             """
             INSERT INTO public.users (
@@ -265,6 +257,7 @@ def create_initial_admin():
     except Exception:
         if connection:
             connection.rollback()
+
         logger.exception("Initial Admin initialization failed.")
         raise
 
