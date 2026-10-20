@@ -151,12 +151,15 @@ class CreateBillRequest(BaseModel):
         if not items:
             raise ValueError("At least one bill item is required.")
 
-        service_ids = [item.service_id for item in items]
+        service_keys = [
+            (item.service_id, item.service_date)
+            for item in items
+        ]
 
-        if len(service_ids) != len(set(service_ids)):
+        if len(service_keys) != len(set(service_keys)):
             raise ValueError(
-                "A service can appear only once in a bill. "
-                "Combine quantities for duplicate services."
+                "A service can appear only once per date. "
+                "Combine quantities for duplicate services on the same date."
             )
 
         return items
@@ -179,7 +182,23 @@ class CreateBillRequest(BaseModel):
                 )
 
             if self.admission_date and self.discharge_date:
-                if self.discharge_date < self.admission_date:
+                india_tz = ZoneInfo("Asia/Kolkata")
+
+                # Pydantic may parse one value as timezone-aware (for example,
+                # an ISO timestamp ending in "Z") and the other as naive.
+                # Normalize both to the hospital's timezone before comparing.
+                admission = (
+                    self.admission_date.replace(tzinfo=india_tz)
+                    if self.admission_date.tzinfo is None
+                    else self.admission_date.astimezone(india_tz)
+                )
+                discharge = (
+                    self.discharge_date.replace(tzinfo=india_tz)
+                    if self.discharge_date.tzinfo is None
+                    else self.discharge_date.astimezone(india_tz)
+                )
+
+                if discharge < admission:
                     raise ValueError(
                         "Discharge date cannot be earlier than "
                         "admission date."

@@ -680,6 +680,19 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if not bill:
                     raise HTTPException(status_code=404, detail="Bill not found.")
 
+                # Lock editing once an OP bill is fully paid, or an IP bill is discharged.
+                if str(bill.get("bill_type") or "").upper() == "IP" and bill.get("discharge_date"):
+                    raise HTTPException(status_code=409, detail="This IP bill cannot be edited after the discharge date has been recorded.")
+                if str(bill.get("bill_type") or "").upper() == "OP":
+                    cursor.execute(
+                        "SELECT COALESCE(SUM(amount), 0) AS gross_paid FROM public.bill_payments WHERE bill_id = %s",
+                        (bill_id,),
+                    )
+                    gross_paid_for_lock = Decimal(str(cursor.fetchone()["gross_paid"] or 0))
+                    bill_total_for_lock = Decimal(str(bill.get("total_amount") or 0))
+                    if bill_total_for_lock <= gross_paid_for_lock:
+                        raise HTTPException(status_code=409, detail="This OP bill cannot be edited because it has been fully paid.")
+
                 # A bill may be edited after partial/full payment, but its revised
                 # total must not fall below the amount currently retained by the
                 # hospital (gross payments less bill-level refunds). The bill row
@@ -846,6 +859,8 @@ def add_nurse_ip_service(bill_id: int, service_id: int, quantity, service_date, 
                     raise HTTPException(status_code=404, detail="Bill not found.")
                 if str(bill["bill_type"]).upper() != "IP":
                     raise HTTPException(status_code=422, detail="Nurse services can only be added to IP bills.")
+                if bill.get("discharge_date"):
+                    raise HTTPException(status_code=409, detail="Services cannot be added after the IP discharge date has been recorded.")
                 resolved = resolve_service_price(
                     cursor, service_id, "IP", None, bill.get("room_type_id")
                 )

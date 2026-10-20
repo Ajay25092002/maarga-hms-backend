@@ -333,7 +333,8 @@ def _calculate_totals(
     total_payments = sum(_money(payment.get("amount")) for payment in payments)
     total_refunds = sum(_money(refund.get("refund_amount")) for refund in refunds)
     net_paid = max(0.0, total_payments - total_refunds)
-    balance = max(0.0, net_total - net_paid)
+    # Outstanding is based on original payments, not net paid after refunds.
+    balance = max(0.0, net_total - total_payments)
 
     return subtotal, discount_total, net_total, total_payments, total_refunds, net_paid, balance
 

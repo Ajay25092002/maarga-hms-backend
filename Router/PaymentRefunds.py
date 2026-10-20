@@ -63,7 +63,7 @@ def _filters(search=None, bill_id=None, refund_method=None, date_from=None, date
 
 def _bill_refund_balance(cursor, bill_id: int, lock=False):
     cursor.execute(
-        f"SELECT id, bill_number, bill_type, total_amount FROM public.bills WHERE id = %s {'FOR UPDATE' if lock else ''}",
+        f"SELECT id, bill_number, bill_type, total_amount, discharge_date FROM public.bills WHERE id = %s {'FOR UPDATE' if lock else ''}",
         (bill_id,),
     )
     bill = cursor.fetchone()
@@ -112,6 +112,8 @@ def create_payment_refund(payload: CreatePaymentRefundRequest, current_user: dic
                 balance = _bill_refund_balance(cursor, payload.bill_id, lock=True)
                 if not balance:
                     raise HTTPException(status_code=404, detail="Bill not found.")
+                if str(balance.get("bill_type") or "").upper() == "IP" and not balance.get("discharge_date"):
+                    raise HTTPException(status_code=409, detail="IP bills can be refunded only after a discharge date has been recorded.")
                 total = balance["bill_total"]
                 paid = balance["total_paid"]
                 refunded = balance["total_refunded"]
@@ -243,6 +245,8 @@ def get_bill_refund_balance(bill_id: int = Path(gt=0)):
             balance = _bill_refund_balance(cursor, bill_id)
             if not balance:
                 raise HTTPException(status_code=404, detail="Bill not found.")
+            if str(balance.get("bill_type") or "").upper() == "IP" and not balance.get("discharge_date"):
+                raise HTTPException(status_code=409, detail="IP bills can be refunded only after a discharge date has been recorded.")
             return serialize_row(balance)
     except HTTPException:
         raise

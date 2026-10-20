@@ -15,9 +15,17 @@ from Utils.billing_helpers import (
 logger = get_logger(__name__)
 
 
-# Outstanding is based on original payments. Refunds are tracked separately
-# and never reopen a fully-paid bill.
-NET_PAID_SQL = "GREATEST(COALESCE(payments.amount_paid, 0) - COALESCE(refunds.total_refunds, 0), 0)"
+# Shared financial formulas for OP and IP billing:
+# gross_paid      = original payments received
+# total_refunded  = refunds recorded against the bill
+# net_paid        = gross_paid - total_refunded
+# outstanding     = total_amount - gross_paid (refunds do not reopen a bill)
+# deposit_balance = net_paid - total_amount (IP bills only)
+GROSS_PAID_SQL = "COALESCE(payments.amount_paid, 0)"
+TOTAL_REFUNDED_SQL = "COALESCE(refunds.total_refunds, 0)"
+NET_PAID_SQL = f"({GROSS_PAID_SQL} - {TOTAL_REFUNDED_SQL})"
+OUTSTANDING_SQL = f"GREATEST(COALESCE(b.total_amount, 0) - {GROSS_PAID_SQL}, 0)"
+DEPOSIT_BALANCE_SQL = f"GREATEST({NET_PAID_SQL} - COALESCE(b.total_amount, 0), 0)"
 
 
 def list_bills_service(
@@ -64,7 +72,7 @@ def list_bills_service(
                 )
                 total = cursor.fetchone()["total"]
 
-                # Financial summary uses original payments for paid and outstanding totals; refunds are separate.
+                # Outstanding is based on gross payments; refunds are reported separately.
                 cursor.execute(
                     f"""
                     SELECT
@@ -74,25 +82,14 @@ def list_bills_service(
                         ) AS billed,
 
                         COALESCE(
-                            SUM(
-                                LEAST(
-                                    {NET_PAID_SQL},
-                                    GREATEST(b.total_amount, 0)
-                                )
-                            ),
+                            SUM(LEAST({GROSS_PAID_SQL}, GREATEST(b.total_amount, 0))),
                             0
                         ) AS received,
 
                         COALESCE(
-                                SUM(
-                                    GREATEST(
-                                        COALESCE(b.total_amount, 0)
-                                        - COALESCE(payments.amount_paid, 0),
-                                        0
-                                    )
-                                ),
-                                0
-                            ) AS outstanding,
+                            SUM({OUTSTANDING_SQL}),
+                            0
+                        ) AS outstanding,
                         COALESCE(
                             SUM(COALESCE(refunds.total_refunds, 0)),
                             0
@@ -153,21 +150,18 @@ def list_bills_service(
 
                         {NET_PAID_SQL} AS amount_paid,
 
-                        GREATEST(
-                            COALESCE(b.total_amount, 0) - {NET_PAID_SQL},
-                            0
-                        ) AS outstanding_amount,
+                        {OUTSTANDING_SQL} AS outstanding_amount,
 
                         CASE WHEN b.bill_type = 'IP' THEN
-                            GREATEST(({NET_PAID_SQL}) - b.total_amount, 0)
+                            {DEPOSIT_BALANCE_SQL}
                         ELSE 0 END AS deposit_balance,
 
                         CASE
                             WHEN COALESCE(b.total_amount, 0) <= 0
                                 THEN 'Paid'
-                            WHEN {NET_PAID_SQL} >= COALESCE(b.total_amount, 0)
+                            WHEN {GROSS_PAID_SQL} >= COALESCE(b.total_amount, 0)
                                 THEN 'Paid'
-                            WHEN {NET_PAID_SQL} > 0
+                            WHEN {GROSS_PAID_SQL} > 0
                                 THEN 'Partially Paid'
                             ELSE 'Unpaid'
                         END AS payment_status,
@@ -295,21 +289,18 @@ def get_bill_service(bill_id: int):
 
                         {NET_PAID_SQL} AS amount_paid,
 
-                        GREATEST(
-                            COALESCE(b.total_amount, 0) - {NET_PAID_SQL},
-                            0
-                        ) AS outstanding_amount,
+                        {OUTSTANDING_SQL} AS outstanding_amount,
 
                         CASE WHEN b.bill_type = 'IP' THEN
-                            GREATEST(({NET_PAID_SQL}) - b.total_amount, 0)
+                            {DEPOSIT_BALANCE_SQL}
                         ELSE 0 END AS deposit_balance,
 
                         CASE
                             WHEN COALESCE(b.total_amount, 0) <= 0
                                 THEN 'Paid'
-                            WHEN {NET_PAID_SQL} >= COALESCE(b.total_amount, 0)
+                            WHEN {GROSS_PAID_SQL} >= COALESCE(b.total_amount, 0)
                                 THEN 'Paid'
-                            WHEN {NET_PAID_SQL} > 0
+                            WHEN {GROSS_PAID_SQL} > 0
                                 THEN 'Partially Paid'
                             ELSE 'Unpaid'
                         END AS payment_status,
@@ -396,7 +387,18 @@ def get_bill_service(bill_id: int):
                 result["total_refunds"] = refunded
                 result["amount_paid"] = net_paid
                 result["net_paid"] = net_paid
-                result["outstanding_amount"] = max(0.0, total_amount - net_paid)
+                # Refunds reduce net paid, but do not reopen a paid bill.
+                result["outstanding_amount"] = max(0.0, total_amount - gross_paid)
+                result["payment_status"] = (
+                    "Paid" if total_amount <= 0 or gross_paid >= total_amount
+                    else "Partially Paid" if gross_paid > 0
+                    else "Unpaid"
+                )
+                result["refund_status"] = (
+                    "Not Refunded" if refunded <= 0
+                    else "Fully Refunded" if refunded >= gross_paid
+                    else "Partially Refunded"
+                )
                 result["deposit_balance"] = (
                     max(0.0, net_paid - total_amount)
                     if str(result.get("bill_type", "")).upper() == "IP"
