@@ -178,7 +178,7 @@ class VerifyOTPRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    login_id: str = Field(min_length=4, max_length=20, pattern=r"^USR[0-9]{5,}$")
     password: str = Field(min_length=1, max_length=256)
 
 
@@ -186,7 +186,7 @@ class LoginRequest(BaseModel):
 # Shared authentication helpers
 # --------------------------------------------------
 
-def get_user_by_email(email: str):
+def get_user_by_login_id(login_id: str):
     connection = None
 
     try:
@@ -197,6 +197,7 @@ def get_user_by_email(email: str):
                 """
                 SELECT
                     u.id,
+                    u.login_id,
                     u.full_name,
                     u.email,
                     u.password_hash,
@@ -208,10 +209,10 @@ def get_user_by_email(email: str):
                 FROM public.users u
                 JOIN public.roles r
                     ON r.id = u.role_id
-                WHERE lower(trim(u.email)) = %s
+                WHERE upper(trim(u.login_id)) = %s
                 LIMIT 1
                 """,
-                (email,),
+                (login_id.upper(),)
             )
 
             return cursor.fetchone()
@@ -232,6 +233,7 @@ def get_user_by_id(user_id: int):
                 """
                 SELECT
                     u.id,
+                    u.login_id,
                     u.full_name,
                     u.email,
                     u.role_id,
@@ -271,6 +273,7 @@ def serialize_authenticated_user(row: dict) -> dict:
 
     return {
         "id": row["id"],
+        "login_id": row.get("login_id"),
         "full_name": row["full_name"],
         "email": row["email"],
         "role_id": row["role_id"],
@@ -311,10 +314,10 @@ def create_session_cookie(
 
 @router.post("/login")
 def login(data: LoginRequest, response: Response):
-    email = str(data.email).strip().lower()
+    login_id = data.login_id.strip().upper()
 
     try:
-        user = get_user_by_email(email)
+        user = get_user_by_login_id(login_id)
 
     except (psycopg2.Error, RuntimeError):
         logger.exception(
@@ -329,7 +332,7 @@ def login(data: LoginRequest, response: Response):
     if user is None:
         raise HTTPException(
             status_code=401,
-            detail="Invalid email or password.",
+            detail="Invalid User ID or password.",
         )
 
     stored_hash = user.get("password_hash") or ""
@@ -348,7 +351,7 @@ def login(data: LoginRequest, response: Response):
     if not password_matches:
         raise HTTPException(
             status_code=401,
-            detail="Invalid email or password.",
+            detail="Invalid User ID or password.",
         )
 
     if not user["user_is_active"]:

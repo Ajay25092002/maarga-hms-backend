@@ -6,287 +6,271 @@ import secrets
 import logging
 
 import psycopg2
-from dotenv import load_dotenv
 from psycopg2.extras import RealDictCursor, Json
+from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=False)
 
 logger = logging.getLogger(__name__)
 
-
-# ---------------------------------------------------------
-# ADMIN CONFIGURATION
-# ---------------------------------------------------------
-
 ROLE_NAME = "Admin"
 
+# Preserve the Admin permissions used by the application.
 ADMIN_PERMISSIONS = {
-    "dashboard.view": True,
-
-    "patients.op.create": True,
-    "patients.op.view": True,
-    "patients.ip.create": True,
-    "patients.ip.view": True,
-
-    "bills.op.view": True,
-    "bills.ip.view": True,
-    "payments.view": True,
-
-    "users.view": True,
-    "users.create": True,
-    "users.edit": True,
-    "users.delete": True,
-
-    "roles.view": True,
-    "roles.create": True,
-    "roles.edit": True,
-    "roles.delete": True,
-
-    "pricing.view": True,
-    "pricing.create": True,
-    "pricing.edit": True,
-    "pricing.import": True,
+    "dashboard": {
+        "view": True,
+    },
+    "op_patients": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "ip_patients": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "op_bills": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "ip_bills": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "payments": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "users": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "roles": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
+    "pricing": {
+        "view": True,
+        "create": True,
+        "edit": True,
+        "delete": True,
+    },
 }
 
 
-# ---------------------------------------------------------
-# PASSWORD HASHING
-# ---------------------------------------------------------
-
 def hash_admin_password(password: str) -> str:
-    """
-    Hash the password using the application's scrypt format.
-
-    Make sure this format matches the existing authentication
-    code used to verify user passwords.
-    """
+    """Hash the initial Admin password using scrypt."""
     salt = secrets.token_bytes(16)
+
+    n = 16384
+    r = 8
+    p = 1
 
     derived_key = hashlib.scrypt(
         password.encode("utf-8"),
         salt=salt,
-        n=2**14,
-        r=8,
-        p=1,
+        n=n,
+        r=r,
+        p=p,
         dklen=64,
     )
 
-    salt_text = base64.b64encode(salt).decode("ascii")
-    hash_text = base64.b64encode(derived_key).decode("ascii")
+    salt_b64 = base64.b64encode(salt).decode("utf-8")
+    key_b64 = base64.b64encode(derived_key).decode("utf-8")
 
-    return (
-        f"scrypt$16384$8$1${salt_text}${hash_text}"
-    )
+    return f"scrypt${n}${r}${p}${salt_b64}${key_b64}"
 
 
-# ---------------------------------------------------------
-# CREATE INITIAL ADMIN USER
-# ---------------------------------------------------------
-
-def create_initial_admin() -> None:
+def create_initial_admin():
     """
-    Create the initial Admin role and user.
+    Create the initial Admin only when ADMIN_USER_ID does not already exist.
 
-    Behavior:
-    - Runs after database initialization.
-    - Creates the Admin role if it does not exist.
-    - Creates the Admin user if the email does not exist.
-    - Does not overwrite an existing user's password.
-    - Does not silently modify existing role permissions.
+    If the configured User ID already exists, skip initial Admin creation
+    and allow the application to continue starting.
     """
 
     database_url = os.getenv("DATABASE_URL")
+    admin_user_id = os.getenv("ADMIN_USER_ID")
+    admin_email = os.getenv("ADMIN_EMAIL")
+    admin_full_name = os.getenv("ADMIN_FULL_NAME")
+    admin_password = os.getenv("ADMIN_PASSWORD")
 
-    admin_email = os.getenv("ADMIN_EMAIL", "").strip()
-    admin_full_name = os.getenv("ADMIN_FULL_NAME", "").strip()
-    admin_password = os.getenv("ADMIN_PASSWORD", "")
+    required_values = {
+        "DATABASE_URL": database_url,
+        "ADMIN_USER_ID": admin_user_id,
+        "ADMIN_EMAIL": admin_email,
+        "ADMIN_FULL_NAME": admin_full_name,
+        "ADMIN_PASSWORD": admin_password,
+    }
 
-    # Validate configuration before connecting to the database.
-    if not database_url:
+    missing_values = [
+        key for key, value in required_values.items()
+        if not value or not value.strip()
+    ]
+
+    if missing_values:
         raise RuntimeError(
-            "DATABASE_URL is missing from the environment."
+            "Missing required environment variables: "
+            + ", ".join(missing_values)
         )
 
-    if not admin_email:
-        raise RuntimeError(
-            "ADMIN_EMAIL is missing from the environment."
-        )
-
-    if not admin_full_name:
-        raise RuntimeError(
-            "ADMIN_FULL_NAME is missing from the environment."
-        )
-
-    if not 8 <= len(admin_password) <= 128:
-        raise RuntimeError(
-            "ADMIN_PASSWORD must contain between 8 and 128 characters."
-        )
-
-    password_hash = hash_admin_password(admin_password)
-
-    # Connect to PostgreSQL.
-    with psycopg2.connect(
-        database_url,
-        options="-c timezone=Asia/Kolkata",
-        connect_timeout=10,
-        cursor_factory=RealDictCursor,
-    ) as connection:
-
-        with connection.cursor() as cursor:
-
-            # -------------------------------------------------
-            # 1. CHECK WHETHER THE ADMIN USER ALREADY EXISTS
-            # -------------------------------------------------
-
-            cursor.execute(
-                """
-                SELECT id
-                FROM public.users
-                WHERE LOWER(email) = LOWER(%s)
-                """,
-                (admin_email,),
-            )
-
-            existing_user = cursor.fetchone()
-
-            if existing_user:
-                logger.info(
-                    "Admin user already exists. "
-                    "Skipping user creation."
-                )
-                return
-
-            # -------------------------------------------------
-            # 2. FIND THE ADMIN ROLE
-            # -------------------------------------------------
-
-            cursor.execute(
-                """
-                SELECT
-                    id,
-                    name,
-                    permissions,
-                    is_active
-                FROM public.roles
-                WHERE LOWER(name) = LOWER(%s)
-                FOR UPDATE
-                """,
-                (ROLE_NAME,),
-            )
-
-            role = cursor.fetchone()
-
-            # -------------------------------------------------
-            # 3. CREATE THE ADMIN ROLE IF IT DOES NOT EXIST
-            # -------------------------------------------------
-
-            if role is None:
-
-                cursor.execute(
-                    """
-                    INSERT INTO public.roles (
-                        name,
-                        description,
-                        permissions,
-                        is_active
-                    )
-                    VALUES (%s, %s, %s, TRUE)
-                    RETURNING
-                        id,
-                        name,
-                        permissions,
-                        is_active
-                    """,
-                    (
-                        ROLE_NAME,
-                        "Full access to hospital billing and settings.",
-                        Json(ADMIN_PERMISSIONS),
-                    ),
-                )
-
-                role = cursor.fetchone()
-
-                logger.info(
-                    "Admin role created successfully. Role ID: %s",
-                    role["id"],
-                )
-
-            else:
-
-                # Do not silently activate an inactive role.
-                if not role["is_active"]:
-                    raise RuntimeError(
-                        "The existing Admin role is inactive. "
-                        "Activate it explicitly before creating "
-                        "the Admin user."
-                    )
-
-                # Do not silently elevate or repair existing permissions.
-                if not role["permissions"]:
-                    raise RuntimeError(
-                        "The existing Admin role has no permissions. "
-                        "Review its permissions before proceeding."
-                    )
-
-                logger.info(
-                    "Using existing Admin role ID %s. "
-                    "Existing permissions will not be modified.",
-                    role["id"],
-                )
-
-            # -------------------------------------------------
-            # 4. CREATE THE ADMIN USER
-            # -------------------------------------------------
-
-            cursor.execute(
-                """
-                INSERT INTO public.users (
-                    full_name,
-                    email,
-                    password_hash,
-                    role_id,
-                    is_active
-                )
-                VALUES (%s, %s, %s, %s, TRUE)
-                RETURNING
-                    id,
-                    full_name,
-                    email,
-                    role_id,
-                    is_active
-                """,
-                (
-                    admin_full_name,
-                    admin_email,
-                    password_hash,
-                    role["id"],
-                ),
-            )
-
-            user = cursor.fetchone()
-
-    # The database transaction has committed successfully here.
-    logger.info(
-        "Initial Admin user created successfully. User ID: %s",
-        user["id"],
-    )
-    logger.info(
-        "Admin email: %s",
-        user["email"],
-    )
-
-
-# ---------------------------------------------------------
-# OPTIONAL MANUAL EXECUTION
-# ---------------------------------------------------------
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    connection = None
+    cursor = None
 
     try:
-        create_initial_admin()
-        print("Admin initialization completed successfully.")
+        connection = psycopg2.connect(database_url)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+
+        # ---------------------------------------------------------
+        # 1. If the configured User ID exists, skip creation.
+        # ---------------------------------------------------------
+        cursor.execute(
+            """
+            SELECT id, login_id
+            FROM public.users
+            WHERE login_id = %s
+            LIMIT 1
+            """,
+            (admin_user_id,),
+        )
+
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            logger.info(
+                "User ID '%s' already exists. "
+                "Skipping initial Admin creation.",
+                admin_user_id,
+            )
+            return
+
+        # ---------------------------------------------------------
+        # 2. If the email already exists, skip creation as well.
+        # ---------------------------------------------------------
+        cursor.execute(
+            """
+            SELECT id, login_id
+            FROM public.users
+            WHERE LOWER(email) = LOWER(%s)
+            LIMIT 1
+            """,
+            (admin_email,),
+        )
+
+        existing_email = cursor.fetchone()
+
+        if existing_email:
+            logger.info(
+                "Email '%s' already exists under User ID '%s'. "
+                "Skipping initial Admin creation.",
+                admin_email,
+                existing_email["login_id"],
+            )
+            return
+
+        # ---------------------------------------------------------
+        # 3. Find or create the Admin role.
+        # ---------------------------------------------------------
+        cursor.execute(
+            """
+            SELECT id, name
+            FROM public.roles
+            WHERE LOWER(name) = LOWER(%s)
+            LIMIT 1
+            """,
+            (ROLE_NAME,),
+        )
+
+        admin_role = cursor.fetchone()
+
+        if admin_role:
+            role_id = admin_role["id"]
+
+            # Preserve/update the permissions required for Admin.
+            cursor.execute(
+                """
+                UPDATE public.roles
+                SET permissions = %s
+                WHERE id = %s
+                """,
+                (Json(ADMIN_PERMISSIONS), role_id),
+            )
+
+        else:
+            cursor.execute(
+                """
+                INSERT INTO public.roles (name, permissions)
+                VALUES (%s, %s)
+                RETURNING id
+                """,
+                (ROLE_NAME, Json(ADMIN_PERMISSIONS)),
+            )
+
+            admin_role = cursor.fetchone()
+            role_id = admin_role["id"]
+
+        # ---------------------------------------------------------
+        # 4. Hash the password.
+        # ---------------------------------------------------------
+        password_hash = hash_admin_password(admin_password)
+
+        # ---------------------------------------------------------
+        # 5. Create the initial Admin user.
+        # ---------------------------------------------------------
+        cursor.execute(
+            """
+            INSERT INTO public.users (
+                login_id,
+                full_name,
+                email,
+                password_hash,
+                role_id,
+                is_active
+            )
+            VALUES (%s, %s, %s, %s, %s, TRUE)
+            RETURNING id, login_id, full_name, email, role_id, is_active
+            """,
+            (
+                admin_user_id,
+                admin_full_name,
+                admin_email,
+                password_hash,
+                role_id,
+            ),
+        )
+
+        new_admin = cursor.fetchone()
+        connection.commit()
+
+        logger.info(
+            "Initial Admin created successfully with User ID '%s'.",
+            admin_user_id,
+        )
+
+        return new_admin
 
     except Exception:
-        logger.exception("Admin initialization failed.")
+        if connection:
+            connection.rollback()
+        logger.exception("Initial Admin initialization failed.")
         raise
+
+    finally:
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()

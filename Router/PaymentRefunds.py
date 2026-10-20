@@ -82,10 +82,17 @@ def _bill_refund_balance(cursor, bill_id: int, lock=False):
     refunded = Decimal(str(cursor.fetchone()["total_refunded"] or 0))
     total = Decimal(str(bill["total_amount"] or 0))
     outstanding = max(total - paid, Decimal("0.00"))
-    refundable = max(paid - refunded, Decimal("0.00"))
+    bill_type = str(bill.get("bill_type") or "").strip().upper()
+    net_retained = max(paid - refunded, Decimal("0.00"))
+
+    # OP refunds are based on the amount paid. For IP bills, only the
+    # excess payment above the bill total is a refundable deposit.
+    deposit_balance = max(net_retained - total, Decimal("0.00")) if bill_type == "IP" else Decimal("0.00")
+    refundable = deposit_balance if bill_type == "IP" else net_retained
     return {
         **dict(bill), "bill_total": total, "total_paid": paid,
-        "total_refunded": refunded, "net_retained": max(paid - refunded, Decimal("0.00")),
+        "total_refunded": refunded, "net_retained": net_retained,
+        "deposit_balance": deposit_balance,
         "outstanding_amount": outstanding, "refundable_balance": refundable,
         "payment_status": "Paid" if total <= 0 or paid >= total else ("Partially Paid" if paid > 0 else "Unpaid"),
         "refund_status": "Fully Refunded" if refunded > 0 and refunded >= paid else ("Partially Refunded" if refunded > 0 else "Not Refunded"),
@@ -117,10 +124,14 @@ def create_payment_refund(payload: CreatePaymentRefundRequest, current_user: dic
                 if total > 0 and paid < total:
                     raise HTTPException(status_code=400, detail="Refunds are allowed only after the bill has been paid in full.")
                 if payload.refund_amount > refundable:
+                    limit_label = "remaining IP deposit balance" if balance.get("bill_type", "").upper() == "IP" else "remaining refundable amount"
                     raise HTTPException(status_code=400, detail={
-                        "message": "Refund amount exceeds the remaining refundable amount for this bill.",
+                        "message": f"Refund amount exceeds the {limit_label} for this bill.",
+                        "bill_type": balance.get("bill_type"),
                         "bill_total": str(total), "total_paid": str(paid),
-                        "total_refunded": str(refunded), "refundable_balance": str(refundable),
+                        "total_refunded": str(refunded),
+                        "deposit_balance": str(balance.get("deposit_balance", Decimal("0.00"))),
+                        "refundable_balance": str(refundable),
                     })
                 try:
                     created_by = int(current_user["user"]["id"])

@@ -487,7 +487,10 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
         gross_paid = _money(payment.get("bill_amount_paid"))
         total_refunded = _money(payment.get("bill_total_refunded"))
         total_paid = max(gross_paid - total_refunded, Decimal("0.00"))
-        outstanding = max(Decimal("0.00"), bill_total - gross_paid)
+        outstanding = max(
+            Decimal("0.00"),
+            bill_total - total_paid,
+        )
         amount = _money(payment.get("amount"))
         deposit_balance = max(
             Decimal("0.00"),

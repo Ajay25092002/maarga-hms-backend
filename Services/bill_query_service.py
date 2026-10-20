@@ -154,7 +154,7 @@ def list_bills_service(
                         {NET_PAID_SQL} AS amount_paid,
 
                         GREATEST(
-                            b.total_amount - COALESCE(payments.amount_paid, 0),
+                            COALESCE(b.total_amount, 0) - {NET_PAID_SQL},
                             0
                         ) AS outstanding_amount,
 
@@ -163,9 +163,12 @@ def list_bills_service(
                         ELSE 0 END AS deposit_balance,
 
                         CASE
-                            WHEN b.total_amount <= 0 THEN 'Paid'
-                            WHEN COALESCE(payments.amount_paid, 0) >= b.total_amount THEN 'Paid'
-                            WHEN COALESCE(payments.amount_paid, 0) > 0 THEN 'Partially Paid'
+                            WHEN COALESCE(b.total_amount, 0) <= 0
+                                THEN 'Paid'
+                            WHEN {NET_PAID_SQL} >= COALESCE(b.total_amount, 0)
+                                THEN 'Paid'
+                            WHEN {NET_PAID_SQL} > 0
+                                THEN 'Partially Paid'
                             ELSE 'Unpaid'
                         END AS payment_status,
                         CASE
@@ -293,7 +296,7 @@ def get_bill_service(bill_id: int):
                         {NET_PAID_SQL} AS amount_paid,
 
                         GREATEST(
-                            b.total_amount - COALESCE(payments.amount_paid, 0),
+                            COALESCE(b.total_amount, 0) - {NET_PAID_SQL},
                             0
                         ) AS outstanding_amount,
 
@@ -302,9 +305,12 @@ def get_bill_service(bill_id: int):
                         ELSE 0 END AS deposit_balance,
 
                         CASE
-                            WHEN b.total_amount <= 0 THEN 'Paid'
-                            WHEN COALESCE(payments.amount_paid, 0) >= b.total_amount THEN 'Paid'
-                            WHEN COALESCE(payments.amount_paid, 0) > 0 THEN 'Partially Paid'
+                            WHEN COALESCE(b.total_amount, 0) <= 0
+                                THEN 'Paid'
+                            WHEN {NET_PAID_SQL} >= COALESCE(b.total_amount, 0)
+                                THEN 'Paid'
+                            WHEN {NET_PAID_SQL} > 0
+                                THEN 'Partially Paid'
                             ELSE 'Unpaid'
                         END AS payment_status,
                         CASE
@@ -390,7 +396,7 @@ def get_bill_service(bill_id: int):
                 result["total_refunds"] = refunded
                 result["amount_paid"] = net_paid
                 result["net_paid"] = net_paid
-                result["outstanding_amount"] = max(0.0, total_amount - gross_paid)
+                result["outstanding_amount"] = max(0.0, total_amount - net_paid)
                 result["deposit_balance"] = (
                     max(0.0, net_paid - total_amount)
                     if str(result.get("bill_type", "")).upper() == "IP"

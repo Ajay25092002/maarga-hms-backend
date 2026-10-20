@@ -91,6 +91,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
 USER_SELECT = """
     SELECT
         u.id,
+        u.login_id,
         u.full_name,
         u.email,
         u.role_id,
@@ -141,6 +142,12 @@ def handle_database_error(error):
         None,
     )
 
+    if constraint in {"uq_users_login_id", "users_login_id_key"}:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This User ID is already in use. Please enter a different User ID.",
+        )
+
     if constraint in {
         "users_email_key",
         "idx_users_email_lower_unique",
@@ -189,15 +196,16 @@ def list_users_service(
             where.append(
                 """
                 (
-                    u.full_name ILIKE %s
+                    u.login_id ILIKE %s
+                    OR u.full_name ILIKE %s
                     OR COALESCE(u.email, '') ILIKE %s
                     OR r.name ILIKE %s
                 )
                 """
             )
 
-            # Three SQL placeholders: full name, email, and role.
-            params.extend([term] * 3)
+            # Four SQL placeholders: User ID, full name, email, and role.
+            params.extend([term] * 4)
 
         if role_id is not None:
             where.append("u.role_id = %s")
@@ -328,14 +336,15 @@ def create_user_service(data: dict):
                 ensure_active_role(cursor, data["role_id"])
 
                 password_hash = hash_password(data["password"])
-                email = data.get("email")
+                login_id = data["login_id"].strip().upper()
 
-                if email:
-                    email = email.strip().lower()
+                raw_email = data.get("email")
+                email = raw_email.strip().lower() if raw_email and raw_email.strip() else None
 
                 cursor.execute(
                     """
                     INSERT INTO public.users (
+                        login_id,
                         full_name,
                         email,
                         password_hash,
@@ -343,10 +352,11 @@ def create_user_service(data: dict):
                         is_active,
                         updated_at
                     )
-                    VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+                    VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
                     RETURNING id
                     """,
                     (
+                        login_id,
                         data["full_name"].strip(),
                         email,
                         password_hash,
@@ -385,6 +395,7 @@ def update_user_service(user_id: int, data: dict):
     connection = None
 
     allowed_fields = {
+        "login_id",
         "full_name",
         "email",
         "role_id",
@@ -413,8 +424,11 @@ def update_user_service(user_id: int, data: dict):
                 updates = {
                     key: value
                     for key, value in data.items()
-                    if key in allowed_fields and value is not None
+                    if key in allowed_fields
                 }
+
+                if updates.get("login_id"):
+                    updates["login_id"] = updates["login_id"].strip().upper()
 
                 if updates.get("email"):
                     updates["email"] = updates["email"].strip().lower()

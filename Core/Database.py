@@ -354,48 +354,36 @@ def initialize_database():
                 """)
 
 
-
                 # ==========================================================
-
                 # USERS
-
                 # ==========================================================
 
+                # login_id is entered by the administrator in the Create User
+                # screen. Internal id remains database-generated and is used
+                # for relationships and route parameters.
                 cursor.execute("""
-
                     CREATE TABLE IF NOT EXISTS public.users (
-
                         id BIGSERIAL PRIMARY KEY,
-
+                        login_id VARCHAR(20) NOT NULL,
                         full_name VARCHAR(150) NOT NULL,
-
                         email VARCHAR(255) UNIQUE,
-
                         password_hash TEXT NOT NULL,
-
                         role_id BIGINT NOT NULL
-
                             REFERENCES public.roles(id)
-
                             ON DELETE RESTRICT,
-
                         is_active BOOLEAN NOT NULL DEFAULT TRUE,
-
                         created_at TIMESTAMPTZ NOT NULL
-
                             DEFAULT CURRENT_TIMESTAMP,
-
                         updated_at TIMESTAMPTZ NOT NULL
-
                             DEFAULT CURRENT_TIMESTAMP,
-
+                        CONSTRAINT uq_users_login_id UNIQUE (login_id),
                         CONSTRAINT users_full_name_not_blank
-
-                            CHECK (LENGTH(TRIM(full_name)) > 0)
-
+                            CHECK (LENGTH(TRIM(full_name)) > 0),
+                        CONSTRAINT users_login_id_not_blank
+                            CHECK (LENGTH(TRIM(login_id)) > 0)
                     );
-
                 """)
+
 
 
 

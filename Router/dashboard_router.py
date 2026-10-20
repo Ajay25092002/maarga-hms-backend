@@ -26,9 +26,9 @@ def get_dashboard(request: Request):
 
     auth_result = get_current_user(request)
     current_user = auth_result.get("user", {})
-    email = current_user.get("email")
+    login_id = current_user.get("login_id")
 
-    if not email:
+    if not login_id:
         raise HTTPException(
             status_code=401,
             detail="Authentication required.",
@@ -44,15 +44,16 @@ def get_dashboard(request: Request):
         ) as cursor:
 
             # Check the user's current dashboard permission.
+            
             cursor.execute(
                 """
                 SELECT r.permissions
                 FROM public.users u
                 JOIN public.roles r ON r.id = u.role_id
-                WHERE LOWER(u.email) = LOWER(%s)
-                  AND u.is_active = TRUE
+                WHERE LOWER(u.login_id) = LOWER(%s)
+                AND u.is_active = TRUE
                 """,
-                (email,),
+                (login_id,),
             )
 
             permission_row = cursor.fetchone()

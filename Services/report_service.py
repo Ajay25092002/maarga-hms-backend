@@ -13,6 +13,7 @@ REPORTS = {
     "cash-collection": "Cash Collection",
     "refunds": "Refunds",
     "outstanding": "Partially Paid / Outstanding Bills",
+
     "service-wise": "Service-wise Report",
     "service-group-wise": "Service Group-wise Report",
     "admission-discharge": "Admission & Discharge",
@@ -68,7 +69,11 @@ BASE_SELECTS = {
                CASE WHEN ot.transaction_row=1 THEN bf.total_refunded END AS "Total Refunded",
                CASE WHEN ot.transaction_row=1 THEN bf.net_paid END AS "Net Paid",
                CASE WHEN ot.transaction_row=1 THEN bf.outstanding_amount END AS "Outstanding Amount",
-               CASE WHEN bf.gross_paid <= 0 THEN 'Unpaid' WHEN bf.gross_paid < bf.total_amount THEN 'Partially Paid' ELSE 'Paid' END AS "Payment Status",
+               CASE
+                   WHEN bf.net_paid <= 0 THEN 'Unpaid'
+                   WHEN bf.net_paid < bf.total_amount THEN 'Partially Paid'
+                   ELSE 'Paid'
+               END AS "Payment Status",
                COALESCE(u.full_name,'—') AS "Billed By", ot.recorded_at AS "Transaction Recorded At"
         FROM ordered_transactions ot JOIN bill_financials bf ON bf.bill_id=ot.bill_id
         JOIN public.patients p ON p.id=bf.patient_db_id LEFT JOIN public.users u ON u.id=bf.created_by''',
@@ -116,8 +121,12 @@ BASE_SELECTS = {
                CASE WHEN ot.transaction_row=1 THEN bf.total_refunded END AS "Total Refunded",
                CASE WHEN ot.transaction_row=1 THEN bf.net_paid END AS "Net Paid",
                CASE WHEN ot.transaction_row=1 THEN bf.outstanding_amount END AS "Outstanding Amount",
-               CASE WHEN ot.transaction_row=1 THEN bf.deposit_balance END AS "Debit Balance",
-               CASE WHEN bf.gross_paid <= 0 THEN 'Unpaid' WHEN bf.gross_paid < bf.total_amount THEN 'Partially Paid' ELSE 'Paid' END AS "Payment Status",
+               CASE WHEN ot.transaction_row=1 THEN bf.outstanding_amount END AS "Debit Balance",
+               CASE
+                   WHEN bf.net_paid <= 0 THEN 'Unpaid'
+                   WHEN bf.net_paid < bf.total_amount THEN 'Partially Paid'
+                   ELSE 'Paid'
+               END AS "Payment Status",
                COALESCE(u.full_name,'—') AS "Billed By", ot.recorded_at AS "Transaction Recorded At"
         FROM ordered_transactions ot JOIN bill_financials bf ON bf.bill_id=ot.bill_id
         JOIN public.patients p ON p.id=bf.patient_db_id LEFT JOIN public.users u ON u.id=bf.created_by''',
@@ -136,15 +145,46 @@ BASE_SELECTS = {
         FROM public.payment_refunds pr JOIN public.bills b ON b.id=pr.bill_id JOIN public.patients p ON p.id=b.patient_db_id
         LEFT JOIN public.users u ON u.id=pr.created_by ''',
 
-    "outstanding": '''SELECT b.bill_date AS report_date, b.bill_number AS "Bill Number", b.bill_type AS "Bill Type",
-        CASE WHEN b.bill_type='OP' THEN b.op_number ELSE b.ip_number END AS "OP/IP Number",
-        p.patient_id AS "Patient Number", p.name AS "Patient Name", b.bill_date AS "Bill Date",
-        b.total_amount AS "Bill Amount", COALESCE(pay.paid,0) AS "Amount Paid",
-        GREATEST(b.total_amount-COALESCE(pay.paid,0),0) AS "Outstanding Amount",
-        CASE WHEN COALESCE(pay.paid,0)<=0 THEN 'Unpaid' ELSE 'Partially Paid' END AS "Payment Status", pay.last_payment AS "Last Payment Date"
-        FROM public.bills b JOIN public.patients p ON p.id=b.patient_db_id
-        LEFT JOIN (SELECT bill_id,SUM(amount) paid,MAX(payment_date) last_payment FROM public.bill_payments GROUP BY bill_id) pay ON pay.bill_id=b.id
-        WHERE COALESCE(pay.paid,0)<b.total_amount ''',
+    "outstanding": '''WITH payment_totals AS (
+        SELECT bill_id, SUM(amount) AS gross_paid, MAX(payment_date) AS last_payment
+        FROM public.bill_payments
+        GROUP BY bill_id
+    ),
+    refund_totals AS (
+        SELECT bill_id, SUM(refund_amount) AS total_refunded
+        FROM public.payment_refunds
+        GROUP BY bill_id
+    ),
+    bill_financials AS (
+        SELECT b.id AS bill_id, b.bill_date, b.bill_number, b.bill_type,
+               b.op_number, b.ip_number, b.patient_db_id, b.total_amount,
+               COALESCE(pay.gross_paid, 0) AS gross_paid,
+               COALESCE(ref.total_refunded, 0) AS total_refunded,
+               GREATEST(COALESCE(pay.gross_paid, 0) - COALESCE(ref.total_refunded, 0), 0) AS net_paid,
+               GREATEST(
+                   b.total_amount - GREATEST(COALESCE(pay.gross_paid, 0) - COALESCE(ref.total_refunded, 0), 0),
+                   0
+               ) AS outstanding_amount,
+               pay.last_payment
+        FROM public.bills b
+        LEFT JOIN payment_totals pay ON pay.bill_id = b.id
+        LEFT JOIN refund_totals ref ON ref.bill_id = b.id
+    )
+    SELECT bf.bill_date AS report_date, bf.bill_number AS "Bill Number", bf.bill_type AS "Bill Type",
+        CASE WHEN bf.bill_type='OP' THEN bf.op_number ELSE bf.ip_number END AS "OP/IP Number",
+        p.patient_id AS "Patient Number", p.name AS "Patient Name", bf.bill_date AS "Bill Date",
+        bf.total_amount AS "Bill Amount", bf.gross_paid AS "Amount Paid",
+        bf.total_refunded AS "Total Refunded", bf.net_paid AS "Net Paid",
+        bf.outstanding_amount AS "Outstanding Amount",
+        CASE
+            WHEN bf.net_paid <= 0 THEN 'Unpaid'
+            WHEN bf.net_paid < bf.total_amount THEN 'Partially Paid'
+            ELSE 'Paid'
+        END AS "Payment Status",
+        bf.last_payment AS "Last Payment Date"
+    FROM bill_financials bf
+    JOIN public.patients p ON p.id=bf.patient_db_id
+    WHERE bf.net_paid < bf.total_amount ''',
 
     "service-wise": '''SELECT b.bill_date::date AS report_date, b.bill_type AS "Bill Type", bi.service_name AS "Service Name", bi.service_group_name AS "Service Group",
         SUM(bi.quantity) AS "Quantity", SUM(bi.net_amount) AS "Total Billed Amount", COUNT(DISTINCT b.id) AS "Number of Bills"
