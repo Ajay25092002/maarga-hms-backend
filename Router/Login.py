@@ -178,7 +178,7 @@ class VerifyOTPRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    login_id: str = Field(min_length=4, max_length=20, pattern=r"^USR[0-9]{5,}$")
+    login_id: str = Field(min_length=4, max_length=20)
     password: str = Field(min_length=1, max_length=256)
 
 
