@@ -2,34 +2,51 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-
-
-USER_ID_PATTERN = r"^USR[0-9]{5,}$"
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    field_validator,
+)
 
 
 class UserCreate(BaseModel):
     login_id: str = Field(
-        min_length=8,
-        max_length=20,
-        pattern=USER_ID_PATTERN,
+        min_length=1,
+        max_length=50,
     )
-    full_name: str = Field(min_length=2, max_length=150)
+    full_name: str = Field(
+        min_length=2,
+        max_length=150,
+    )
 
     # Email is optional during user creation.
     email: Optional[EmailStr] = None
 
-    password: str = Field(min_length=8, max_length=128)
+    password: str = Field(
+        min_length=8,
+        max_length=128,
+    )
     role_id: int = Field(gt=0)
     is_active: bool = True
+
+    @field_validator("login_id")
+    @classmethod
+    def validate_login_id(cls, value: str) -> str:
+        value = value.strip()
+
+        if not value:
+            raise ValueError("User ID is required.")
+
+        return value
 
 
 class UserUpdate(BaseModel):
     login_id: Optional[str] = Field(
         default=None,
-        min_length=8,
-        max_length=20,
-        pattern=USER_ID_PATTERN,
+        min_length=1,
+        max_length=50,
     )
     full_name: Optional[str] = Field(
         default=None,
@@ -48,6 +65,19 @@ class UserUpdate(BaseModel):
     role_id: Optional[int] = Field(default=None, gt=0)
     is_active: Optional[bool] = None
 
+    @field_validator("login_id")
+    @classmethod
+    def validate_login_id(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+
+        value = value.strip()
+
+        if not value:
+            raise ValueError("User ID cannot be empty.")
+
+        return value
+
 
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -55,10 +85,7 @@ class UserResponse(BaseModel):
     id: int
     login_id: str
     full_name: str
-
-    # API responses must allow users without an email address.
     email: Optional[EmailStr] = None
-
     role_id: int
     role_name: str
     is_active: bool
