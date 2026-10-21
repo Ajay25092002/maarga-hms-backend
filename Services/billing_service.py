@@ -707,7 +707,6 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     (bill_id, bill_id),
                 )
                 financials = cursor.fetchone()
-                from decimal import Decimal
                 gross_paid = Decimal(str(financials["gross_paid"] or 0))
                 total_refunded = Decimal(str(financials["total_refunded"] or 0))
                 net_paid = max(gross_paid - total_refunded, Decimal("0.00"))

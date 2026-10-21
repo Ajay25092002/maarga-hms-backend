@@ -128,3 +128,9 @@ Traceback (most recent call last):
     details.append([
     ^^^^^^^
 UnboundLocalError: cannot access local variable 'details' where it is not associated with a value
+2026-10-21 10:11:34 | ERROR    | Services.billing_service | Unexpected error while updating bill 1
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\billing_service.py", line 691, in update_bill_service
+    gross_paid_for_lock = Decimal(str(cursor.fetchone()["gross_paid"] or 0))
+                          ^^^^^^^
+UnboundLocalError: cannot access local variable 'Decimal' where it is not associated with a value
