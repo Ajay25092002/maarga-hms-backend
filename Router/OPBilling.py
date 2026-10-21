@@ -138,6 +138,11 @@ def add_nurse_service(
             status_code=403,
             detail="You do not have permission to add services from the Nurse section.",
         )
+    allow_all_service_groups = (
+        permissions.get("nurse.all_service_groups") is True
+        if isinstance(permissions, dict)
+        else "nurse.all_service_groups" in permissions
+    )
     user_id = current_user["user"]["id"]
     try:
         service_id = int(payload.get("service_id"))
@@ -148,7 +153,10 @@ def add_nurse_service(
     except (TypeError, ValueError):
         from fastapi import HTTPException
         raise HTTPException(status_code=422, detail="Provide a valid service_id, quantity and service_date.") from None
-    return add_nurse_ip_service(bill_id, service_id, quantity, service_date, user_id)
+    return add_nurse_ip_service(
+        bill_id, service_id, quantity, service_date, user_id,
+        allow_all_service_groups=allow_all_service_groups,
+    )
 
 
 @router.get("/{bill_id}")

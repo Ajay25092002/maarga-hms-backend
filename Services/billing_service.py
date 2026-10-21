@@ -840,6 +840,8 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
 NURSE_ALLOWED_SERVICE_GROUPS = {
     "clinical services",
     "medical equipment",
+    "medical equipments",
+    "procedure",
     "procedures",
     "psychiatry charges",
     "radiology charges",
@@ -847,8 +849,11 @@ NURSE_ALLOWED_SERVICE_GROUPS = {
 }
 
 
-def add_nurse_ip_service(bill_id: int, service_id: int, quantity, service_date, updated_by: int):
-    """Append one allowed IP service without permitting nurse edits/removals."""
+def add_nurse_ip_service(
+    bill_id: int, service_id: int, quantity, service_date, updated_by: int,
+    allow_all_service_groups: bool = False,
+):
+    """Append a service to an IP bill; enforce role-based group restrictions."""
     from decimal import Decimal
     from datetime import date
     connection = None
@@ -867,13 +872,51 @@ def add_nurse_ip_service(bill_id: int, service_id: int, quantity, service_date, 
                 resolved = resolve_service_price(
                     cursor, service_id, "IP", None, bill.get("room_type_id")
                 )
-                if resolved["service_group_name"].strip().lower() not in NURSE_ALLOWED_SERVICE_GROUPS:
-                    raise HTTPException(status_code=403, detail="Nurses can add services only from the six permitted service groups.")
+                service_group = str(resolved.get("service_group_name") or "").strip().lower()
+                if (
+                    not allow_all_service_groups
+                    and service_group not in NURSE_ALLOWED_SERVICE_GROUPS
+                ):
+                    raise HTTPException(
+                        status_code=403,
+                        detail=(
+                            "Nurses can add services only from the six permitted "
+                            "service groups. Ask an administrator to update the role "
+                            "permission if access to all IP service groups is required."
+                        ),
+                    )
                 qty = Decimal(str(quantity))
                 if qty <= 0:
                     raise HTTPException(status_code=422, detail="Quantity must be greater than zero.")
                 if service_date and service_date > date.today():
                     raise HTTPException(status_code=422, detail="Service date cannot be in the future.")
+
+                # Prevent nurses from adding the same service name to the same
+                # bill more than once for the same service date. The bill row is
+                # already locked FOR UPDATE above, so concurrent nurse requests
+                # for this bill serialize before this check and insert.
+                cursor.execute(
+                    """
+                    SELECT id
+                    FROM public.bill_items
+                    WHERE bill_id = %s
+                      AND LOWER(BTRIM(service_name)) = LOWER(BTRIM(%s))
+                      AND service_date IS NOT DISTINCT FROM %s
+                    LIMIT 1
+                    """,
+                    (bill_id, resolved["service_name"], service_date),
+                )
+                existing_item = cursor.fetchone()
+                if existing_item:
+                    raise HTTPException(
+                        status_code=409,
+                        detail=(
+                            f"'{resolved['service_name']}' is already added to this "
+                            f"IP bill for {service_date.isoformat() if service_date else 'the same unspecified date'}. "
+                            "A service with the same name cannot be added twice for the same date."
+                        ),
+                    )
+
                 rate = money(resolved["rate"])
                 amount = money(rate * qty)
                 cursor.execute("""

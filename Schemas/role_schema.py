@@ -38,6 +38,7 @@ ROLE_PERMISSIONS = {
     # Nurse module (view bills separately from permission to add services)
     "nurse.view": "View Nurse Section",
     "nurse.add_services": "Add Services to IP Bills (Nurse)",
+    "nurse.all_service_groups": "Allow Nurse to Add Services from All IP Service Groups",
     
 
     # Payments & Receipts
