@@ -771,11 +771,15 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if bill_discount > remaining:
                     raise HTTPException(status_code=422, detail="The bill discount cannot exceed the amount remaining after item discounts.")
                 total_amount = money(remaining - bill_discount + gst_total)
-                if total_amount < net_paid:
+                # OP: Do not allow the revised bill total to fall below
+                # the net amount already paid.
+                # IP: Allow a lower revised total; the deposit balance will
+                # be recalculated from the updated bill total.
+                if payload.bill_type == "OP" and total_amount < net_paid:
                     raise HTTPException(
                         status_code=409,
                         detail=(
-                            f"The revised bill total (₹{total_amount:,.2f}) cannot be less than "
+                            f"The revised OP bill total (₹{total_amount:,.2f}) cannot be less than "
                             f"the net amount already paid (₹{net_paid:,.2f})."
                         ),
                     )
