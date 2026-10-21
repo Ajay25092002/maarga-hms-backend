@@ -141,7 +141,19 @@ def get_dashboard(request: Request):
                 FROM public.payment_refunds
                 GROUP BY bill_id
             """
-            net_paid_sql = "COALESCE(pay.amount_paid, 0)"
+            # Keep these formulas identical to the billing service:
+            # - amount_paid is net of refunds
+            # - outstanding is based on gross payments; refunds do not reopen a bill
+            # - IP deposit balance is net paid minus the bill total
+            gross_paid_sql = "COALESCE(pay.amount_paid, 0)"
+            total_refunds_sql = "COALESCE(ref.total_refunds, 0)"
+            net_paid_sql = f"({gross_paid_sql} - {total_refunds_sql})"
+            outstanding_sql = (
+                f"GREATEST(COALESCE(b.total_amount, 0) - {gross_paid_sql}, 0)"
+            )
+            deposit_balance_sql = (
+                f"GREATEST({net_paid_sql} - COALESCE(b.total_amount, 0), 0)"
+            )
 
             # 4. Outstanding balance across all bills.
             cursor.execute(
@@ -149,7 +161,7 @@ def get_dashboard(request: Request):
                 SELECT COALESCE(
                     SUM(
                         GREATEST(
-                            b.total_amount - COALESCE(p.amount_paid, 0),
+                            COALESCE(b.total_amount, 0) - COALESCE(p.amount_paid, 0),
                             0
                         )
                     ),
@@ -260,16 +272,16 @@ def get_dashboard(request: Request):
                 f"""
                 SELECT
                     COUNT(*) FILTER (
-                        WHERE b.total_amount <= 0
-                           OR {net_paid_sql} >= b.total_amount
+                        WHERE COALESCE(b.total_amount, 0) <= 0
+                           OR {gross_paid_sql} >= COALESCE(b.total_amount, 0)
                     ) AS paid,
                     COUNT(*) FILTER (
-                        WHERE {net_paid_sql} > 0
-                          AND {net_paid_sql} < b.total_amount
+                        WHERE {gross_paid_sql} > 0
+                          AND {gross_paid_sql} < COALESCE(b.total_amount, 0)
                     ) AS partially_paid,
                     COUNT(*) FILTER (
-                        WHERE {net_paid_sql} <= 0
-                          AND b.total_amount > 0
+                        WHERE {gross_paid_sql} <= 0
+                          AND COALESCE(b.total_amount, 0) > 0
                     ) AS unpaid
                 FROM public.bills b
                 LEFT JOIN ({payment_totals_sql}) pay ON pay.bill_id = b.id
@@ -290,18 +302,18 @@ def get_dashboard(request: Request):
                     b.total_amount,
                     p.patient_id,
                     p.name AS patient_name,
-                    COALESCE(pay.amount_paid, 0) AS total_payments,
-                    COALESCE(ref.total_refunds, 0) AS total_refunds,
+                    {gross_paid_sql} AS gross_paid,
+                    {total_refunds_sql} AS total_refunds,
                     {net_paid_sql} AS amount_paid,
-                    GREATEST(
-                        b.total_amount - ({net_paid_sql}),
-                        0
-                    ) AS outstanding_amount,
+                    {outstanding_sql} AS outstanding_amount,
+                    CASE WHEN b.bill_type = 'IP' THEN
+                        {deposit_balance_sql}
+                    ELSE 0 END AS deposit_balance,
                     CASE
-                        WHEN b.total_amount <= 0
-                          OR ({net_paid_sql}) >= b.total_amount
+                        WHEN COALESCE(b.total_amount, 0) <= 0
+                          OR {gross_paid_sql} >= COALESCE(b.total_amount, 0)
                             THEN 'Paid'
-                        WHEN ({net_paid_sql}) > 0
+                        WHEN {gross_paid_sql} > 0
                             THEN 'Partially Paid'
                         ELSE 'Unpaid'
                     END AS payment_status
@@ -329,10 +341,11 @@ def get_dashboard(request: Request):
                         ),
                         "patient_id": row["patient_id"],
                         "patient_name": row["patient_name"],
-                        "total_amount": float(row["total_amount"]),
-                        "total_payments": float(row["total_payments"]),
-                        "total_refunds": float(row["total_refunds"]),
-                        "amount_paid": float(row["amount_paid"]),
+                        "total_amount": float(row["total_amount"] or 0),
+                        "total_payments": float(row["gross_paid"] or 0),
+                        "total_refunds": float(row["total_refunds"] or 0),
+                        "amount_paid": float(row["amount_paid"] or 0),
+                        "deposit_balance": float(row["deposit_balance"] or 0),
                         "outstanding_amount": float(
                             row["outstanding_amount"]
                         ),
