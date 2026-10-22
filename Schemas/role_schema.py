@@ -15,15 +15,10 @@ ROLE_PERMISSIONS = {
     # Dashboard
     "dashboard.view": "View Dashboard",
 
-    # OP Patients
-    "patients.op.view": "View OP Patients",
-    "patients.op.create": "Register OP Patients",
-    "patients.op.edit": "Edit OP Patient Details",
-
-    # IP Patients
-    "patients.ip.view": "View IP Patients",
-    "patients.ip.create": "Register IP Patients",
-    "patients.ip.edit": "Edit IP Patient Details",
+    # Shared patient registry (OP/IP billing remains separately permissioned)
+    "patients.view": "View Patients",
+    "patients.create": "Register Patients",
+    "patients.edit": "Edit Patient Details",
 
         # OP Bills
     "bills.op.view": "View OP Bills",
@@ -72,6 +67,40 @@ ROLE_PERMISSIONS = {
     "pricing.edit": "Edit Pricing Configuration",
     "pricing.import": "Import Pricing from Excel",
 }
+
+
+# Legacy permission keys were used when patient access was split by OP/IP.
+# Keep existing roles working by mapping either legacy grant to the shared
+# patient-registry permission. New role payloads must use canonical keys.
+LEGACY_PATIENT_PERMISSION_MAP = {
+    "patients.view": ("patients.op.view", "patients.ip.view"),
+    "patients.create": ("patients.op.create", "patients.ip.create"),
+    "patients.edit": ("patients.op.edit", "patients.ip.edit"),
+}
+
+
+def normalize_permissions(value: dict | None) -> dict[str, bool]:
+    """
+    Return the canonical permission map for an existing stored permission map.
+
+    Old role records may still contain patients.op.* / patients.ip.* keys.
+    For the shared patient registry, a grant from either legacy key carries
+    forward to the corresponding shared permission. Unknown legacy keys are
+    not returned.
+    """
+    stored = value if isinstance(value, dict) else {}
+    normalized = {
+        key: stored.get(key) is True
+        for key in ROLE_PERMISSIONS
+    }
+
+    for canonical_key, legacy_keys in LEGACY_PATIENT_PERMISSION_MAP.items():
+        normalized[canonical_key] = (
+            normalized[canonical_key]
+            or any(stored.get(key) is True for key in legacy_keys)
+        )
+
+    return normalized
 
 
 def validate_permissions(

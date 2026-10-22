@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import BaseModel, EmailStr, Field
 from psycopg2.extras import RealDictCursor
 
+from Schemas.role_schema import normalize_permissions
 from Services.email_service import send_email
 from Services.template_service import render_email_template
 
@@ -270,6 +271,8 @@ def serialize_authenticated_user(row: dict) -> dict:
 
     if not isinstance(permissions, dict):
         permissions = {}
+
+    permissions = normalize_permissions(permissions)
 
     return {
         "id": row["id"],

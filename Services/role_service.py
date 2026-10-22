@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2 import errors
 from psycopg2.extras import Json, RealDictCursor
 
-from Schemas.role_schema import ROLE_PERMISSIONS
+from Schemas.role_schema import normalize_permissions
 
 
 class RoleNotFoundError(Exception):
@@ -33,11 +33,8 @@ def _normalize_role(row):
     role = dict(row)
     stored = role.get("permissions") or {}
 
-    # Older roles may not have every permission key yet.
-    role["permissions"] = {
-        key: stored.get(key, False)
-        for key in ROLE_PERMISSIONS
-    }
+    # Normalize old stored keys and fill every canonical permission explicitly.
+    role["permissions"] = normalize_permissions(stored)
 
     return role
 

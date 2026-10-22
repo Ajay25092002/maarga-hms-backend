@@ -19,13 +19,9 @@ ROLE_NAME = "Admin"
 ADMIN_PERMISSIONS = {
     "dashboard.view": True,
 
-    "patients.op.view": True,
-    "patients.op.create": True,
-    "patients.op.edit": True,
-
-    "patients.ip.view": True,
-    "patients.ip.create": True,
-    "patients.ip.edit": True,
+    "patients.view": True,
+    "patients.create": True,
+    "patients.edit": True,
 
     "bills.op.view": True,
     "bills.op.create": True,
@@ -37,6 +33,7 @@ ADMIN_PERMISSIONS = {
 
     "nurse.view": True,
     "nurse.add_services": True,
+    "nurse.all_service_groups": True,
 
     "payments.view": True,
     "payments.create": True,
