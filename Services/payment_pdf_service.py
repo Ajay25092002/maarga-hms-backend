@@ -413,6 +413,7 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                     bp.payment_method,
                     bp.reference_number,
                     bp.notes,
+                    u.full_name AS collected_by,
 
                     b.bill_number,
                     b.bill_type,
@@ -447,6 +448,8 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                     ON b.id = bp.bill_id
                 JOIN public.patients p
                     ON p.id = b.patient_db_id
+                LEFT JOIN public.users u
+                    ON u.id = bp.created_by
                 WHERE bp.id = %s
                 """,
                 (payment_id,),
@@ -570,6 +573,13 @@ def generate_payment_receipt_pdf(payment_id: int) -> Response:
                     f"Notes: {payment.get('notes') or '-'}",
                     styles["normal"],
                 ),
+            ],
+            [
+                _p(
+                    f"Collected By: {payment.get('collected_by') or '-'}",
+                    styles["normal"],
+                ),
+                _p("", styles["normal"]),
             ],
         ]
 

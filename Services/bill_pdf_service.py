@@ -643,6 +643,7 @@ def _transaction_table(records: list[dict], styles, op: bool, is_refund: bool = 
     return table
 
 
+
 def _meta_row(
     label1: Any,
     value1: Any,
@@ -652,29 +653,38 @@ def _meta_row(
     value3: Any,
     styles: dict,
 ) -> Table:
-    row = []
-
-    for label, value in [
+    pairs = [
         (label1, value1),
         (label2, value2),
         (label3, value3),
-    ]:
-        if label and value not in ("", None, "-"):
+    ]
+
+    row = []
+    col_widths = []
+
+    available_width = CONTENT_WIDTH
+    label_width = 20 * mm
+    value_width = 35 * mm
+
+    for label, value in pairs:
+        if label and value not in ("", None):
             row.extend([
                 _p(label, styles["bold"]),
                 _p(value, styles["normal"]),
             ])
+            col_widths.extend([label_width, value_width])
 
-    col_widths = [
-        20 * mm,
-        35 * mm,
-        20 * mm,
-        35 * mm,
-        20 * mm,
-        CONTENT_WIDTH - 130 * mm,
-    ]
+    if not row:
+        return Table([[""]], colWidths=[available_width])
 
-    table = Table([row], colWidths=col_widths, hAlign="LEFT")
+    # Expand the final value column to use all remaining space.
+    col_widths[-1] = available_width - sum(col_widths[:-1])
+
+    table = Table(
+        [row],
+        colWidths=col_widths,
+        hAlign="LEFT",
+    )
     table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("LEFTPADDING", (0, 0), (-1, -1), 2),
@@ -682,7 +692,9 @@ def _meta_row(
         ("TOPPADDING", (0, 0), (-1, -1), 2),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
     ]))
+
     return table
+
 
 
 def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
@@ -779,6 +791,10 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                     f"Address : {_display(bill.get('address'))}",
                     styles["normal"],
                 ),
+                _p(
+                    f"Billed By : {_display(bill.get('created_by_name') or '-')}",
+                    styles["normal"],
+                )
             ],
         ]
 
@@ -931,12 +947,19 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                 _date_text(bill.get("discharge_date"), True),
                 styles,
             ),
+            _meta_row(
+                "Billed By",
+                bill.get("created_by_name") or "-",
+                "",
+                "",
+                "",
+                "",
+                styles,
+            ),
            
             Spacer(1, 2 * mm),
             _charge_table(items, styles, False),
             Spacer(1, 2 * mm),
-            _p("PAYMENT AND REFUND HISTORY", styles["bold"]),
-            Spacer(1, 1 * mm),
             _p("PAYMENT HISTORY", styles["bold"]),
             Spacer(1, 1 * mm),
             _transaction_table(payments, styles, False, False),
