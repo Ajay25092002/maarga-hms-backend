@@ -754,7 +754,14 @@ def initialize_database():
 
                         service_date DATE,
 
+                        
+                        room_type_id BIGINT
+                            REFERENCES public.room_types(id)
+                            ON DELETE RESTRICT,
 
+                        room_type_name VARCHAR(100),
+
+                        bed_number VARCHAR(100),
 
                         rate NUMERIC(12, 2) NOT NULL DEFAULT 0
 
@@ -1038,7 +1045,69 @@ def initialize_database():
 
                 """)
 
+                # ==========================================================
+                # BILL AUDIT HISTORY
+                # ==========================================================
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS public.bill_audit_history (
+                        id BIGSERIAL PRIMARY KEY,
+                        bill_id BIGINT NOT NULL
+                            REFERENCES public.bills(id) ON DELETE RESTRICT,
+                        action VARCHAR(100) NOT NULL,
+                        entity_type VARCHAR(50) NOT NULL,
+                        entity_id BIGINT,
+                        old_values JSONB,
+                        new_values JSONB,
+                        changed_by BIGINT,
+                        changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        reason TEXT
+                    );
+                """)
 
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_bill_audit_history_bill_changed_at
+                    ON public.bill_audit_history(bill_id, changed_at DESC, id DESC);
+                """)
+
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_bill_audit_history_entity
+                    ON public.bill_audit_history(entity_type, entity_id);
+                """)
+
+
+
+
+                # ==========================================================
+                # IP ROOM / BED ASSIGNMENT HISTORY
+                # ==========================================================
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS public.ip_room_history (
+                        id BIGSERIAL PRIMARY KEY,
+                        bill_id BIGINT NOT NULL
+                            REFERENCES public.bills(id) ON DELETE RESTRICT,
+                        room_type_id BIGINT
+                            REFERENCES public.room_types(id) ON DELETE SET NULL,
+                        room_type_name VARCHAR(100),
+                        bed_number VARCHAR(100),
+                        start_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+                        end_at TIMESTAMPTZ,
+                        changed_by BIGINT,
+                        change_reason TEXT,
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+                        CONSTRAINT chk_ip_room_history_period
+                            CHECK (end_at IS NULL OR end_at >= start_at)
+                    );
+                """)
+
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_ip_room_history_bill_period
+                    ON public.ip_room_history(bill_id, start_at DESC, id DESC);
+                """)
+
+                cursor.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_ip_room_history_active
+                    ON public.ip_room_history(bill_id) WHERE end_at IS NULL;
+                """)
 
         logger.info("Database initialization completed successfully.")
 

@@ -7,12 +7,21 @@ from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
 
 from Core.logger import get_logger
+from Services.ip_room_history_service import (
+    create_initial_ip_room_assignment,
+    sync_ip_room_assignment,
+)
 from Schemas.billing_schema import CreateBillRequest
 from Utils.billing_helpers import (
     ensure_payment_table,
     get_bill_items,
     get_db_connection,
     serialize_row,
+)
+from Services.bill_audit_service import (
+    fetch_bill_items_for_audit,
+    write_bill_audit,
+    write_bill_item_diff,
 )
 
 logger = get_logger(__name__)
@@ -350,6 +359,31 @@ def validate_pricing_context(cursor, payload: CreateBillRequest):
     return result
 
 
+def resolve_item_room_context(cursor, bill_type: str, item, payload):
+    """Resolve authoritative per-item room snapshot for IP services."""
+    if bill_type != "IP":
+        return {"room_type_id": None, "room_type_name": None, "bed_number": None}
+
+    room_type_id = item.room_type_id or payload.room_type_id
+    if room_type_id is None:
+        raise HTTPException(status_code=422, detail="Room type is required for every IP service item.")
+
+    cursor.execute(
+        "SELECT id, name, is_active FROM public.room_types WHERE id = %s",
+        (room_type_id,),
+    )
+    room = cursor.fetchone()
+    if room is None or not room["is_active"]:
+        raise HTTPException(status_code=422, detail=f"Room type {room_type_id} does not exist or is inactive.")
+
+    item_bed = item.bed_number if item.bed_number is not None else payload.bed_number
+    return {
+        "room_type_id": room["id"],
+        "room_type_name": room["name"],
+        "bed_number": item_bed.strip() if isinstance(item_bed, str) and item_bed.strip() else None,
+    }
+
+
 def create_bill_service(payload: CreateBillRequest, created_by: int):
     connection = None
 
@@ -399,20 +433,13 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                 prepared_items = []
 
                 for item in payload.items:
+                    item_room = resolve_item_room_context(cursor, payload.bill_type, item, payload)
                     resolved = resolve_service_price(
                         cursor=cursor,
                         service_id=item.service_id,
                         bill_type=payload.bill_type,
-                        doctor_id=(
-                            payload.doctor_id
-                            if payload.bill_type == "OP"
-                            else None
-                        ),
-                        room_type_id=(
-                            payload.room_type_id
-                            if payload.bill_type == "IP"
-                            else None
-                        ),
+                        doctor_id=(payload.doctor_id if payload.bill_type == "OP" else None),
+                        room_type_id=item_room["room_type_id"],
                     )
 
                     
@@ -467,6 +494,9 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             "service_name": resolved["service_name"],
                             "service_group_name": resolved["service_group_name"],
                             "service_date": item.service_date,
+                            "room_type_id": item_room["room_type_id"],
+                            "room_type_name": item_room["room_type_name"],
+                            "bed_number": item_room["bed_number"],
                             "rate": rate,
                             "quantity": quantity,
                             "amount": amount,
@@ -586,6 +616,11 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
 
                 bill = dict(cursor.fetchone())
 
+                # Start the IP room/bed timeline within the bill creation transaction.
+                create_initial_ip_room_assignment(
+                    cursor, bill=bill, changed_by=created_by
+                )
+
                 # Save bill items using the updated database column names.
                 for item in prepared_items:
                     cursor.execute(
@@ -599,6 +634,9 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             service_name,
                             service_group_name,
                             service_date,
+                            room_type_id,
+                            room_type_name,
+                            bed_number,
                             rate,
                             quantity,
                             amount,
@@ -608,7 +646,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         )
                         VALUES (
                             %s, %s, %s, %s, %s, %s, %s,
-                            %s, %s, %s, %s, %s, %s
+                            %s, %s, %s, %s, %s, %s, %s, %s, %s
                         )
 
                         """,
@@ -620,6 +658,9 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             item["service_name"],
                             item["service_group_name"],
                             item["service_date"],
+                            item["room_type_id"],
+                            item["room_type_name"],
+                            item["bed_number"],
                             item["rate"],
                             item["quantity"],
                             item["amount"],
@@ -629,6 +670,33 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
 
                         ),
                     )
+
+                created_items_for_audit = fetch_bill_items_for_audit(cursor, bill["id"])
+
+                # Keep the bill-level creation snapshot and also create one
+                # explicit audit event per initial line item. This makes the
+                # initial services visible in the timeline just like items
+                # added later, while keeping all audit writes in this same
+                # transaction as bill creation.
+                write_bill_audit(
+                    cursor,
+                    bill_id=bill["id"],
+                    action="bill.created",
+                    entity_type="bill",
+                    entity_id=bill["id"],
+                    changed_by=created_by,
+                    new_values={
+                        "bill": dict(bill),
+                        "items": created_items_for_audit,
+                    },
+                )
+                write_bill_item_diff(
+                    cursor,
+                    bill_id=bill["id"],
+                    old_items=[],
+                    new_items=created_items_for_audit,
+                    changed_by=created_by,
+                )
 
                 result = serialize_row(bill)
                 result["patient_id"] = patient["patient_id"]
@@ -680,6 +748,50 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if not bill:
                     raise HTTPException(status_code=404, detail="Bill not found.")
 
+                old_bill_for_audit = dict(bill)
+                old_items_for_audit = fetch_bill_items_for_audit(cursor, bill_id)
+
+                # Automated IP service rows are system-managed. They must remain
+                # present with the same service, service date and quantity; the
+                # discount and (Room Rent only) GST may still be edited.
+                automated_ip_services = {
+                    "room rent",
+                    "holistic therapies",
+                    "diet & food",
+                    "doctor consultation",
+                    "nursing charges",
+                    "psychiatric consultation/treatment",
+                    "psychologist counselling/treatment",
+                    "recreation actvities/therapy",
+                    "recreation activities/therapy",
+                }
+                if str(bill.get("bill_type") or "").upper() == "IP":
+                    required_rows = [
+                        old_item for old_item in old_items_for_audit
+                        if str(old_item.get("service_name") or "").strip().casefold()
+                        in automated_ip_services
+                    ]
+                    remaining_payload_items = list(payload.items)
+                    for old_item in required_rows:
+                        match_index = next(
+                            (
+                                index for index, incoming in enumerate(remaining_payload_items)
+                                if str(incoming.service_id) == str(old_item.get("service_id"))
+                                and str(incoming.service_date)[:10] == str(old_item.get("service_date"))[:10]
+                                and Decimal(str(incoming.quantity)) == Decimal(str(old_item.get("quantity") or 1))
+                            ),
+                            None,
+                        )
+                        if match_index is None:
+                            raise HTTPException(
+                                status_code=409,
+                                detail=(
+                                    f"Automated IP service '{old_item.get('service_name')}' "
+                                    "cannot be removed or have its service date or quantity changed."
+                                ),
+                            )
+                        remaining_payload_items.pop(match_index)
+
                 # Lock editing once an OP bill is fully paid, or an IP bill is discharged.
                 if str(bill.get("bill_type") or "").upper() == "IP" and bill.get("discharge_date"):
                     raise HTTPException(status_code=409, detail="This IP bill cannot be edited after the discharge date has been recorded.")
@@ -715,8 +827,6 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     raise HTTPException(status_code=422, detail="Bill type cannot be changed.")
                 if payload.bill_type == "OP" and payload.room_type_id is not None:
                     raise HTTPException(status_code=422, detail="Room type must not be provided for OP billing.")
-                if payload.bill_type == "IP" and payload.room_type_id != bill["room_type_id"]:
-                    raise HTTPException(status_code=422, detail="Room type cannot be changed while editing an existing bill.")
 
                 cursor.execute("SELECT id, patient_id FROM public.patients WHERE id = %s", (bill["patient_db_id"],))
                 patient = cursor.fetchone()
@@ -729,12 +839,13 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 gst_total = Decimal("0.00")
                 prepared_items = []
                 for item in payload.items:
+                    item_room = resolve_item_room_context(cursor, payload.bill_type, item, payload)
                     resolved = resolve_service_price(
                         cursor=cursor,
                         service_id=item.service_id,
                         bill_type=payload.bill_type,
                         doctor_id=payload.doctor_id if payload.bill_type == "OP" else None,
-                        room_type_id=payload.room_type_id if payload.bill_type == "IP" else None,
+                        room_type_id=item_room["room_type_id"],
                     )
                     rate = resolved["rate"]
                     quantity = item.quantity
@@ -760,6 +871,9 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         "service_name": resolved["service_name"],
                         "service_group_name": resolved["service_group_name"],
                         "service_date": item.service_date,
+                        "room_type_id": item_room["room_type_id"],
+                        "room_type_name": item_room["room_type_name"],
+                        "bed_number": item_room["bed_number"],
                         "rate": rate, "quantity": quantity, "amount": amount,
                         "discount_amount": discount, "net_amount": net, "gst_amount": gst,
                     })
@@ -787,7 +901,8 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 cursor.execute("""
                     UPDATE public.bills SET
                         -- The original bill creation timestamp is immutable.
-                        department = %s, doctor_id = %s, doctor_name = %s,
+                        department = %s, room_type_id = %s, room_type_name = %s,
+                        doctor_id = %s, doctor_name = %s,
                         psychologist_id = %s, psychologist_name = %s, subtotal = %s,
                         discount_amount = %s, total_amount = %s, notes = %s,
                         admission_date = %s, discharge_date = %s, bed_number = %s,
@@ -798,6 +913,8 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     RETURNING *
                 """, (
                     payload.department,
+                    payload.room_type_id if payload.bill_type == "IP" else None,
+                    context.get("room_type_name") if payload.bill_type == "IP" else None,
                     payload.doctor_id, context.get("doctor_name") if payload.doctor_id else payload.doctor_name,
                     payload.psychologist_id,
                     context.get("psychologist_name") if payload.psychologist_id else payload.psychologist_name,
@@ -809,18 +926,53 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     updated_by, bill_id,
                 ))
                 updated_bill = cursor.fetchone()
+                # Record room type / bed assignment periods only when they change.
+                # This shares the bill update transaction, so both stay consistent.
+                sync_ip_room_assignment(
+                    cursor,
+                    old_bill=old_bill_for_audit,
+                    new_bill=dict(updated_bill),
+                    changed_by=updated_by,
+                )
                 # The transaction protects the bill and all its items as one unit.
                 cursor.execute("DELETE FROM public.bill_items WHERE bill_id = %s", (bill_id,))
                 for item in prepared_items:
                     cursor.execute("""
                         INSERT INTO public.bill_items (
                             bill_id, service_id, service_group_id, service_price_id,
-                            service_name, service_group_name, service_date, rate, quantity,
-                            amount, discount_amount, net_amount, gst_amount
-                        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                            service_name, service_group_name, service_date,
+                            room_type_id, room_type_name, bed_number,
+                            rate, quantity, amount, discount_amount, net_amount, gst_amount
+                        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     """, (bill_id, item["service_id"], item["service_group_id"], item["service_price_id"],
-                          item["service_name"], item["service_group_name"], item["service_date"], item["rate"],
+                          item["service_name"], item["service_group_name"], item["service_date"],
+                          item["room_type_id"], item["room_type_name"], item["bed_number"], item["rate"],
                           item["quantity"], item["amount"], item["discount_amount"], item["net_amount"], item["gst_amount"]))
+                new_items_for_audit = fetch_bill_items_for_audit(cursor, bill_id)
+                write_bill_audit(
+                    cursor,
+                    bill_id=bill_id,
+                    action="bill.updated",
+                    entity_type="bill",
+                    entity_id=bill_id,
+                    changed_by=updated_by,
+                    old_values={
+                        "bill": old_bill_for_audit,
+                        "items": old_items_for_audit,
+                    },
+                    new_values={
+                        "bill": dict(updated_bill),
+                        "items": new_items_for_audit,
+                    },
+                )
+                write_bill_item_diff(
+                    cursor,
+                    bill_id=bill_id,
+                    old_items=old_items_for_audit,
+                    new_items=new_items_for_audit,
+                    changed_by=updated_by,
+                )
+
                 from Utils.billing_helpers import get_bill_items
                 result = serialize_row(dict(updated_bill))
                 result["items"] = get_bill_items(cursor, bill_id)
@@ -891,44 +1043,20 @@ def add_nurse_ip_service(
                 if service_date and service_date > date.today():
                     raise HTTPException(status_code=422, detail="Service date cannot be in the future.")
 
-                # Prevent nurses from adding the same service name to the same
-                # bill more than once for the same service date. The bill row is
-                # already locked FOR UPDATE above, so concurrent nurse requests
-                # for this bill serialize before this check and insert.
-                cursor.execute(
-                    """
-                    SELECT id
-                    FROM public.bill_items
-                    WHERE bill_id = %s
-                      AND LOWER(BTRIM(service_name)) = LOWER(BTRIM(%s))
-                      AND service_date IS NOT DISTINCT FROM %s
-                    LIMIT 1
-                    """,
-                    (bill_id, resolved["service_name"], service_date),
-                )
-                existing_item = cursor.fetchone()
-                if existing_item:
-                    raise HTTPException(
-                        status_code=409,
-                        detail=(
-                            f"'{resolved['service_name']}' is already added to this "
-                            f"IP bill for {service_date.isoformat() if service_date else 'the same unspecified date'}. "
-                            "A service with the same name cannot be added twice for the same date."
-                        ),
-                    )
-
                 rate = money(resolved["rate"])
                 amount = money(rate * qty)
                 cursor.execute("""
                     INSERT INTO public.bill_items (
                         bill_id, service_id, service_group_id, service_price_id,
-                        service_name, service_group_name, service_date, rate, quantity,
-                        amount, discount_amount, net_amount, gst_amount
-                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,0)
+                        service_name, service_group_name, service_date,
+                        room_type_id, room_type_name, bed_number,
+                        rate, quantity, amount, discount_amount, net_amount, gst_amount
+                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,0)
                     RETURNING id
                 """, (bill_id, resolved["service_id"], resolved["service_group_id"],
                       resolved["service_price_id"], resolved["service_name"],
-                      resolved["service_group_name"], service_date, rate, qty, amount, amount))
+                      resolved["service_group_name"], service_date, bill.get("room_type_id"),
+                      bill.get("room_type_name"), bill.get("bed_number"), rate, qty, amount, amount))
                 item_id = cursor.fetchone()["id"]
                 cursor.execute("""
                     SELECT COALESCE(SUM(amount),0) AS subtotal,
@@ -947,6 +1075,40 @@ def add_nurse_ip_service(
                         updated_by=%s, updated_at=CURRENT_TIMESTAMP
                     WHERE id=%s
                 """, (subtotal, total, updated_by, bill_id))
+                cursor.execute("SELECT * FROM public.bills WHERE id = %s", (bill_id,))
+                updated_bill_for_audit = dict(cursor.fetchone())
+                cursor.execute("SELECT * FROM public.bill_items WHERE id = %s", (item_id,))
+                added_item_for_audit = dict(cursor.fetchone())
+                write_bill_audit(
+                    cursor,
+                    bill_id=bill_id,
+                    action="bill_item.added",
+                    entity_type="bill_item",
+                    entity_id=item_id,
+                    changed_by=updated_by,
+                    old_values=None,
+                    new_values={"item": added_item_for_audit},
+                )
+                old_totals = {
+                    "subtotal": str(money(bill.get("subtotal") or 0)),
+                    "total_amount": str(money(bill.get("total_amount") or 0)),
+                }
+                new_totals = {
+                    "subtotal": str(subtotal),
+                    "total_amount": str(total),
+                }
+                if old_totals != new_totals:
+                    write_bill_audit(
+                        cursor,
+                        bill_id=bill_id,
+                        action="bill.totals_updated",
+                        entity_type="bill",
+                        entity_id=bill_id,
+                        changed_by=updated_by,
+                        old_values=old_totals,
+                        new_values=new_totals,
+                        reason="Bill totals recalculated after a service was added.",
+                    )
                 return {"success": True, "bill_id": bill_id, "item_id": item_id,
                         "service_name": resolved["service_name"], "total_amount": float(total)}
     except HTTPException:

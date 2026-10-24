@@ -2,7 +2,7 @@
 from datetime import date
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, Path, Query, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Path, Query, status
 
 from Router.Login import get_current_user
 from Schemas.billing_schema import (
@@ -17,6 +17,8 @@ from Services.bill_query_service import (
     list_bill_creators_service,
 )
 from Services.payment_service import record_payment_service
+from Services.ip_room_history_service import list_ip_room_history
+from Services.bill_audit_service import list_bill_audit_history, search_bill_history
 from Services.bill_pdf_service import (
     generate_ip_bill_pdf,
     generate_op_bill_pdf,
@@ -157,6 +159,87 @@ def add_nurse_service(
         bill_id, service_id, quantity, service_date, user_id,
         allow_all_service_groups=allow_all_service_groups,
     )
+
+
+@router.get("/history/search")
+def search_bills_for_history(
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=10, ge=1, le=100),
+    search: Optional[str] = Query(default=None, max_length=100),
+    bill_type: Optional[Literal["OP", "IP"]] = Query(default=None),
+    current_user: dict = Depends(get_current_user),
+):
+    """Search bills for the audit-history screen."""
+    permissions = current_user.get("user", {}).get("permissions", {})
+    allowed = (
+        permissions.get("bills.history.view") is True
+        if isinstance(permissions, dict)
+        else "bills.history.view" in permissions
+    )
+    if not allowed:
+        raise HTTPException(status_code=403, detail="You do not have permission to view bill history.")
+    return search_bill_history(page=page, page_size=page_size, search=search, bill_type=bill_type)
+
+
+@router.get("/history/bill/{bill_id}")
+def get_bill_history_header(
+    bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
+):
+    """Return OP/IP-specific bill header fields for audit-history viewers."""
+    permissions = current_user.get("user", {}).get("permissions", {})
+    allowed = (
+        permissions.get("bills.history.view") is True
+        if isinstance(permissions, dict)
+        else "bills.history.view" in permissions
+    )
+    if not allowed:
+        raise HTTPException(status_code=403, detail="You do not have permission to view bill history.")
+    bill = get_bill_service(bill_id)
+    bill_type = str(bill.get("bill_type") or "").upper()
+    fields = {
+        "id", "bill_number", "bill_type", "op_number", "ip_number",
+        "bill_date", "admission_date", "discharge_date", "total_amount",
+        "patient_id", "patient_name", "patient_db_id", "created_at", "updated_at",
+    }
+    return {key: value for key, value in bill.items() if key in fields and (bill_type == "IP" or key not in {"admission_date", "discharge_date"})}
+
+
+@router.get("/{bill_id}/history")
+def get_bill_history(
+    bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
+):
+    """Retrieve the audit timeline for a bill."""
+    permissions = current_user.get("user", {}).get("permissions", {})
+    allowed = (
+        permissions.get("bills.history.view") is True
+        if isinstance(permissions, dict)
+        else "bills.history.view" in permissions
+    )
+    if not allowed:
+        raise HTTPException(status_code=403, detail="You do not have permission to view bill history.")
+    return list_bill_audit_history(bill_id)
+
+
+@router.get("/{bill_id}/room-history")
+def get_ip_room_history(
+    bill_id: int = Path(gt=0),
+    current_user: dict = Depends(get_current_user),
+):
+    """Return room/bed assignment periods for an IP bill."""
+    bill = get_bill_service(bill_id)
+    if str(bill.get("bill_type") or "").upper() != "IP":
+        raise HTTPException(status_code=422, detail="Room history is available only for IP bills.")
+    permissions = current_user.get("user", {}).get("permissions", {})
+    allowed_keys = ("bills.ip.view", "nurse.view")
+    allowed = any(
+        permissions.get(key) is True if isinstance(permissions, dict) else key in permissions
+        for key in allowed_keys
+    )
+    if not allowed:
+        raise HTTPException(status_code=403, detail="You do not have permission to view IP room history.")
+    return list_ip_room_history(bill_id)
 
 
 @router.get("/{bill_id}")

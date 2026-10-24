@@ -20,6 +20,13 @@ class BillItemInput(BaseModel):
     service_id: int = Field(gt=0)
     service_date: Optional[date] = None
 
+    # Per-service IP room context. Names are accepted for compatibility/display,
+    # but the backend resolves room_type_name from room_types to avoid trusting
+    # client-supplied master data.
+    room_type_id: Optional[int] = Field(default=None, gt=0)
+    room_type_name: Optional[str] = Field(default=None, max_length=100)
+    bed_number: Optional[str] = Field(default=None, max_length=100)
+
     quantity: Decimal = Field(
         default=Decimal("1"),
         gt=0,
@@ -150,17 +157,6 @@ class CreateBillRequest(BaseModel):
     ) -> list[BillItemInput]:
         if not items:
             raise ValueError("At least one bill item is required.")
-
-        service_keys = [
-            (item.service_id, item.service_date)
-            for item in items
-        ]
-
-        if len(service_keys) != len(set(service_keys)):
-            raise ValueError(
-                "A service can appear only once per date. "
-                "Combine quantities for duplicate services on the same date."
-            )
 
         return items
 

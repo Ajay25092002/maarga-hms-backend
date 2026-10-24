@@ -20,7 +20,10 @@ ROLE_PERMISSIONS = {
     "patients.create": "Register Patients",
     "patients.edit": "Edit Patient Details",
 
-        # OP Bills
+        # Bill History / Audit Trail
+    "bills.history.view": "View Bill History and Audit Trail",
+
+    # OP Bills
     "bills.op.view": "View OP Bills",
     "bills.op.create": "Create OP Bills",
     "bills.op.edit": "Edit OP Bills",

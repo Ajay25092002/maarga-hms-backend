@@ -1,6 +1,7 @@
 import psycopg2
 from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
+from psycopg2 import sql
 
 from Core.logger import get_logger
 from Utils.billing_helpers import (
@@ -254,6 +255,39 @@ def list_bill_creators_service():
             connection.close()
 
 
+
+def _get_ip_room_history(cursor, bill: dict) -> list[dict]:
+    """Read the canonical room/bed timeline for an inpatient bill.
+
+    The schema is defined by Services.ip_room_history_service; query that table
+    directly rather than probing guessed table names and column layouts.
+    """
+    if str(bill.get("bill_type") or "").upper() != "IP":
+        return []
+
+    cursor.execute(
+        """
+        SELECT
+            h.id,
+            h.bill_id,
+            h.room_type_id,
+            h.room_type_name,
+            h.bed_number,
+            h.start_at AS start_date,
+            h.end_at AS end_date,
+            h.changed_by,
+            h.change_reason,
+            h.created_at
+        FROM public.ip_room_history AS h
+        WHERE h.bill_id = %s
+        ORDER BY h.start_at ASC, h.id ASC
+        """,
+        (bill.get("id"),),
+    )
+    return [serialize_row(dict(row)) for row in cursor.fetchall()]
+
+
+
 def get_bill_service(bill_id: int):
     connection = None
 
@@ -327,6 +361,7 @@ def get_bill_service(bill_id: int):
 
                 # Bill items and original payment records remain unchanged.
                 result["items"] = get_bill_items(cursor, bill_id)
+                result["room_history"] = _get_ip_room_history(cursor, result)
 
                 cursor.execute(
                     """

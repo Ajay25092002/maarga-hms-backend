@@ -30,6 +30,7 @@ ADMIN_PERMISSIONS = {
     "bills.ip.view": True,
     "bills.ip.create": True,
     "bills.ip.edit": True,
+    "bills.history.view": True,
 
     "nurse.view": True,
     "nurse.add_services": True,
@@ -144,12 +145,51 @@ def create_initial_admin():
         existing_user = cursor.fetchone()
 
         if existing_user:
+            # Existing installations still need the dedicated System actor for
+            # scheduler audit records. Reuse the existing Admin role if present.
+            cursor.execute(
+                "SELECT id FROM public.roles WHERE LOWER(name) = LOWER(%s) LIMIT 1",
+                (ROLE_NAME,),
+            )
+            existing_admin_role = cursor.fetchone()
+            if existing_admin_role:
+                cursor.execute(
+                    """
+                    UPDATE public.roles
+                    SET permissions = COALESCE(permissions, '{}'::jsonb)
+                        || %s::jsonb,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                    """,
+                    (Json({"bills.history.view": True}), existing_admin_role["id"]),
+                )
+                cursor.execute(
+                    """
+                    SELECT id FROM public.users
+                    WHERE LOWER(login_id) = 'system' OR LOWER(full_name) = 'system'
+                    LIMIT 1
+                    """
+                )
+                if not cursor.fetchone():
+                    cursor.execute(
+                        """
+                        INSERT INTO public.users (
+                            login_id, full_name, email, password_hash, role_id, is_active
+                        )
+                        VALUES (%s, %s, %s, %s, %s, FALSE)
+                        """,
+                        (
+                            "system", "System", "system@internal.local",
+                            hash_admin_password(secrets.token_urlsafe(48)),
+                            existing_admin_role["id"],
+                        ),
+                    )
+                    logger.info("Created inactive System audit user.")
+            connection.commit()
             logger.info(
-                "User ID '%s' already exists. "
-                "Skipping initial Admin creation.",
+                "User ID '%s' already exists. Skipping initial Admin creation.",
                 existing_user["login_id"],
             )
-            connection.rollback()
             return
 
         # 2. Prevent duplicate email addresses.
@@ -249,6 +289,39 @@ def create_initial_admin():
             admin_user_id,
         )
 
+        # Create one dedicated inactive System actor for scheduler-generated audit events.
+        # It cannot be used to sign in, but its database user ID is stored in audit history.
+        cursor.execute(
+            """
+            SELECT id
+            FROM public.users
+            WHERE LOWER(login_id) = 'system'
+               OR LOWER(full_name) = 'system'
+            LIMIT 1
+            """
+        )
+        system_user = cursor.fetchone()
+        if not system_user:
+            cursor.execute(
+                """
+                INSERT INTO public.users (
+                    login_id, full_name, email, password_hash, role_id, is_active
+                )
+                VALUES (%s, %s, %s, %s, %s, FALSE)
+                RETURNING id
+                """,
+                (
+                    "system",
+                    "System",
+                    "system@internal.local",
+                    hash_admin_password(secrets.token_urlsafe(48)),
+                    role_id,
+                ),
+            )
+            system_user = cursor.fetchone()
+            logger.info("Created inactive System audit user with database ID %s.", system_user["id"])
+
+        connection.commit()
         return new_admin
 
     except Exception:

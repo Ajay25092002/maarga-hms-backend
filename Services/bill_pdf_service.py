@@ -386,6 +386,165 @@ def _get_bill_refunds(bill_id: int) -> list[dict]:
         connection.close()
 
 
+
+# These are the eight services auto-populated by the IP billing screen.
+# Matching is case-insensitive and also tolerates common spelling variations.
+IP_AUTO_SERVICE_NAMES = {
+    "ROOM RENT",
+    "RECREATION ACTIVITIES/THERAPY",
+    "RECREATION ACTVITIES/THERAPY",
+    "PSYCHIATRIC CONSULTATION/TREATMENT",
+    "DOCTOR CONSULTATION",
+    "NURSING CHARGES",
+    "PSYCHOLOGIST COUNSELLING/TREATMENT",
+    "HOLISTIC THERAPIES",
+    "DIET AND FOOD",
+}
+
+
+def _normal_name(value: Any) -> str:
+    return " ".join(str(value or "").strip().upper().split())
+
+
+def _room_periods(bill: dict) -> list[dict]:
+    """Normalize room-history periods supplied by get_bill_service()."""
+    history = bill.get("room_history") or bill.get("room_history_timeline") or []
+    periods = []
+    for record in history:
+        start = _date_value(
+            record.get("start_date") or record.get("start_at")
+            or record.get("admission_date") or record.get("from_date")
+            or record.get("assigned_at") or record.get("created_at")
+        )
+        end = _date_value(
+            record.get("end_date") or record.get("end_at")
+            or record.get("discharge_date") or record.get("to_date")
+            or record.get("released_at")
+        ) or _date_value(bill.get("discharge_date")) or _date_value(bill.get("bill_date"))
+        if not start or not end or end.date() < start.date():
+            continue
+        periods.append({
+            "start": start,
+            "end": end,
+            "room_type_name": record.get("room_type_name") or record.get("room_name")
+                or record.get("room_type") or bill.get("room_type_name") or "",
+            "bed_number": record.get("bed_number") or record.get("bed_no")
+                or record.get("bed_name") or bill.get("bed_number") or "",
+            "room_type_id": record.get("room_type_id") or record.get("room_id"),
+        })
+    periods.sort(key=lambda period: period["start"])
+
+    # A room-history row is not guaranteed for every admission. If no transfer
+    # history exists, still show the patient's single/current room stay using
+    # the admission start date and today's date (India local time).
+    if not periods:
+        start = _date_value(
+            bill.get("admission_date") or bill.get("admitted_at")
+            or bill.get("admission_datetime") or bill.get("created_at")
+            or bill.get("bill_date")
+        )
+        today = datetime.now(ZoneInfo("Asia/Kolkata")).date()
+        if start and start.date() <= today:
+            periods.append({
+                "start": start,
+                "end": datetime.combine(today, datetime.min.time()),
+                "room_type_name": (
+                    bill.get("room_type_name")
+                    or bill.get("current_room_type_name")
+                    or bill.get("room_type")
+                    or bill.get("current_room_type")
+                    or ""
+                ),
+                "bed_number": (
+                    bill.get("bed_number") or bill.get("bed_no")
+                    or bill.get("current_bed_number") or ""
+                ),
+                "room_type_id": bill.get("room_type_id") or bill.get("room_id"),
+            })
+
+    return periods
+
+
+def _period_label(period: dict) -> str:
+    start = _date_text(period["start"])
+    end = _date_text(period["end"])
+    room = str(period.get("room_type_name") or "").strip()
+    bed = str(period.get("bed_number") or "").strip()
+    room_bed = "/".join(part for part in (room, bed) if part)
+    suffix = f" {room_bed}" if room_bed else ""
+    return f"({start} to {end}{suffix})"
+
+
+def _ip_display_items(bill: dict, items: list[dict]) -> list[dict]:
+    """
+    Prepare IP-only display rows from room history. This does not write to the
+    database or alter stored bill totals. Existing rate/discount fields are
+    carried forward; period quantity is the inclusive number of calendar days.
+    """
+    periods = _room_periods(bill)
+    if not periods:
+        # Without room history, keep the original items unchanged rather than
+        # inventing dates when the admission start date is unavailable.
+        return items
+
+    display_items = []
+    for item in items:
+        name = item.get("service_name") or item.get("name") or item.get("description") or ""
+        normalized = _normal_name(name)
+        # Only split accommodation and the configured auto-picked clinical
+        # services. Other manually added charges retain their original rows.
+        is_room_rent = "ROOM RENT" in normalized
+        is_auto = normalized in IP_AUTO_SERVICE_NAMES
+        if not (is_room_rent or is_auto):
+            display_items.append(item)
+            continue
+
+        # service_date is the date the charge was recorded, not the start of
+        # the patient's room stay. Do not use it to truncate earlier room
+        # periods. Explicit item date ranges, when present, are respected.
+        item_start = _date_value(item.get("start_date"))
+        item_end = _date_value(item.get("end_date"))
+        matching_periods = []
+        for period in periods:
+            start = period["start"]
+            end = period["end"]
+            if item_start and item_start.date() > start.date():
+                start = item_start
+            if item_end and item_end.date() < end.date():
+                end = item_end
+            if end.date() < start.date():
+                continue
+            matching_periods.append({
+                **period,
+                "start": start,
+                "end": end,
+                "quantity": (end.date() - start.date()).days + 1,
+            })
+
+        total_period_quantity = sum(period["quantity"] for period in matching_periods) or 1
+        original_discount = _money(item.get("discount_amount"))
+        for period in matching_periods:
+            row = dict(item)
+            row["service_name"] = f"{name} {_period_label(period)}"
+            row["service_date"] = item.get("service_date") or period["start"]
+            row["room_history_start"] = period["start"]
+            row["room_history_end"] = period["end"]
+            row["room_type_name"] = period.get("room_type_name")
+            row["bed_number"] = period.get("bed_number")
+            row["quantity"] = period["quantity"]
+            # These are PDF display rows only. The persisted bill items and
+            # bill totals are untouched. Distribute the existing line discount
+            # proportionally across the displayed room periods.
+            row["amount"] = _money(row.get("rate")) * row["quantity"]
+            row["discount_amount"] = original_discount * (
+                row["quantity"] / total_period_quantity
+            )
+            row["net_amount"] = max(0.0, row["amount"] - row["discount_amount"])
+            display_items.append(row)
+
+    return display_items
+
+
 def _charge_table(items: list[dict], styles, op: bool):
 
     if op:
@@ -467,10 +626,18 @@ def _charge_table(items: list[dict], styles, op: bool):
 
     grouped: dict[str, list[dict]] = {}
     for item in items:
-        grouped.setdefault(
-            str(item.get("category") or "OTHER CHARGES").strip(),
-            [],
-        ).append(item)
+        # bill_items uses service_group_name (and service_group_id), not
+        # `category`. Prefer the persisted group name so charges remain under
+        # their actual configured service groups in the IP PDF.
+        category = (
+            item.get("service_group_name")
+            or item.get("service_group")
+            or item.get("category")
+        )
+        category = str(category or "OTHER CHARGES").strip()
+        if not category:
+            category = "OTHER CHARGES"
+        grouped.setdefault(category, []).append(item)
 
     if not grouped:
         grouped["OTHER CHARGES"] = []
@@ -840,10 +1007,15 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
         story.extend([
             totals,
             Spacer(1, 3 * mm),
-            _p("PAYMENT HISTORY", styles["bold"]),
-            Spacer(1, 1 * mm),
-            _transaction_table(payments, styles, True, False),
-            Spacer(1, 2 * mm),
+            *(
+                [
+                    _p("PAYMENT HISTORY", styles["bold"]),
+                    Spacer(1, 1 * mm),
+                    _transaction_table(payments, styles, True, False),
+                    Spacer(1, 2 * mm),
+                ]
+                if payments else []
+            ),
             *(
                 [
                     _p("REFUND HISTORY", styles["bold"]),
@@ -952,18 +1124,23 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                 bill.get("created_by_name") or "-",
                 "",
                 "",
-                "",
-                "",
+                "Room Type",
+                bill.get("room_type_name") or bill.get("current_room_type_name") or bill.get("room_type") or bill.get("current_room_type") or "-",
                 styles,
             ),
            
             Spacer(1, 2 * mm),
-            _charge_table(items, styles, False),
+            _charge_table(_ip_display_items(bill, items), styles, False),
             Spacer(1, 2 * mm),
-            _p("PAYMENT HISTORY", styles["bold"]),
-            Spacer(1, 1 * mm),
-            _transaction_table(payments, styles, False, False),
-            Spacer(1, 2 * mm),
+            *(
+                [
+                    _p("PAYMENT HISTORY", styles["bold"]),
+                    Spacer(1, 1 * mm),
+                    _transaction_table(payments, styles, False, False),
+                    Spacer(1, 2 * mm),
+                ]
+                if payments else []
+            ),
             *(
                 [
                     _p("REFUND HISTORY", styles["bold"]),
