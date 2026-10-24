@@ -391,14 +391,13 @@ def _get_bill_refunds(bill_id: int) -> list[dict]:
 # Matching is case-insensitive and also tolerates common spelling variations.
 IP_AUTO_SERVICE_NAMES = {
     "ROOM RENT",
-    "RECREATION ACTIVITIES/THERAPY",
     "RECREATION ACTVITIES/THERAPY",
     "PSYCHIATRIC CONSULTATION/TREATMENT",
     "DOCTOR CONSULTATION",
     "NURSING CHARGES",
     "PSYCHOLOGIST COUNSELLING/TREATMENT",
     "HOLISTIC THERAPIES",
-    "DIET AND FOOD",
+    "DIET & FOOD",
 }
 
 
@@ -476,71 +475,139 @@ def _period_label(period: dict) -> str:
 
 
 def _ip_display_items(bill: dict, items: list[dict]) -> list[dict]:
-    """
-    Prepare IP-only display rows from room history. This does not write to the
-    database or alter stored bill totals. Existing rate/discount fields are
-    carried forward; period quantity is the inclusive number of calendar days.
+    """Decorate existing IP bill items with room-period context without adding rows.
+
+    The saved bill items are the financial source of truth. Room history is used
+    only to find the relevant stay period for the service date. This function
+    must return exactly one display row for each saved bill item and must never
+    recalculate quantity, rate, amount, discount, GST, or net amount.
     """
     periods = _room_periods(bill)
-    if not periods:
-        # Without room history, keep the original items unchanged rather than
-        # inventing dates when the admission start date is unavailable.
-        return items
+    display_items: list[dict] = []
 
-    display_items = []
     for item in items:
-        name = item.get("service_name") or item.get("name") or item.get("description") or ""
-        normalized = _normal_name(name)
-        # Only split accommodation and the configured auto-picked clinical
-        # services. Other manually added charges retain their original rows.
-        is_room_rent = "ROOM RENT" in normalized
-        is_auto = normalized in IP_AUTO_SERVICE_NAMES
-        if not (is_room_rent or is_auto):
-            display_items.append(item)
-            continue
+        row = dict(item)
+        name = (
+            item.get("service_name")
+            or item.get("name")
+            or item.get("description")
+            or item.get("service_code")
+            or ""
+        )
+        service_date = _date_value(item.get("service_date") or item.get("created_at"))
 
-        # service_date is the date the charge was recorded, not the start of
-        # the patient's room stay. Do not use it to truncate earlier room
-        # periods. Explicit item date ranges, when present, are respected.
-        item_start = _date_value(item.get("start_date"))
-        item_end = _date_value(item.get("end_date"))
-        matching_periods = []
-        for period in periods:
-            start = period["start"]
-            end = period["end"]
-            if item_start and item_start.date() > start.date():
-                start = item_start
-            if item_end and item_end.date() < end.date():
-                end = item_end
-            if end.date() < start.date():
-                continue
-            matching_periods.append({
-                **period,
-                "start": start,
-                "end": end,
-                "quantity": (end.date() - start.date()).days + 1,
-            })
+        # The bill item itself is authoritative for its assigned room/bed.
+        item_room_name = (
+            item.get("room_type_name")
+            or item.get("room_name")
+            or item.get("room_type")
+            or ""
+        )
+        item_bed = (
+            item.get("bed_number")
+            or item.get("bed_no")
+            or item.get("bed_name")
+            or ""
+        )
+        item_room_id = item.get("room_type_id") or item.get("room_id")
 
-        total_period_quantity = sum(period["quantity"] for period in matching_periods) or 1
-        original_discount = _money(item.get("discount_amount"))
-        for period in matching_periods:
-            row = dict(item)
-            row["service_name"] = f"{name} {_period_label(period)}"
-            row["service_date"] = item.get("service_date") or period["start"]
-            row["room_history_start"] = period["start"]
-            row["room_history_end"] = period["end"]
-            row["room_type_name"] = period.get("room_type_name")
-            row["bed_number"] = period.get("bed_number")
-            row["quantity"] = period["quantity"]
-            # These are PDF display rows only. The persisted bill items and
-            # bill totals are untouched. Distribute the existing line discount
-            # proportionally across the displayed room periods.
-            row["amount"] = _money(row.get("rate")) * row["quantity"]
-            row["discount_amount"] = original_discount * (
-                row["quantity"] / total_period_quantity
+        # Match the saved item room/bed to room history FIRST. A room-rent
+        # item may intentionally be entered with a service date before the
+        # room assignment became active (for example, a charge entered on the
+        # 23rd for a room assigned on the 24th). In that case, the item's saved
+        # room/bed identifies the correct period, and its period dates should
+        # still be shown. Service date is only a secondary disambiguator.
+        def period_matches_item(period: dict) -> bool:
+            room_id_matches = (
+                item_room_id is not None
+                and period.get("room_type_id") is not None
+                and str(item_room_id) == str(period.get("room_type_id"))
             )
-            row["net_amount"] = max(0.0, row["amount"] - row["discount_amount"])
-            display_items.append(row)
+            room_name_matches = (
+                bool(item_room_name)
+                and bool(period.get("room_type_name"))
+                and _normal_name(item_room_name) == _normal_name(period.get("room_type_name"))
+            )
+            bed_matches = (
+                bool(item_bed)
+                and bool(period.get("bed_number"))
+                and str(item_bed).strip() == str(period.get("bed_number")).strip()
+            )
+            # Prefer the strongest available match. If a room name is present,
+            # require the bed to match too when the item has a bed number.
+            return (
+                room_id_matches
+                or (room_name_matches and (not item_bed or bed_matches))
+                or (bed_matches and not item_room_name)
+            )
+
+        item_matching_periods = [period for period in periods if period_matches_item(period)]
+        selected_period = None
+        if item_matching_periods:
+            # If the same room/bed has multiple historical periods, choose the
+            # one containing service_date where possible; otherwise choose the
+            # latest matching period. This preserves the item's stored room and
+            # never creates extra bill rows.
+            date_matching_item_periods = [
+                period for period in item_matching_periods
+                if service_date
+                and period["start"].date() <= service_date.date() <= period["end"].date()
+            ]
+            selected_period = (
+                date_matching_item_periods[-1]
+                if date_matching_item_periods
+                else item_matching_periods[-1]
+            )
+        elif service_date:
+            # Only fall back to service-date matching if the item has no
+            # usable room/bed match in the history.
+            date_matching_periods = [
+                period for period in periods
+                if period["start"].date() <= service_date.date() <= period["end"].date()
+            ]
+            if date_matching_periods:
+                selected_period = date_matching_periods[-1]
+
+        # If service date is absent, room/bed fields still come from the bill
+        # item. Do not infer a date range that could misrepresent the charge.
+        room_name = item_room_name or (selected_period or {}).get("room_type_name") or ""
+        bed_number = item_bed or (selected_period or {}).get("bed_number") or ""
+
+        # Preserve the original description if this item already has a period
+        # label, avoiding duplicate labels if this helper is called more than once.
+        clean_name = name
+        if selected_period:
+            period_label = _period_label(selected_period)
+            if period_label not in clean_name:
+                room_bed = "/".join(
+                    part for part in (str(room_name).strip(), str(bed_number).strip()) if part
+                )
+                start_text = _date_text(selected_period["start"])
+                end_text = _date_text(selected_period["end"])
+                suffix = f" {room_bed}" if room_bed else ""
+                clean_name = f"{name} ({start_text} to {end_text}{suffix})"
+        elif room_name or bed_number:
+            # If history cannot be matched, show the item-specific room/bed
+            # without fabricating a room-period date range.
+            room_bed = "/".join(
+                part for part in (str(room_name).strip(), str(bed_number).strip()) if part
+            )
+            suffix = f" ({room_bed})"
+            if suffix not in clean_name:
+                clean_name = f"{name}{suffix}"
+
+        if name:
+            row["service_name"] = clean_name
+        if room_name:
+            row["room_type_name"] = room_name
+        if bed_number:
+            row["bed_number"] = bed_number
+        if selected_period:
+            row["room_history_start"] = selected_period["start"]
+            row["room_history_end"] = selected_period["end"]
+
+        # Do not alter any financial fields or quantity here.
+        display_items.append(row)
 
     return display_items
 
