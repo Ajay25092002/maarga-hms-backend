@@ -754,43 +754,45 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 # Automated IP service rows are system-managed. They must remain
                 # present with the same service, service date and quantity; the
                 # discount and (Room Rent only) GST may still be edited.
-                automated_ip_services = {
-                    "room rent",
-                    "holistic therapies",
-                    "diet & food",
-                    "doctor consultation",
-                    "nursing charges",
-                    "psychiatric consultation/treatment",
-                    "psychologist counselling/treatment",
-                    "recreation actvities/therapy",
-                    "recreation activities/therapy",
-                }
-                if str(bill.get("bill_type") or "").upper() == "IP":
-                    required_rows = [
-                        old_item for old_item in old_items_for_audit
-                        if str(old_item.get("service_name") or "").strip().casefold()
-                        in automated_ip_services
-                    ]
-                    remaining_payload_items = list(payload.items)
-                    for old_item in required_rows:
-                        match_index = next(
-                            (
-                                index for index, incoming in enumerate(remaining_payload_items)
-                                if str(incoming.service_id) == str(old_item.get("service_id"))
-                                and str(incoming.service_date)[:10] == str(old_item.get("service_date"))[:10]
-                                and Decimal(str(incoming.quantity)) == Decimal(str(old_item.get("quantity") or 1))
-                            ),
-                            None,
-                        )
-                        if match_index is None:
-                            raise HTTPException(
-                                status_code=409,
-                                detail=(
-                                    f"Automated IP service '{old_item.get('service_name')}' "
-                                    "cannot be removed or have its service date or quantity changed."
-                                ),
-                            )
-                        remaining_payload_items.pop(match_index)
+
+                # disabled temporruily
+                # automated_ip_services = {
+                #     "room rent",
+                #     "holistic therapies",
+                #     "diet & food",
+                #     "doctor consultation",
+                #     "nursing charges",
+                #     "psychiatric consultation/treatment",
+                #     "psychologist counselling/treatment",
+                #     "recreation actvities/therapy",
+                #     "recreation activities/therapy",
+                # }
+                # if str(bill.get("bill_type") or "").upper() == "IP":
+                #     required_rows = [
+                #         old_item for old_item in old_items_for_audit
+                #         if str(old_item.get("service_name") or "").strip().casefold()
+                #         in automated_ip_services
+                #     ]
+                #     remaining_payload_items = list(payload.items)
+                #     for old_item in required_rows:
+                #         match_index = next(
+                #             (
+                #                 index for index, incoming in enumerate(remaining_payload_items)
+                #                 if str(incoming.service_id) == str(old_item.get("service_id"))
+                #                 and str(incoming.service_date)[:10] == str(old_item.get("service_date"))[:10]
+                #                 and Decimal(str(incoming.quantity)) == Decimal(str(old_item.get("quantity") or 1))
+                #             ),
+                #             None,
+                #         )
+                #         if match_index is None:
+                #             raise HTTPException(
+                #                 status_code=409,
+                #                 detail=(
+                #                     f"Automated IP service '{old_item.get('service_name')}' "
+                #                     "cannot be removed or have its service date or quantity changed."
+                #                 ),
+                #             )
+                #         remaining_payload_items.pop(match_index)
 
                 # Lock editing once an OP bill is fully paid, or an IP bill is discharged.
                 if str(bill.get("bill_type") or "").upper() == "IP" and bill.get("discharge_date"):
