@@ -152,12 +152,24 @@ def add_nurse_service(
         service_date_value = payload.get("service_date")
         from datetime import date
         service_date = date.fromisoformat(service_date_value) if service_date_value else None
+        rate = payload.get("rate")
+        special_note = payload.get("special_note")
+        if special_note is not None and not isinstance(special_note, str):
+            raise ValueError("special_note must be text")
     except (TypeError, ValueError):
-        from fastapi import HTTPException
-        raise HTTPException(status_code=422, detail="Provide a valid service_id, quantity and service_date.") from None
+        raise HTTPException(
+            status_code=422,
+            detail="Provide a valid service_id, quantity, service_date, rate and special_note.",
+        ) from None
     return add_nurse_ip_service(
-        bill_id, service_id, quantity, service_date, user_id,
+        bill_id,
+        service_id,
+        quantity,
+        service_date,
+        user_id,
         allow_all_service_groups=allow_all_service_groups,
+        rate=rate,
+        special_note=special_note,
     )
 
 
