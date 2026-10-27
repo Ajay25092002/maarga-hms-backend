@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 from io import BytesIO
 from pathlib import Path
@@ -406,9 +406,10 @@ def _normal_name(value: Any) -> str:
 
 
 def _room_periods(bill: dict) -> list[dict]:
-    """Normalize room-history periods supplied by get_bill_service()."""
+    """Normalize room-history periods and close an open current stay at today's date."""
     history = bill.get("room_history") or bill.get("room_history_timeline") or []
     periods = []
+
     for record in history:
         start = _date_value(
             record.get("start_date") or record.get("start_at")
@@ -419,8 +420,8 @@ def _room_periods(bill: dict) -> list[dict]:
             record.get("end_date") or record.get("end_at")
             or record.get("discharge_date") or record.get("to_date")
             or record.get("released_at")
-        ) or _date_value(bill.get("discharge_date")) or _date_value(bill.get("bill_date"))
-        if not start or not end or end.date() < start.date():
+        )
+        if not start:
             continue
         periods.append({
             "start": start,
@@ -431,28 +432,42 @@ def _room_periods(bill: dict) -> list[dict]:
                 or record.get("bed_name") or bill.get("bed_number") or "",
             "room_type_id": record.get("room_type_id") or record.get("room_id"),
         })
-    periods.sort(key=lambda period: period["start"])
 
-    # A room-history row is not guaranteed for every admission. If no transfer
-    # history exists, still show the patient's single/current room stay using
-    # the admission start date and today's date (India local time).
+    periods.sort(key=lambda period: period["start"])
+    today = datetime.now(ZoneInfo("Asia/Kolkata")).date()
+    discharge = _date_value(bill.get("discharge_date"))
+
+    for index, period in enumerate(periods):
+        if period["end"] is None:
+            if index + 1 < len(periods):
+                next_start = periods[index + 1]["start"]
+                period["end"] = datetime.combine(
+                    next_start.date() - timedelta(days=1), datetime.max.time()
+                )
+            elif discharge:
+                period["end"] = discharge
+            else:
+                period["end"] = datetime.combine(today, datetime.min.time())
+
+    periods = [
+        period for period in periods
+        if period["end"] and period["end"].date() >= period["start"].date()
+    ]
+
+    # Fallback when room history is unavailable.
     if not periods:
         start = _date_value(
             bill.get("admission_date") or bill.get("admitted_at")
             or bill.get("admission_datetime") or bill.get("created_at")
             or bill.get("bill_date")
         )
-        today = datetime.now(ZoneInfo("Asia/Kolkata")).date()
         if start and start.date() <= today:
             periods.append({
                 "start": start,
-                "end": datetime.combine(today, datetime.min.time()),
+                "end": discharge or datetime.combine(today, datetime.min.time()),
                 "room_type_name": (
-                    bill.get("room_type_name")
-                    or bill.get("current_room_type_name")
-                    or bill.get("room_type")
-                    or bill.get("current_room_type")
-                    or ""
+                    bill.get("room_type_name") or bill.get("current_room_type_name")
+                    or bill.get("room_type") or bill.get("current_room_type") or ""
                 ),
                 "bed_number": (
                     bill.get("bed_number") or bill.get("bed_no")
@@ -598,6 +613,7 @@ def _ip_display_items(bill: dict, items: list[dict]) -> list[dict]:
 
         if name:
             row["service_name"] = clean_name
+            row["_ip_original_service_name"] = name
         if room_name:
             row["room_type_name"] = room_name
         if bed_number:
@@ -610,6 +626,94 @@ def _ip_display_items(bill: dict, items: list[dict]) -> list[dict]:
         display_items.append(row)
 
     return display_items
+
+
+def _aggregate_ip_auto_items(items: list[dict]) -> list[dict]:
+    """Aggregate only the eight automated IP services for PDF display.
+
+    Saved bill items are never modified. Rows are combined only when their
+    service, room-history period, room/bed, rate, and financial calculation
+    fields match. All non-automated services remain individual rows.
+    """
+    auto_names = {_normal_name(name) for name in IP_AUTO_SERVICE_NAMES}
+    output: list[dict] = []
+    grouped: dict[tuple, dict] = {}
+    sum_fields = (
+        "quantity", "amount", "discount_amount", "net_amount", "gst_amount",
+    )
+
+    for item in items:
+        original_name = item.get("_ip_original_service_name") or (
+            item.get("service_name") or item.get("name")
+            or item.get("description") or item.get("service_code") or ""
+        )
+        normalized_name = _normal_name(original_name)
+
+        if normalized_name not in auto_names:
+            output.append(item)
+            continue
+
+        period_start = item.get("room_history_start")
+        period_end = item.get("room_history_end")
+        # If no room period was resolved, do not merge unrelated entries.
+        if not period_start or not period_end:
+            output.append(item)
+            continue
+
+        key = (
+            normalized_name,
+            str(period_start),
+            str(period_end),
+            str(item.get("room_type_id") or item.get("room_id") or ""),
+            _normal_name(item.get("room_type_name") or item.get("room_name") or ""),
+            str(item.get("bed_number") or item.get("bed_no") or ""),
+            _money(item.get("rate")),
+            _money(item.get("discount_rate")),
+            _money(item.get("gst_rate")),
+            _money(item.get("discount_percentage")),
+            _normal_name(item.get("discount_type") or ""),
+        )
+
+        if key not in grouped:
+            merged = dict(item)
+            merged["service_name"] = (
+                f"{original_name} {_period_label({
+                    'start': period_start,
+                    'end': period_end,
+                    'room_type_name': item.get('room_type_name') or '',
+                    'bed_number': item.get('bed_number') or '',
+                })}"
+            )
+            # The displayed Service Date must be the earliest actual bill-item
+            # service date in this aggregated row, not the room-history start.
+            # Room-history dates remain in the service description separately.
+            actual_service_date = _date_value(item.get("service_date") or item.get("created_at"))
+            merged["service_date"] = actual_service_date or item.get("service_date") or item.get("created_at")
+            merged["quantity"] = _money(item.get("quantity") or 1)
+            for field in ("amount", "discount_amount", "net_amount", "gst_amount"):
+                if item.get(field) is not None:
+                    merged[field] = _money(item.get(field))
+            grouped[key] = merged
+            output.append(merged)
+        else:
+            merged = grouped[key]
+            # Keep the first actual service date among all items combined into
+            # this row, including cases where it precedes the room-history start.
+            current_service_date = _date_value(merged.get("service_date") or merged.get("created_at"))
+            item_service_date = _date_value(item.get("service_date") or item.get("created_at"))
+            if item_service_date and (
+                not current_service_date or item_service_date < current_service_date
+            ):
+                merged["service_date"] = item_service_date
+            merged["quantity"] = _money(merged.get("quantity") or 0) + _money(item.get("quantity") or 1)
+            for field in ("amount", "discount_amount", "net_amount", "gst_amount"):
+                if merged.get(field) is not None or item.get(field) is not None:
+                    merged[field] = _money(merged.get(field)) + _money(item.get(field))
+
+    # Strip private helper metadata before rendering.
+    for item in output:
+        item.pop("_ip_original_service_name", None)
+    return output
 
 
 def _charge_table(items: list[dict], styles, op: bool):
@@ -1197,7 +1301,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             ),
            
             Spacer(1, 2 * mm),
-            _charge_table(_ip_display_items(bill, items), styles, False),
+            _charge_table(_aggregate_ip_auto_items(_ip_display_items(bill, items)), styles, False),
             Spacer(1, 2 * mm),
             *(
                 [
