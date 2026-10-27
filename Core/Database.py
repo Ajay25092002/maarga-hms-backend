@@ -547,14 +547,14 @@ def initialize_database():
                         -- Common sequence shared by OP and IP bills.
                         IF NEW.bill_number IS NULL OR BTRIM(NEW.bill_number) = '' THEN
                             NEW.bill_number :=
-                                '2MGB-' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
+                                '2MG/' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
                                 LPAD(NEXTVAL('public.bill_number_seq')::TEXT, 6, '0');
                         END IF;
 
                         IF NEW.bill_type = 'OP' THEN
                             IF NEW.op_number IS NULL OR BTRIM(NEW.op_number) = '' THEN
                                 NEW.op_number :=
-                                    '2MGOP-' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
+                                    '2MG/OP' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
                                     LPAD(NEXTVAL('public.op_bill_number_seq')::TEXT, 6, '0');
                             END IF;
                             NEW.ip_number := NULL;
@@ -562,7 +562,7 @@ def initialize_database():
                         ELSIF NEW.bill_type = 'IP' THEN
                             IF NEW.ip_number IS NULL OR BTRIM(NEW.ip_number) = '' THEN
                                 NEW.ip_number :=
-                                    '2MGIP-' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
+                                    '2MG/IP' || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || '-' ||
                                     LPAD(NEXTVAL('public.ip_bill_number_seq')::TEXT, 6, '0');
                             END IF;
                             NEW.op_number := NULL;

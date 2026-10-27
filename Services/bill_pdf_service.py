@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re
 
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -72,6 +73,32 @@ def _date_text(value: Any, include_time: bool = False) -> str:
 
 def _display(value: Any) -> str:
     return "-" if value is None or value == "" else str(value)
+
+
+def _filename_part(value: Any) -> str:
+    """Return a filesystem-safe filename part while preserving readable names."""
+    text = str(value or "").strip()
+    # A slash in the main bill number must become a hyphen in a filename.
+    text = text.replace("/", "-").replace("\\", "-")
+    text = re.sub(r'[<>:"|?*\x00-\x1f]', "-", text)
+    text = re.sub(r"\s+", " ", text).strip(" .-")
+    return text or "Unknown"
+
+
+def _download_filename(bill: dict, bill_type: str, bill_id: int) -> str:
+    patient = bill.get("patient") if isinstance(bill.get("patient"), dict) else {}
+    patient_name = (
+        bill.get("patient_name")
+        or patient.get("name")
+        or patient.get("full_name")
+        or "Unknown Patient"
+    )
+    # Always use the main bill_number, never ip_number or op_number.
+    main_bill_number = bill.get("bill_number") or bill_id
+    return (
+        f"PT. {_filename_part(patient_name)} BILL {bill_type}-Bill-"
+        f"{_filename_part(main_bill_number)}.pdf"
+    )
 
 
 def _calculate_age(date_of_birth):
@@ -1209,7 +1236,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             ),
         ])
 
-        filename = f"OP-Bill-{bill.get('bill_number') or bill_id}.pdf"
+        filename = _download_filename(bill, "OP", bill_id)
 
     else:
         story.extend([
@@ -1378,7 +1405,7 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
             ], colWidths=[CONTENT_WIDTH / 2, CONTENT_WIDTH / 2]),
         ])
 
-        filename = f"IP-Bill-{bill.get('bill_number') or bill_id}.pdf"
+        filename = _download_filename(bill, "IP", bill_id)
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(
