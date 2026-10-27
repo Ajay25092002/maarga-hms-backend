@@ -17,8 +17,18 @@ from pydantic import (
 class BillItemInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    
     service_id: int = Field(gt=0)
     service_date: Optional[date] = None
+
+    # Optional rate supplied by the frontend for specifically allowed services.
+    rate: Optional[Decimal] = Field(
+        default=None,
+        ge=0,
+        max_digits=12,
+        decimal_places=2,
+    )
+
 
     # Per-service IP room context. Names are accepted for compatibility/display,
     # but the backend resolves room_type_name from room_types to avoid trusting

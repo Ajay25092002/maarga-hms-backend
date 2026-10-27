@@ -28,6 +28,11 @@ logger = get_logger(__name__)
 
 MONEY = Decimal("0.01")
 
+FRONTEND_RATE_SERVICE_NAMES = {
+    "RETRIEVAL CHARGES",
+    "LAUNDRY CHARGES",
+    "MISCELLANEOUS",
+}
 
 def money(value):
     return Decimal(str(value)).quantize(
@@ -42,6 +47,7 @@ def resolve_service_price(
     bill_type: str,
     doctor_id: int | None,
     room_type_id: int | None,
+    allow_frontend_rate: bool = False,
 ):
     """
     Resolve an active service price from the database.
@@ -114,6 +120,19 @@ def resolve_service_price(
                 f"for {bill_type} billing."
             ),
         )
+
+    # These services use a rate entered by an authorized frontend user.
+    # Validate the service/group above, but do not require a service_prices row.
+    service_name = str(service["service_name"]).strip().upper()
+    if allow_frontend_rate and service_name in FRONTEND_RATE_SERVICE_NAMES:
+        return {
+            "service_id": service["id"],
+            "service_group_id": service["service_group_id"],
+            "service_price_id": None,
+            "service_name": service["service_name"],
+            "service_group_name": service["service_group_name"],
+            "rate": None,
+        }
 
     cursor.execute(
         """
@@ -440,10 +459,27 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         bill_type=payload.bill_type,
                         doctor_id=(payload.doctor_id if payload.bill_type == "OP" else None),
                         room_type_id=item_room["room_type_id"],
+                        allow_frontend_rate=True,
                     )
 
-                    
-                    rate = resolved["rate"]
+                    service_name = str(resolved["service_name"]).strip().upper()
+
+                    if service_name in FRONTEND_RATE_SERVICE_NAMES:
+                        if item.rate is None:
+                            raise HTTPException(
+                                status_code=422,
+                                detail=f"Rate is required for service '{service_name}'.",
+                            )
+                        rate = money(item.rate)
+
+                        if rate < 0:
+                            raise HTTPException(
+                                status_code=422,
+                                detail="Rate cannot be negative.",
+                            )
+                    else:
+                        rate = resolved["rate"]
+
                     quantity = item.quantity
                     amount = money(rate * quantity)
                     item_discount = money(item.discount_amount)
@@ -848,8 +884,26 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         bill_type=payload.bill_type,
                         doctor_id=payload.doctor_id if payload.bill_type == "OP" else None,
                         room_type_id=item_room["room_type_id"],
+                        allow_frontend_rate=True,
                     )
-                    rate = resolved["rate"]
+                    service_name = str(resolved["service_name"]).strip().upper()
+
+                    if service_name in FRONTEND_RATE_SERVICE_NAMES:
+                        if item.rate is None:
+                            raise HTTPException(
+                                status_code=422,
+                                detail=f"Rate is required for service '{service_name}'.",
+                            )
+                        rate = money(item.rate)
+
+                        if rate < 0:
+                            raise HTTPException(
+                                status_code=422,
+                                detail="Rate cannot be negative.",
+                            )
+                    else:
+                        rate = resolved["rate"]
+
                     quantity = item.quantity
                     amount = money(rate * quantity)
                     discount = money(item.discount_amount)
