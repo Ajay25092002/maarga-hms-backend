@@ -127,6 +127,7 @@ def get_bill_items(cursor, bill_id: int) -> list[dict]:
             service_name,
             service_group_name,
             service_date,
+            special_note,
             room_type_id,
             room_type_name,
             bed_number,

@@ -201,6 +201,7 @@ def get_services(
                     s.name,
                     s.available_for_op,
                     s.available_for_ip,
+                    s.requires_special_note,
                     s.is_active,
                     s.created_at,
                     s.updated_at

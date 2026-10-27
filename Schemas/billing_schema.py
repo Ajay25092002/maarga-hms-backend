@@ -20,6 +20,7 @@ class BillItemInput(BaseModel):
     
     service_id: int = Field(gt=0)
     service_date: Optional[date] = None
+    special_note: Optional[str] = Field(default=None, max_length=2000)
 
     # Optional rate supplied by the frontend for specifically allowed services.
     rate: Optional[Decimal] = Field(
@@ -58,6 +59,14 @@ class BillItemInput(BaseModel):
         decimal_places=2,
     )
 
+
+    @field_validator("special_note")
+    @classmethod
+    def normalize_special_note(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
 
 
 class CreateBillRequest(BaseModel):

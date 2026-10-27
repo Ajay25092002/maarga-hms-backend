@@ -73,6 +73,7 @@ def resolve_service_price(
             s.is_active AS service_is_active,
             s.available_for_op,
             s.available_for_ip,
+            s.requires_special_note,
             sg.name AS service_group_name,
             sg.is_active AS group_is_active
         FROM public.services s
@@ -131,6 +132,7 @@ def resolve_service_price(
             "service_price_id": None,
             "service_name": service["service_name"],
             "service_group_name": service["service_group_name"],
+            "requires_special_note": service["requires_special_note"],
             "rate": None,
         }
 
@@ -292,6 +294,7 @@ def resolve_service_price(
         "service_price_id": selected_price["id"],
         "service_name": service["service_name"],
         "service_group_name": service["service_group_name"],
+        "requires_special_note": service["requires_special_note"],
         "rate": money(selected_price["amount"]),
     }
 
@@ -463,6 +466,14 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                     )
 
                     service_name = str(resolved["service_name"]).strip().upper()
+                    special_note = (item.special_note or "").strip() or None
+                    if payload.bill_type == "IP" and resolved.get("requires_special_note") and not special_note:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"A note is required for service '{resolved['service_name']}'.",
+                        )
+                    if payload.bill_type != "IP" or not resolved.get("requires_special_note"):
+                        special_note = None
 
                     if service_name in FRONTEND_RATE_SERVICE_NAMES:
                         if item.rate is None:
@@ -530,6 +541,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             "service_name": resolved["service_name"],
                             "service_group_name": resolved["service_group_name"],
                             "service_date": item.service_date,
+                            "special_note": special_note,
                             "room_type_id": item_room["room_type_id"],
                             "room_type_name": item_room["room_type_name"],
                             "bed_number": item_room["bed_number"],
@@ -670,6 +682,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             service_name,
                             service_group_name,
                             service_date,
+                            special_note,
                             room_type_id,
                             room_type_name,
                             bed_number,
@@ -681,7 +694,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             gst_amount
                         )
                         VALUES (
-                            %s, %s, %s, %s, %s, %s, %s,
+                            %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, %s, %s, %s, %s, %s
                         )
 
@@ -694,6 +707,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             item["service_name"],
                             item["service_group_name"],
                             item["service_date"],
+                            item["special_note"],
                             item["room_type_id"],
                             item["room_type_name"],
                             item["bed_number"],
@@ -887,6 +901,14 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         allow_frontend_rate=True,
                     )
                     service_name = str(resolved["service_name"]).strip().upper()
+                    special_note = (item.special_note or "").strip() or None
+                    if payload.bill_type == "IP" and resolved.get("requires_special_note") and not special_note:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"A note is required for service '{resolved['service_name']}'.",
+                        )
+                    if payload.bill_type != "IP" or not resolved.get("requires_special_note"):
+                        special_note = None
 
                     if service_name in FRONTEND_RATE_SERVICE_NAMES:
                         if item.rate is None:
@@ -927,6 +949,7 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         "service_name": resolved["service_name"],
                         "service_group_name": resolved["service_group_name"],
                         "service_date": item.service_date,
+                        "special_note": special_note,
                         "room_type_id": item_room["room_type_id"],
                         "room_type_name": item_room["room_type_name"],
                         "bed_number": item_room["bed_number"],
@@ -996,12 +1019,12 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     cursor.execute("""
                         INSERT INTO public.bill_items (
                             bill_id, service_id, service_group_id, service_price_id,
-                            service_name, service_group_name, service_date,
+                            service_name, service_group_name, service_date, special_note,
                             room_type_id, room_type_name, bed_number,
                             rate, quantity, amount, discount_amount, net_amount, gst_amount
-                        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                        ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     """, (bill_id, item["service_id"], item["service_group_id"], item["service_price_id"],
-                          item["service_name"], item["service_group_name"], item["service_date"],
+                          item["service_name"], item["service_group_name"], item["service_date"], item["special_note"],
                           item["room_type_id"], item["room_type_name"], item["bed_number"], item["rate"],
                           item["quantity"], item["amount"], item["discount_amount"], item["net_amount"], item["gst_amount"]))
                 new_items_for_audit = fetch_bill_items_for_audit(cursor, bill_id)

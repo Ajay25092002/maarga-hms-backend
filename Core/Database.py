@@ -794,6 +794,18 @@ def initialize_database():
 
                 """)
 
+                # Add special-note columns to existing tables
+                cursor.execute("""
+                    ALTER TABLE public.services
+                    ADD COLUMN IF NOT EXISTS requires_special_note
+                    BOOLEAN NOT NULL DEFAULT FALSE;
+                """)
+
+                cursor.execute("""
+                    ALTER TABLE public.bill_items
+                    ADD COLUMN IF NOT EXISTS special_note TEXT;
+                """)
+
 
 
                 # ==========================================================
