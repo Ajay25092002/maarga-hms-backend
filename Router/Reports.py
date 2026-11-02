@@ -41,6 +41,9 @@ def get_report(
     service: Optional[str] = Query(default=None, max_length=150),
     service_group: Optional[str] = Query(default=None, max_length=150),
     status_filter: Optional[str] = Query(default=None, alias="status", max_length=30),
+    year: Optional[int] = Query(default=None, ge=2000, le=2100),
+    month: Optional[int] = Query(default=None, ge=1, le=12),
+    based_on: Optional[str] = Query(default=None, pattern="^(patient-wise|bill-wise)$"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=10, ge=1, le=200),
     export_all: bool = False,
@@ -54,23 +57,34 @@ def get_report(
         raise HTTPException(status_code=403, detail="You do not have permission to view reports.")
     if report_type not in REPORTS:
         raise HTTPException(status_code=404, detail="Report not found.")
-    # Every report request is bounded to an explicit date range, including
-    # direct API calls. The UI supplies the last seven Indian calendar days by default.
-    if date_from is None or date_to is None:
-        raise HTTPException(
-            status_code=422,
-            detail="Both date_from and date_to are required for a report.",
-        )
-    if (date_from is None) != (date_to is None):
-        raise HTTPException(
-            status_code=422,
-            detail="Provide both a start date and an end date.",
-        )
-    if date_from and date_to and date_from > date_to:
-        raise HTTPException(status_code=422, detail="Start date must be on or before end date.")
     today_india = datetime.now(ZoneInfo("Asia/Kolkata")).date()
-    if date_from > today_india or date_to > today_india:
-        raise HTTPException(status_code=422, detail="Future report dates are not allowed.")
+
+    if report_type == "accrued-revenue":
+        if year is None or month is None:
+            raise HTTPException(
+                status_code=422,
+                detail="Both year and month are required for the accrued revenue report.",
+            )
+        if (year, month) > (today_india.year, today_india.month):
+            raise HTTPException(status_code=422, detail="Future report months are not allowed.")
+        if based_on is None:
+            based_on = "patient-wise"
+    else:
+        # Preserve the existing date-range requirement for every other report.
+        if date_from is None or date_to is None:
+            raise HTTPException(
+                status_code=422,
+                detail="Both date_from and date_to are required for a report.",
+            )
+        if (date_from is None) != (date_to is None):
+            raise HTTPException(
+                status_code=422,
+                detail="Provide both a start date and an end date.",
+            )
+        if date_from and date_to and date_from > date_to:
+            raise HTTPException(status_code=422, detail="Start date must be on or before end date.")
+        if date_from > today_india or date_to > today_india:
+            raise HTTPException(status_code=422, detail="Future report dates are not allowed.")
     filters = {
         "date_from": date_from.isoformat() if date_from else None,
         "date_to": date_to.isoformat() if date_to else None,
@@ -82,6 +96,9 @@ def get_report(
         "service": service.strip() if service else None,
         "service_group": service_group.strip() if service_group else None,
         "status": status_filter,
+        "year": year,
+        "month": month,
+        "based_on": based_on,
     }
     try:
         return fetch_report(report_type, filters, page, page_size, export_all)
