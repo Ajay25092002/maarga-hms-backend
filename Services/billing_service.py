@@ -845,8 +845,56 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 #         remaining_payload_items.pop(match_index)
 
                 # Lock editing once an OP bill is fully paid, or an IP bill is discharged.
-                if str(bill.get("bill_type") or "").upper() == "IP" and bill.get("discharge_date"):
-                    raise HTTPException(status_code=409, detail="This IP bill cannot be edited after the discharge date has been recorded.")
+                # if str(bill.get("bill_type") or "").upper() == "IP" and bill.get("discharge_date"):
+                #     raise HTTPException(status_code=409, detail="This IP bill cannot be edited after the discharge date has been recorded.")
+                # if str(bill.get("bill_type") or "").upper() == "OP":
+                #     cursor.execute(
+                #         "SELECT COALESCE(SUM(amount), 0) AS gross_paid FROM public.bill_payments WHERE bill_id = %s",
+                #         (bill_id,),
+                #     )
+                #     gross_paid_for_lock = Decimal(str(cursor.fetchone()["gross_paid"] or 0))
+                #     bill_total_for_lock = Decimal(str(bill.get("total_amount") or 0))
+                #     if bill_total_for_lock <= gross_paid_for_lock:
+                #         raise HTTPException(status_code=409, detail="This OP bill cannot be edited because it has been fully paid.")
+
+                
+                # TEMPORARY: Allow editing discharged IP bills for selected patients.
+                TEMP_IP_EDIT_PATIENT_IDS = {
+                    "PAT-5B5F77F3F094",
+                    "PAT-3E2E434879E3",
+                    "PAT-C31887297772",
+                    "PAT-7091D17DF61E",
+                }
+
+                # Lock editing once an OP bill is fully paid, or an IP bill
+                # is discharged unless the patient is in the temporary whitelist.
+
+                if (
+                    str(bill.get("bill_type") or "").upper() == "IP"
+                    and bill.get("discharge_date")
+                ):
+                    cursor.execute(
+                        """
+                        SELECT patient_id
+                        FROM public.patients
+                        WHERE id = %s
+                        """,
+                        (bill["patient_db_id"],),
+                    )
+                    patient_for_edit = cursor.fetchone()
+
+                    patient_id = (
+                        str(patient_for_edit["patient_id"])
+                        if patient_for_edit
+                        else ""
+                    )
+
+                    if patient_id not in TEMP_IP_EDIT_PATIENT_IDS:
+                        raise HTTPException(
+                            status_code=409,
+                            detail="This IP bill cannot be edited after the discharge date has been recorded."
+                        )
+
                 if str(bill.get("bill_type") or "").upper() == "OP":
                     cursor.execute(
                         "SELECT COALESCE(SUM(amount), 0) AS gross_paid FROM public.bill_payments WHERE bill_id = %s",
@@ -855,7 +903,11 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     gross_paid_for_lock = Decimal(str(cursor.fetchone()["gross_paid"] or 0))
                     bill_total_for_lock = Decimal(str(bill.get("total_amount") or 0))
                     if bill_total_for_lock <= gross_paid_for_lock:
-                        raise HTTPException(status_code=409, detail="This OP bill cannot be edited because it has been fully paid.")
+                        raise HTTPException(
+                            status_code=409,
+                            detail="This OP bill cannot be edited because it has been fully paid."
+                        )
+
 
                 # A bill may be edited after partial/full payment, but its revised
                 # total must not fall below the amount currently retained by the

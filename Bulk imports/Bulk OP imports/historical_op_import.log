@@ -1,0 +1,2188 @@
+2026-10-29 20:25:58,474 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 20:25:58,568 | ERROR | Failed bill group DHARAMBIR | 2026-10-10 | rows 2,3
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,576 | ERROR | Failed bill group PANKAJ AGARWAL | 2026-10-10 | rows 5,6
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,582 | ERROR | Failed bill group RAJA RANA | 2026-10-12 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,582 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-12 | rows 10,11
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,585 | ERROR | Failed bill group MIRNAL ARORA | 2026-10-12 | rows 13,14
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,586 | ERROR | Failed bill group BARKHA SHARMA | 2026-10-13 | rows 15,16
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,590 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,590 | ERROR | Failed bill group JYOTI ARORA | 2026-10-14 | rows 19,20
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,593 | ERROR | Failed bill group HARDIK GARG | 2026-10-14 | rows 22,23
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,604 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 27: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:25:58,608 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,611 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 29: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:25:58,616 | ERROR | Failed bill group VIKESH | 2026-10-17 | rows 32,33
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,625 | ERROR | Failed bill group RITIKA | 2026-10-17 | rows 39,40
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,626 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,631 | ERROR | Failed bill group RUDRA SONI | 2026-10-19 | rows 43,44
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,647 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 49: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:25:58,648 | ERROR | Failed bill group KRISHAV MOHAN | 2026-10-19 | rows 50,51
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,650 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,658 | ERROR | Failed bill group CHANDRIKA | 2026-10-21 | rows 56,57
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,664 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,665 | ERROR | Failed bill group PALAK | 2026-10-22 | rows 60,61
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,667 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 62: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:25:58,668 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,673 | ERROR | Failed bill group SHIRIN KUMAR | 2026-10-23 | rows 67,68
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,674 | ERROR | Failed bill group VIDUSHI | 2026-10-23 | rows 69,70
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,676 | ERROR | Failed bill group MUKTA SINGH | 2026-10-24 | rows 71,72
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,681 | ERROR | Failed bill group VAIBHAV DAHIYA | 2026-10-24 | rows 74,75
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 682, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: At least one Excel Rate is blank. No database price will be substituted.
+2026-10-29 20:25:58,692 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 80: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:25:58,694 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-45B4E493A969 was not found. Refusing to create a replacement patient.
+2026-10-29 20:25:58,700 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (64 rows)
+2026-10-29 20:25:58,701 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 20:25:58,701 | INFO | Finished | planned=63 imported=0 dry_run_ok=33 duplicate_skips=0 failed=30
+2026-10-29 20:33:04,070 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 20:33:04,273 | ERROR | Failed bill group RAJA RANA | 2026-12-10 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,287 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,313 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 27: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:33:04,315 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,319 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 29: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:33:04,332 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,343 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 49: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:33:04,346 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,355 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,358 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 62: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:33:04,360 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,383 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 80: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:33:04,385 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-45B4E493A969 was not found. Refusing to create a replacement patient.
+2026-10-29 20:33:04,389 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (13 rows)
+2026-10-29 20:33:04,390 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 20:33:04,390 | INFO | Finished | planned=63 imported=0 dry_run_ok=50 duplicate_skips=0 failed=13
+2026-10-29 20:37:06,360 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 20:37:06,571 | ERROR | Failed bill group RAJA RANA | 2026-12-10 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,579 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,596 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 27: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:37:06,599 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,601 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 29: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:37:06,619 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,630 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 49: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:37:06,635 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,648 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,657 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 62: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:37:06,661 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,688 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 80: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:37:06,690 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-45B4E493A969 was not found. Refusing to create a replacement patient.
+2026-10-29 20:37:06,694 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (13 rows)
+2026-10-29 20:37:06,695 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 20:37:06,695 | INFO | Finished | planned=63 imported=0 dry_run_ok=50 duplicate_skips=0 failed=13
+2026-10-29 20:39:29,930 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 20:39:30,047 | ERROR | Failed bill group RAJA RANA | 2026-12-10 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 9: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,058 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 18: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,076 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 27: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,082 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 28: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,088 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 29: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,116 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 41: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,129 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 49: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,132 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 52: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,149 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 62: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,151 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 63: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,202 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 926, in main
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: Excel row 80: Service_ID is blank and exact service lookup is not unique.
+2026-10-29 20:39:30,212 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (11 rows)
+2026-10-29 20:39:30,213 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 20:39:30,213 | INFO | Finished | planned=63 imported=0 dry_run_ok=52 duplicate_skips=0 failed=11
+2026-10-29 21:56:15,863 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 21:56:16,012 | ERROR | Failed bill group RAJA RANA | 2026-12-10 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,022 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,065 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,103 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,125 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,139 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,146 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,180 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-45B4E493A969 was not found. Refusing to create a replacement patient.
+2026-10-29 21:56:16,185 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (8 rows)
+2026-10-29 21:56:16,186 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 21:56:16,186 | INFO | Finished | planned=63 imported=0 dry_run_ok=55 duplicate_skips=0 failed=8
+2026-10-29 21:56:54,767 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 21:56:54,934 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 21:56:54,934 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 21:56:54,935 | INFO | Finished | planned=63 imported=0 dry_run_ok=63 duplicate_skips=0 failed=0
+2026-10-29 22:00:23,977 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:00:24,070 | INFO | DHARAMBIR | 2026-10-10 | rows 2,3 | bill_id=1 | OP=2MG/OP20261029-000018 | total=2100.00
+2026-10-29 22:00:24,074 | INFO | ANURATI GUPTA | 2026-10-10 | rows 4 | bill_id=2 | OP=2MG/OP20261029-000019 | total=2000.00
+2026-10-29 22:00:24,077 | INFO | PANKAJ AGARWAL | 2026-10-10 | rows 5,6 | bill_id=3 | OP=2MG/OP20261029-000020 | total=2100.00
+2026-10-29 22:00:24,081 | INFO | YASHIKA SAINI | 2026-10-10 | rows 7 | bill_id=4 | OP=2MG/OP20261029-000021 | total=2000.00
+2026-10-29 22:00:24,084 | INFO | SHUBHANKAR GUMMALLA | 2026-10-10 | rows 8 | bill_id=5 | OP=2MG/OP20261029-000022 | total=2000.00
+2026-10-29 22:00:24,087 | INFO | RAJA RANA | 2026-12-10 | rows 9 | bill_id=6 | OP=2MG/OP20261029-000023 | total=1500.00
+2026-10-29 22:00:24,091 | INFO | PUNEET PAL SINGH | 2026-12-10 | rows 10,11 | bill_id=7 | OP=2MG/OP20261029-000024 | total=2100.00
+2026-10-29 22:00:24,095 | INFO | PUNEET PAL SINGH | 2026-12-10 | rows 12 | bill_id=8 | OP=2MG/OP20261029-000025 | total=2000.00
+2026-10-29 22:00:24,100 | INFO | MIRNAL ARORA | 2026-12-10 | rows 13,14 | bill_id=9 | OP=2MG/OP20261029-000026 | total=2100.00
+2026-10-29 22:00:24,106 | INFO | BARKHA SHARMA | 2026-10-13 | rows 15,16 | bill_id=10 | OP=2MG/OP20261029-000027 | total=2000.00
+2026-10-29 22:00:24,117 | INFO | ANKUR MAHENDRA | 2026-10-13 | rows 17 | bill_id=11 | OP=2MG/OP20261029-000028 | total=1500.00
+2026-10-29 22:00:24,119 | INFO | RAJA RANA | 2026-10-14 | rows 18 | bill_id=12 | OP=2MG/OP20261029-000029 | total=1500.00
+2026-10-29 22:00:24,125 | INFO | JYOTI ARORA | 2026-10-14 | rows 19,20 | bill_id=13 | OP=2MG/OP20261029-000030 | total=2000.00
+2026-10-29 22:00:24,128 | INFO | SANTOSH DEVI JAIN | 2026-10-14 | rows 21 | bill_id=14 | OP=2MG/OP20261029-000031 | total=12500.00
+2026-10-29 22:00:24,133 | INFO | HARDIK GARG | 2026-10-14 | rows 22,23 | bill_id=15 | OP=2MG/OP20261029-000032 | total=2100.00
+2026-10-29 22:00:24,135 | INFO | HARDIK GARG | 2026-10-14 | rows 24 | bill_id=16 | OP=2MG/OP20261029-000033 | total=1000.00
+2026-10-29 22:00:24,140 | INFO | HARDIK GARG | 2026-10-15 | rows 25 | bill_id=17 | OP=2MG/OP20261029-000034 | total=1000.00
+2026-10-29 22:00:24,144 | INFO | BUMIKA SHAWNEY | 2026-10-15 | rows 26 | bill_id=18 | OP=2MG/OP20261029-000035 | total=1500.00
+2026-10-29 22:00:24,147 | INFO | SUNITA GOSWAMI | 2026-10-15 | rows 27 | bill_id=19 | OP=2MG/OP20261029-000036 | total=3000.00
+2026-10-29 22:00:24,150 | INFO | RAJA RANA | 2026-10-16 | rows 28 | bill_id=20 | OP=2MG/OP20261029-000037 | total=1500.00
+2026-10-29 22:00:24,153 | INFO | SUNITA GOSWAMI | 2026-10-16 | rows 29 | bill_id=21 | OP=2MG/OP20261029-000038 | total=1500.00
+2026-10-29 22:00:24,156 | INFO | PUNEET PAL SINGH | 2026-10-16 | rows 30 | bill_id=22 | OP=2MG/OP20261029-000039 | total=1500.00
+2026-10-29 22:00:24,160 | INFO | SEJAL GUPTA | 2026-10-17 | rows 31 | bill_id=23 | OP=2MG/OP20261029-000040 | total=1600.00
+2026-10-29 22:00:24,165 | INFO | VIKESH | 2026-10-17 | rows 32,33 | bill_id=24 | OP=2MG/OP20261029-000041 | total=2000.00
+2026-10-29 22:00:24,168 | INFO | AARADHYA SHARMA | 2026-10-17 | rows 34 | bill_id=25 | OP=2MG/OP20261029-000042 | total=2000.00
+2026-10-29 22:00:24,171 | INFO | VIKESH | 2026-10-17 | rows 35 | bill_id=26 | OP=2MG/OP20261029-000043 | total=1500.00
+2026-10-29 22:00:24,175 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 36 | bill_id=27 | OP=2MG/OP20261029-000044 | total=2000.00
+2026-10-29 22:00:24,180 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 37 | bill_id=28 | OP=2MG/OP20261029-000045 | total=2000.00
+2026-10-29 22:00:24,184 | INFO | PARAMJEET PUNDIR | 2026-10-17 | rows 38 | bill_id=29 | OP=2MG/OP20261029-000046 | total=2000.00
+2026-10-29 22:00:24,189 | INFO | RITIKA | 2026-10-17 | rows 39,40 | bill_id=30 | OP=2MG/OP20261029-000047 | total=1600.00
+2026-10-29 22:00:24,194 | INFO | RAJA RANA | 2026-10-19 | rows 41 | bill_id=31 | OP=2MG/OP20261029-000048 | total=1500.00
+2026-10-29 22:00:24,200 | INFO | ANITA SHUKLA | 2026-10-19 | rows 42 | bill_id=32 | OP=2MG/OP20261029-000049 | total=2000.00
+2026-10-29 22:00:24,204 | INFO | RUDRA SONI | 2026-10-19 | rows 43,44 | bill_id=33 | OP=2MG/OP20261029-000050 | total=2100.00
+2026-10-29 22:00:24,210 | INFO | MANSI TANEJA | 2026-10-19 | rows 45 | bill_id=34 | OP=2MG/OP20261029-000051 | total=1500.00
+2026-10-29 22:00:24,216 | INFO | MANISH BAGHEL | 2026-10-19 | rows 46 | bill_id=35 | OP=2MG/OP20261029-000052 | total=2000.00
+2026-10-29 22:00:24,223 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 47 | bill_id=36 | OP=2MG/OP20261029-000053 | total=1500.00
+2026-10-29 22:00:24,225 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 48 | bill_id=37 | OP=2MG/OP20261029-000054 | total=500.00
+2026-10-29 22:00:24,229 | INFO | SUNITA GOSWAMI | 2026-10-19 | rows 49 | bill_id=38 | OP=2MG/OP20261029-000055 | total=1500.00
+2026-10-29 22:00:24,232 | INFO | KRISHAV MOHAN | 2026-10-19 | rows 50,51 | bill_id=39 | OP=2MG/OP20261029-000056 | total=2100.00
+2026-10-29 22:00:24,236 | INFO | RAJA RANA | 2026-10-21 | rows 52 | bill_id=40 | OP=2MG/OP20261029-000057 | total=1500.00
+2026-10-29 22:00:24,239 | INFO | LALITA TIKOO | 2026-10-21 | rows 53 | bill_id=41 | OP=2MG/OP20261029-000058 | total=2000.00
+2026-10-29 22:00:24,243 | INFO | KRISHAV MOHAN | 2026-10-21 | rows 54 | bill_id=42 | OP=2MG/OP20261029-000059 | total=2000.00
+2026-10-29 22:00:24,246 | INFO | SUNITA GOSWAMI | 2026-10-21 | rows 55 | bill_id=43 | OP=2MG/OP20261029-000060 | total=2000.00
+2026-10-29 22:00:24,251 | INFO | CHANDRIKA | 2026-10-21 | rows 56,57 | bill_id=44 | OP=2MG/OP20261029-000061 | total=2000.00
+2026-10-29 22:00:24,257 | INFO | PRADEEP TOGNATTA | 2026-10-22 | rows 58 | bill_id=45 | OP=2MG/OP20261029-000062 | total=1500.00
+2026-10-29 22:00:24,260 | INFO | POONAM AGARWAL | 2026-10-22 | rows 59 | bill_id=46 | OP=2MG/OP20261029-000063 | total=2000.00
+2026-10-29 22:00:24,264 | INFO | PALAK | 2026-10-22 | rows 60,61 | bill_id=47 | OP=2MG/OP20261029-000064 | total=2100.00
+2026-10-29 22:00:24,268 | INFO | SUNITA GOSWAMI | 2026-10-23 | rows 62 | bill_id=48 | OP=2MG/OP20261029-000065 | total=4500.00
+2026-10-29 22:00:24,271 | INFO | RAJA RANA | 2026-10-23 | rows 63 | bill_id=49 | OP=2MG/OP20261029-000066 | total=1500.00
+2026-10-29 22:00:24,273 | INFO | PALAK | 2026-10-23 | rows 64 | bill_id=50 | OP=2MG/OP20261029-000067 | total=2000.00
+2026-10-29 22:00:24,279 | INFO | NISHTHA SAINI | 2026-10-23 | rows 65 | bill_id=51 | OP=2MG/OP20261029-000068 | total=2000.00
+2026-10-29 22:00:24,283 | INFO | SANJAY KUMAR | 2026-10-23 | rows 66 | bill_id=52 | OP=2MG/OP20261029-000069 | total=2000.00
+2026-10-29 22:00:24,286 | INFO | SHIRIN KUMAR | 2026-10-23 | rows 67,68 | bill_id=53 | OP=2MG/OP20261029-000070 | total=2100.00
+2026-10-29 22:00:24,292 | INFO | VIDUSHI | 2026-10-23 | rows 69,70 | bill_id=54 | OP=2MG/OP20261029-000071 | total=2100.00
+2026-10-29 22:00:24,297 | INFO | MUKTA SINGH | 2026-10-24 | rows 71,72 | bill_id=55 | OP=2MG/OP20261029-000072 | total=1700.00
+2026-10-29 22:00:24,300 | INFO | KAMAL SINGH | 2026-10-24 | rows 73 | bill_id=56 | OP=2MG/OP20261029-000073 | total=1600.00
+2026-10-29 22:00:24,305 | INFO | VAIBHAV DAHIYA | 2026-10-24 | rows 74,75 | bill_id=57 | OP=2MG/OP20261029-000074 | total=2000.00
+2026-10-29 22:00:24,308 | INFO | ARPIT TANK | 2026-10-24 | rows 76 | bill_id=58 | OP=2MG/OP20261029-000075 | total=1600.00
+2026-10-29 22:00:24,312 | INFO | SHUBHANKAR GUMMALLA | 2026-10-24 | rows 77 | bill_id=59 | OP=2MG/OP20261029-000076 | total=2000.00
+2026-10-29 22:00:24,315 | INFO | VIKESH | 2026-10-24 | rows 78 | bill_id=60 | OP=2MG/OP20261029-000077 | total=2000.00
+2026-10-29 22:00:24,320 | INFO | ANUPAM BANSAL | 2026-10-24 | rows 79 | bill_id=61 | OP=2MG/OP20261029-000078 | total=2000.00
+2026-10-29 22:00:24,322 | INFO | SUNITA GOSWAMI | 2026-10-24 | rows 80 | bill_id=62 | OP=2MG/OP20261029-000079 | total=1500.00
+2026-10-29 22:00:24,328 | INFO | RISHABH VEDI | 2026-10-24 | rows 81 | bill_id=63 | OP=2MG/OP20261029-000080 | total=1500.00
+2026-10-29 22:00:24,335 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 22:00:24,335 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:00:24,335 | INFO | Finished | planned=63 imported=63 dry_run_ok=0 duplicate_skips=0 failed=0
+2026-10-29 22:08:40,491 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:08:40,588 | ERROR | Failed bill group DHARAMBIR | 2026-10-10 | rows 2,3
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,591 | ERROR | Failed bill group ANURATI GUPTA | 2026-10-10 | rows 4
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,592 | ERROR | Failed bill group PANKAJ AGARWAL | 2026-10-10 | rows 5,6
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,594 | ERROR | Failed bill group YASHIKA SAINI | 2026-10-10 | rows 7
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,595 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-10 | rows 8
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,597 | ERROR | Failed bill group RAJA RANA | 2026-10-12 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,600 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-12 | rows 10,11
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,605 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-12 | rows 12
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,609 | ERROR | Failed bill group MIRNAL ARORA | 2026-10-12 | rows 13,14
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,612 | ERROR | Failed bill group BARKHA SHARMA | 2026-10-13 | rows 15,16
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:08:40,615 | ERROR | Failed bill group ANKUR MAHENDRA | 2026-10-13 | rows 17
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,617 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,622 | ERROR | Failed bill group JYOTI ARORA | 2026-10-14 | rows 19,20
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:08:40,624 | ERROR | Failed bill group SANTOSH DEVI JAIN | 2026-10-14 | rows 21
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,629 | ERROR | Failed bill group HARDIK GARG | 2026-10-14 | rows 22,23
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,632 | ERROR | Failed bill group HARDIK GARG | 2026-10-14 | rows 24
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,635 | ERROR | Failed bill group HARDIK GARG | 2026-10-15 | rows 25
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,637 | ERROR | Failed bill group BUMIKA SHAWNEY | 2026-10-15 | rows 26
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:08:40,642 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,643 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,645 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,649 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-16 | rows 30
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,651 | ERROR | Failed bill group SEJAL GUPTA | 2026-10-17 | rows 31
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:08:40,656 | ERROR | Failed bill group VIKESH | 2026-10-17 | rows 32,33
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,658 | ERROR | Failed bill group AARADHYA SHARMA | 2026-10-17 | rows 34
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:08:40,661 | ERROR | Failed bill group VIKESH | 2026-10-17 | rows 35
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,664 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-17 | rows 36
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,668 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-17 | rows 37
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,671 | ERROR | Failed bill group PARAMJEET PUNDIR | 2026-10-17 | rows 38
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,672 | ERROR | Failed bill group RITIKA | 2026-10-17 | rows 39,40
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,675 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,678 | ERROR | Failed bill group ANITA SHUKLA | 2026-10-19 | rows 42
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,679 | ERROR | Failed bill group RUDRA SONI | 2026-10-19 | rows 43,44
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,683 | ERROR | Failed bill group MANSI TANEJA | 2026-10-19 | rows 45
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,685 | ERROR | Failed bill group MANISH BAGHEL | 2026-10-19 | rows 46
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,689 | ERROR | Failed bill group ANCHAL KAPUR | 2026-10-19 | rows 47
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,692 | ERROR | Failed bill group ANCHAL KAPUR | 2026-10-19 | rows 48
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,696 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,699 | ERROR | Failed bill group KRISHAV MOHAN | 2026-10-19 | rows 50,51
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,703 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,705 | ERROR | Failed bill group LALITA TIKOO | 2026-10-21 | rows 53
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,707 | ERROR | Failed bill group KRISHAV MOHAN | 2026-10-21 | rows 54
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,712 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-21 | rows 55
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,715 | ERROR | Failed bill group CHANDRIKA | 2026-10-21 | rows 56,57
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:08:40,721 | ERROR | Failed bill group PRADEEP TOGNATTA | 2026-10-22 | rows 58
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,726 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,734 | ERROR | Failed bill group PALAK | 2026-10-22 | rows 60,61
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:08:40,740 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,743 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-F06940138778 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,749 | ERROR | Failed bill group PALAK | 2026-10-23 | rows 64
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,755 | ERROR | Failed bill group NISHTHA SAINI | 2026-10-23 | rows 65
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,763 | ERROR | Failed bill group SANJAY KUMAR | 2026-10-23 | rows 66
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,768 | ERROR | Failed bill group SHIRIN KUMAR | 2026-10-23 | rows 67,68
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,771 | ERROR | Failed bill group VIDUSHI | 2026-10-23 | rows 69,70
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:08:40,777 | ERROR | Failed bill group MUKTA SINGH | 2026-10-24 | rows 71,72
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:08:40,785 | ERROR | Failed bill group KAMAL SINGH | 2026-10-24 | rows 73
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:08:40,791 | ERROR | Failed bill group VAIBHAV DAHIYA | 2026-10-24 | rows 74,75
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,798 | ERROR | Failed bill group ARPIT TANK | 2026-10-24 | rows 76
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:08:40,805 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-24 | rows 77
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:08:40,811 | ERROR | Failed bill group VIKESH | 2026-10-24 | rows 78
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:08:40,817 | ERROR | Failed bill group ANUPAM BANSAL | 2026-10-24 | rows 79
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:08:40,823 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:08:40,825 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 797, in main
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Patient_ID PAT-45B4E493A969 was not found. Refusing to create a replacement patient.
+2026-10-29 22:08:40,834 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (80 rows)
+2026-10-29 22:08:40,836 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:08:40,836 | INFO | Finished | planned=63 imported=0 dry_run_ok=0 duplicate_skips=0 failed=63
+2026-10-29 22:09:51,921 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:09:52,049 | ERROR | Failed bill group DHARAMBIR | 2026-10-10 | rows 2,3
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,052 | ERROR | Failed bill group ANURATI GUPTA | 2026-10-10 | rows 4
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,055 | ERROR | Failed bill group PANKAJ AGARWAL | 2026-10-10 | rows 5,6
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,058 | ERROR | Failed bill group YASHIKA SAINI | 2026-10-10 | rows 7
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,062 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-10 | rows 8
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,065 | ERROR | Failed bill group RAJA RANA | 2026-10-12 | rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,068 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-12 | rows 10,11
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,072 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-12 | rows 12
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,075 | ERROR | Failed bill group MIRNAL ARORA | 2026-10-12 | rows 13,14
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,078 | ERROR | Failed bill group BARKHA SHARMA | 2026-10-13 | rows 15,16
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:09:52,081 | ERROR | Failed bill group ANKUR MAHENDRA | 2026-10-13 | rows 17
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,086 | ERROR | Failed bill group RAJA RANA | 2026-10-14 | rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,090 | ERROR | Failed bill group JYOTI ARORA | 2026-10-14 | rows 19,20
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:09:52,092 | ERROR | Failed bill group SANTOSH DEVI JAIN | 2026-10-14 | rows 21
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,096 | ERROR | Failed bill group HARDIK GARG | 2026-10-14 | rows 22,23
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,099 | ERROR | Failed bill group HARDIK GARG | 2026-10-14 | rows 24
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,101 | ERROR | Failed bill group HARDIK GARG | 2026-10-15 | rows 25
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,104 | ERROR | Failed bill group BUMIKA SHAWNEY | 2026-10-15 | rows 26
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:09:52,105 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-15 | rows 27
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,108 | ERROR | Failed bill group RAJA RANA | 2026-10-16 | rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,110 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-16 | rows 29
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,115 | ERROR | Failed bill group PUNEET PAL SINGH | 2026-10-16 | rows 30
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,119 | ERROR | Failed bill group SEJAL GUPTA | 2026-10-17 | rows 31
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:09:52,123 | ERROR | Failed bill group VIKESH | 2026-10-17 | rows 32,33
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,125 | ERROR | Failed bill group AARADHYA SHARMA | 2026-10-17 | rows 34
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:09:52,126 | ERROR | Failed bill group VIKESH | 2026-10-17 | rows 35
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,129 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-17 | rows 36
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,132 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-17 | rows 37
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,134 | ERROR | Failed bill group PARAMJEET PUNDIR | 2026-10-17 | rows 38
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,135 | ERROR | Failed bill group RITIKA | 2026-10-17 | rows 39,40
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,139 | ERROR | Failed bill group RAJA RANA | 2026-10-19 | rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,141 | ERROR | Failed bill group ANITA SHUKLA | 2026-10-19 | rows 42
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,143 | ERROR | Failed bill group RUDRA SONI | 2026-10-19 | rows 43,44
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,148 | ERROR | Failed bill group MANSI TANEJA | 2026-10-19 | rows 45
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,152 | ERROR | Failed bill group MANISH BAGHEL | 2026-10-19 | rows 46
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,154 | ERROR | Failed bill group ANCHAL KAPUR | 2026-10-19 | rows 47
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,156 | ERROR | Failed bill group ANCHAL KAPUR | 2026-10-19 | rows 48
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,160 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-19 | rows 49
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,162 | ERROR | Failed bill group KRISHAV MOHAN | 2026-10-19 | rows 50,51
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,164 | ERROR | Failed bill group RAJA RANA | 2026-10-21 | rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,168 | ERROR | Failed bill group LALITA TIKOO | 2026-10-21 | rows 53
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,169 | ERROR | Failed bill group KRISHAV MOHAN | 2026-10-21 | rows 54
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,173 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-21 | rows 55
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,175 | ERROR | Failed bill group CHANDRIKA | 2026-10-21 | rows 56,57
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:09:52,176 | ERROR | Failed bill group PRADEEP TOGNATTA | 2026-10-22 | rows 58
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,179 | ERROR | Failed bill group POONAM AGARWAL | 2026-10-22 | rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,182 | ERROR | Failed bill group PALAK | 2026-10-22 | rows 60,61
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 7 does not exist.
+2026-10-29 22:09:52,185 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-23 | rows 62
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,188 | ERROR | Failed bill group RAJA RANA | 2026-10-23 | rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,190 | ERROR | Failed bill group PALAK | 2026-10-23 | rows 64
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,194 | ERROR | Failed bill group NISHTHA SAINI | 2026-10-23 | rows 65
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,196 | ERROR | Failed bill group SANJAY KUMAR | 2026-10-23 | rows 66
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,198 | ERROR | Failed bill group SHIRIN KUMAR | 2026-10-23 | rows 67,68
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,201 | ERROR | Failed bill group VIDUSHI | 2026-10-23 | rows 69,70
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 3 does not exist.
+2026-10-29 22:09:52,204 | ERROR | Failed bill group MUKTA SINGH | 2026-10-24 | rows 71,72
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:09:52,208 | ERROR | Failed bill group KAMAL SINGH | 2026-10-24 | rows 73
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:09:52,209 | ERROR | Failed bill group VAIBHAV DAHIYA | 2026-10-24 | rows 74,75
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,211 | ERROR | Failed bill group ARPIT TANK | 2026-10-24 | rows 76
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 4 does not exist.
+2026-10-29 22:09:52,215 | ERROR | Failed bill group SHUBHANKAR GUMMALLA | 2026-10-24 | rows 77
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 5 does not exist.
+2026-10-29 22:09:52,217 | ERROR | Failed bill group VIKESH | 2026-10-24 | rows 78
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 6 does not exist.
+2026-10-29 22:09:52,219 | ERROR | Failed bill group ANUPAM BANSAL | 2026-10-24 | rows 79
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 1 does not exist.
+2026-10-29 22:09:52,222 | ERROR | Failed bill group SUNITA GOSWAMI | 2026-10-24 | rows 80
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 2 does not exist.
+2026-10-29 22:09:52,224 | ERROR | Failed bill group RISHABH VEDI | 2026-10-24 | rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 874, in main
+    raise ValueError(
+        f"Doctor_ID {doctor_id} does not exist."
+    )
+ValueError: Doctor_ID 8 does not exist.
+2026-10-29 22:09:52,230 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (80 rows)
+2026-10-29 22:09:52,231 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:09:52,232 | INFO | Finished | planned=63 imported=0 dry_run_ok=0 duplicate_skips=0 failed=63
+2026-10-29 22:11:19,690 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:11:19,848 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 22:11:19,849 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:11:19,849 | INFO | Finished | planned=63 imported=0 dry_run_ok=63 duplicate_skips=0 failed=0
+2026-10-29 22:11:25,432 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:11:25,513 | INFO | DHARAMBIR | 2026-10-10 | rows 2,3 | bill_id=1 | OP=2MG/OP20261029-000081 | total=2100.00
+2026-10-29 22:11:25,516 | INFO | ANURATI GUPTA | 2026-10-10 | rows 4 | bill_id=2 | OP=2MG/OP20261029-000082 | total=2000.00
+2026-10-29 22:11:25,519 | INFO | PANKAJ AGARWAL | 2026-10-10 | rows 5,6 | bill_id=3 | OP=2MG/OP20261029-000083 | total=2100.00
+2026-10-29 22:11:25,522 | INFO | YASHIKA SAINI | 2026-10-10 | rows 7 | bill_id=4 | OP=2MG/OP20261029-000084 | total=2000.00
+2026-10-29 22:11:25,525 | INFO | SHUBHANKAR GUMMALLA | 2026-10-10 | rows 8 | bill_id=5 | OP=2MG/OP20261029-000085 | total=2000.00
+2026-10-29 22:11:25,531 | INFO | RAJA RANA | 2026-10-12 | rows 9 | bill_id=6 | OP=2MG/OP20261029-000086 | total=1500.00
+2026-10-29 22:11:25,538 | INFO | PUNEET PAL SINGH | 2026-10-12 | rows 10,11 | bill_id=7 | OP=2MG/OP20261029-000087 | total=2100.00
+2026-10-29 22:11:25,540 | INFO | PUNEET PAL SINGH | 2026-10-12 | rows 12 | bill_id=8 | OP=2MG/OP20261029-000088 | total=2000.00
+2026-10-29 22:11:25,546 | INFO | MIRNAL ARORA | 2026-10-12 | rows 13,14 | bill_id=9 | OP=2MG/OP20261029-000089 | total=2100.00
+2026-10-29 22:11:25,552 | INFO | BARKHA SHARMA | 2026-10-13 | rows 15,16 | bill_id=10 | OP=2MG/OP20261029-000090 | total=2000.00
+2026-10-29 22:11:25,556 | INFO | ANKUR MAHENDRA | 2026-10-13 | rows 17 | bill_id=11 | OP=2MG/OP20261029-000091 | total=1500.00
+2026-10-29 22:11:25,558 | INFO | RAJA RANA | 2026-10-14 | rows 18 | bill_id=12 | OP=2MG/OP20261029-000092 | total=1500.00
+2026-10-29 22:11:25,563 | INFO | JYOTI ARORA | 2026-10-14 | rows 19,20 | bill_id=13 | OP=2MG/OP20261029-000093 | total=2000.00
+2026-10-29 22:11:25,566 | INFO | SANTOSH DEVI JAIN | 2026-10-14 | rows 21 | bill_id=14 | OP=2MG/OP20261029-000094 | total=12500.00
+2026-10-29 22:11:25,570 | INFO | HARDIK GARG | 2026-10-14 | rows 22,23 | bill_id=15 | OP=2MG/OP20261029-000095 | total=2100.00
+2026-10-29 22:11:25,573 | INFO | HARDIK GARG | 2026-10-14 | rows 24 | bill_id=16 | OP=2MG/OP20261029-000096 | total=1000.00
+2026-10-29 22:11:25,575 | INFO | HARDIK GARG | 2026-10-15 | rows 25 | bill_id=17 | OP=2MG/OP20261029-000097 | total=1000.00
+2026-10-29 22:11:25,578 | INFO | BUMIKA SHAWNEY | 2026-10-15 | rows 26 | bill_id=18 | OP=2MG/OP20261029-000098 | total=1500.00
+2026-10-29 22:11:25,581 | INFO | SUNITA GOSWAMI | 2026-10-15 | rows 27 | bill_id=19 | OP=2MG/OP20261029-000099 | total=3000.00
+2026-10-29 22:11:25,591 | INFO | RAJA RANA | 2026-10-16 | rows 28 | bill_id=20 | OP=2MG/OP20261029-000100 | total=1500.00
+2026-10-29 22:11:25,599 | INFO | SUNITA GOSWAMI | 2026-10-16 | rows 29 | bill_id=21 | OP=2MG/OP20261029-000101 | total=1500.00
+2026-10-29 22:11:25,608 | INFO | PUNEET PAL SINGH | 2026-10-16 | rows 30 | bill_id=22 | OP=2MG/OP20261029-000102 | total=1500.00
+2026-10-29 22:11:25,618 | INFO | SEJAL GUPTA | 2026-10-17 | rows 31 | bill_id=23 | OP=2MG/OP20261029-000103 | total=1600.00
+2026-10-29 22:11:25,630 | INFO | VIKESH | 2026-10-17 | rows 32,33 | bill_id=24 | OP=2MG/OP20261029-000104 | total=2000.00
+2026-10-29 22:11:25,639 | INFO | AARADHYA SHARMA | 2026-10-17 | rows 34 | bill_id=25 | OP=2MG/OP20261029-000105 | total=2000.00
+2026-10-29 22:11:25,648 | INFO | VIKESH | 2026-10-17 | rows 35 | bill_id=26 | OP=2MG/OP20261029-000106 | total=1500.00
+2026-10-29 22:11:25,654 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 36 | bill_id=27 | OP=2MG/OP20261029-000107 | total=2000.00
+2026-10-29 22:11:25,657 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 37 | bill_id=28 | OP=2MG/OP20261029-000108 | total=2000.00
+2026-10-29 22:11:25,663 | INFO | PARAMJEET PUNDIR | 2026-10-17 | rows 38 | bill_id=29 | OP=2MG/OP20261029-000109 | total=2000.00
+2026-10-29 22:11:25,666 | INFO | RITIKA | 2026-10-17 | rows 39,40 | bill_id=30 | OP=2MG/OP20261029-000110 | total=1600.00
+2026-10-29 22:11:25,674 | INFO | RAJA RANA | 2026-10-19 | rows 41 | bill_id=31 | OP=2MG/OP20261029-000111 | total=1500.00
+2026-10-29 22:11:25,684 | INFO | ANITA SHUKLA | 2026-10-19 | rows 42 | bill_id=32 | OP=2MG/OP20261029-000112 | total=2000.00
+2026-10-29 22:11:25,690 | INFO | RUDRA SONI | 2026-10-19 | rows 43,44 | bill_id=33 | OP=2MG/OP20261029-000113 | total=2100.00
+2026-10-29 22:11:25,695 | INFO | MANSI TANEJA | 2026-10-19 | rows 45 | bill_id=34 | OP=2MG/OP20261029-000114 | total=1500.00
+2026-10-29 22:11:25,699 | INFO | MANISH BAGHEL | 2026-10-19 | rows 46 | bill_id=35 | OP=2MG/OP20261029-000115 | total=2000.00
+2026-10-29 22:11:25,704 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 47 | bill_id=36 | OP=2MG/OP20261029-000116 | total=1500.00
+2026-10-29 22:11:25,706 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 48 | bill_id=37 | OP=2MG/OP20261029-000117 | total=500.00
+2026-10-29 22:11:25,709 | INFO | SUNITA GOSWAMI | 2026-10-19 | rows 49 | bill_id=38 | OP=2MG/OP20261029-000118 | total=1500.00
+2026-10-29 22:11:25,713 | INFO | KRISHAV MOHAN | 2026-10-19 | rows 50,51 | bill_id=39 | OP=2MG/OP20261029-000119 | total=2100.00
+2026-10-29 22:11:25,718 | INFO | RAJA RANA | 2026-10-21 | rows 52 | bill_id=40 | OP=2MG/OP20261029-000120 | total=1500.00
+2026-10-29 22:11:25,722 | INFO | LALITA TIKOO | 2026-10-21 | rows 53 | bill_id=41 | OP=2MG/OP20261029-000121 | total=2000.00
+2026-10-29 22:11:25,725 | INFO | KRISHAV MOHAN | 2026-10-21 | rows 54 | bill_id=42 | OP=2MG/OP20261029-000122 | total=2000.00
+2026-10-29 22:11:25,728 | INFO | SUNITA GOSWAMI | 2026-10-21 | rows 55 | bill_id=43 | OP=2MG/OP20261029-000123 | total=2000.00
+2026-10-29 22:11:25,732 | INFO | CHANDRIKA | 2026-10-21 | rows 56,57 | bill_id=44 | OP=2MG/OP20261029-000124 | total=2000.00
+2026-10-29 22:11:25,737 | INFO | PRADEEP TOGNATTA | 2026-10-22 | rows 58 | bill_id=45 | OP=2MG/OP20261029-000125 | total=1500.00
+2026-10-29 22:11:25,740 | INFO | POONAM AGARWAL | 2026-10-22 | rows 59 | bill_id=46 | OP=2MG/OP20261029-000126 | total=2000.00
+2026-10-29 22:11:25,744 | INFO | PALAK | 2026-10-22 | rows 60,61 | bill_id=47 | OP=2MG/OP20261029-000127 | total=2100.00
+2026-10-29 22:11:25,748 | INFO | SUNITA GOSWAMI | 2026-10-23 | rows 62 | bill_id=48 | OP=2MG/OP20261029-000128 | total=4500.00
+2026-10-29 22:11:25,750 | INFO | RAJA RANA | 2026-10-23 | rows 63 | bill_id=49 | OP=2MG/OP20261029-000129 | total=1500.00
+2026-10-29 22:11:25,753 | INFO | PALAK | 2026-10-23 | rows 64 | bill_id=50 | OP=2MG/OP20261029-000130 | total=2000.00
+2026-10-29 22:11:25,756 | INFO | NISHTHA SAINI | 2026-10-23 | rows 65 | bill_id=51 | OP=2MG/OP20261029-000131 | total=2000.00
+2026-10-29 22:11:25,761 | INFO | SANJAY KUMAR | 2026-10-23 | rows 66 | bill_id=52 | OP=2MG/OP20261029-000132 | total=2000.00
+2026-10-29 22:11:25,766 | INFO | SHIRIN KUMAR | 2026-10-23 | rows 67,68 | bill_id=53 | OP=2MG/OP20261029-000133 | total=2100.00
+2026-10-29 22:11:25,769 | INFO | VIDUSHI | 2026-10-23 | rows 69,70 | bill_id=54 | OP=2MG/OP20261029-000134 | total=2100.00
+2026-10-29 22:11:25,774 | INFO | MUKTA SINGH | 2026-10-24 | rows 71,72 | bill_id=55 | OP=2MG/OP20261029-000135 | total=1700.00
+2026-10-29 22:11:25,777 | INFO | KAMAL SINGH | 2026-10-24 | rows 73 | bill_id=56 | OP=2MG/OP20261029-000136 | total=1600.00
+2026-10-29 22:11:25,782 | INFO | VAIBHAV DAHIYA | 2026-10-24 | rows 74,75 | bill_id=57 | OP=2MG/OP20261029-000137 | total=2000.00
+2026-10-29 22:11:25,788 | INFO | ARPIT TANK | 2026-10-24 | rows 76 | bill_id=58 | OP=2MG/OP20261029-000138 | total=1600.00
+2026-10-29 22:11:25,790 | INFO | SHUBHANKAR GUMMALLA | 2026-10-24 | rows 77 | bill_id=59 | OP=2MG/OP20261029-000139 | total=2000.00
+2026-10-29 22:11:25,794 | INFO | VIKESH | 2026-10-24 | rows 78 | bill_id=60 | OP=2MG/OP20261029-000140 | total=2000.00
+2026-10-29 22:11:25,797 | INFO | ANUPAM BANSAL | 2026-10-24 | rows 79 | bill_id=61 | OP=2MG/OP20261029-000141 | total=2000.00
+2026-10-29 22:11:25,800 | INFO | SUNITA GOSWAMI | 2026-10-24 | rows 80 | bill_id=62 | OP=2MG/OP20261029-000142 | total=1500.00
+2026-10-29 22:11:25,803 | INFO | RISHABH VEDI | 2026-10-24 | rows 81 | bill_id=63 | OP=2MG/OP20261029-000143 | total=1500.00
+2026-10-29 22:11:25,809 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 22:11:25,809 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:11:25,810 | INFO | Finished | planned=63 imported=63 dry_run_ok=0 duplicate_skips=0 failed=0
+2026-10-29 22:20:06,936 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:20:07,191 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 22:20:07,192 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:20:07,192 | INFO | Finished | planned=63 imported=0 dry_run_ok=63 duplicate_skips=0 failed=0
+2026-10-29 22:20:10,601 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:20:10,685 | INFO | DHARAMBIR | 2026-10-10 | rows 2,3 | bill_id=1 | OP=2MG/OP20261029-000144 | total=2100.00
+2026-10-29 22:20:10,690 | INFO | ANURATI GUPTA | 2026-10-10 | rows 4 | bill_id=2 | OP=2MG/OP20261029-000145 | total=2000.00
+2026-10-29 22:20:10,696 | INFO | PANKAJ AGARWAL | 2026-10-10 | rows 5,6 | bill_id=3 | OP=2MG/OP20261029-000146 | total=2100.00
+2026-10-29 22:20:10,700 | INFO | YASHIKA SAINI | 2026-10-10 | rows 7 | bill_id=4 | OP=2MG/OP20261029-000147 | total=2000.00
+2026-10-29 22:20:10,703 | INFO | SHUBHANKAR GUMMALLA | 2026-10-10 | rows 8 | bill_id=5 | OP=2MG/OP20261029-000148 | total=2000.00
+2026-10-29 22:20:10,706 | INFO | RAJA RANA | 2026-10-12 | rows 9 | bill_id=6 | OP=2MG/OP20261029-000149 | total=1500.00
+2026-10-29 22:20:10,710 | INFO | PUNEET PAL SINGH | 2026-10-12 | rows 10,11 | bill_id=7 | OP=2MG/OP20261029-000150 | total=2100.00
+2026-10-29 22:20:10,712 | INFO | PUNEET PAL SINGH | 2026-10-12 | rows 12 | bill_id=8 | OP=2MG/OP20261029-000151 | total=2000.00
+2026-10-29 22:20:10,722 | INFO | MIRNAL ARORA | 2026-10-12 | rows 13,14 | bill_id=9 | OP=2MG/OP20261029-000152 | total=2100.00
+2026-10-29 22:20:10,728 | INFO | BARKHA SHARMA | 2026-10-13 | rows 15,16 | bill_id=10 | OP=2MG/OP20261029-000153 | total=2000.00
+2026-10-29 22:20:10,732 | INFO | ANKUR MAHENDRA | 2026-10-13 | rows 17 | bill_id=11 | OP=2MG/OP20261029-000154 | total=1500.00
+2026-10-29 22:20:10,735 | INFO | RAJA RANA | 2026-10-14 | rows 18 | bill_id=12 | OP=2MG/OP20261029-000155 | total=1500.00
+2026-10-29 22:20:10,739 | INFO | JYOTI ARORA | 2026-10-14 | rows 19,20 | bill_id=13 | OP=2MG/OP20261029-000156 | total=2000.00
+2026-10-29 22:20:10,744 | INFO | SANTOSH DEVI JAIN | 2026-10-14 | rows 21 | bill_id=14 | OP=2MG/OP20261029-000157 | total=12500.00
+2026-10-29 22:20:10,748 | INFO | HARDIK GARG | 2026-10-14 | rows 22,23 | bill_id=15 | OP=2MG/OP20261029-000158 | total=2100.00
+2026-10-29 22:20:10,753 | INFO | HARDIK GARG | 2026-10-14 | rows 24 | bill_id=16 | OP=2MG/OP20261029-000159 | total=1000.00
+2026-10-29 22:20:10,758 | INFO | HARDIK GARG | 2026-10-15 | rows 25 | bill_id=17 | OP=2MG/OP20261029-000160 | total=1000.00
+2026-10-29 22:20:10,763 | INFO | BUMIKA SHAWNEY | 2026-10-15 | rows 26 | bill_id=18 | OP=2MG/OP20261029-000161 | total=1500.00
+2026-10-29 22:20:10,767 | INFO | SUNITA GOSWAMI | 2026-10-15 | rows 27 | bill_id=19 | OP=2MG/OP20261029-000162 | total=3000.00
+2026-10-29 22:20:10,772 | INFO | RAJA RANA | 2026-10-16 | rows 28 | bill_id=20 | OP=2MG/OP20261029-000163 | total=1500.00
+2026-10-29 22:20:10,775 | INFO | SUNITA GOSWAMI | 2026-10-16 | rows 29 | bill_id=21 | OP=2MG/OP20261029-000164 | total=1500.00
+2026-10-29 22:20:10,778 | INFO | PUNEET PAL SINGH | 2026-10-16 | rows 30 | bill_id=22 | OP=2MG/OP20261029-000165 | total=1500.00
+2026-10-29 22:20:10,782 | INFO | SEJAL GUPTA | 2026-10-17 | rows 31 | bill_id=23 | OP=2MG/OP20261029-000166 | total=1600.00
+2026-10-29 22:20:10,789 | INFO | VIKESH | 2026-10-17 | rows 32,33 | bill_id=24 | OP=2MG/OP20261029-000167 | total=2000.00
+2026-10-29 22:20:10,794 | INFO | AARADHYA SHARMA | 2026-10-17 | rows 34 | bill_id=25 | OP=2MG/OP20261029-000168 | total=2000.00
+2026-10-29 22:20:10,799 | INFO | VIKESH | 2026-10-17 | rows 35 | bill_id=26 | OP=2MG/OP20261029-000169 | total=1500.00
+2026-10-29 22:20:10,802 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 36 | bill_id=27 | OP=2MG/OP20261029-000170 | total=2000.00
+2026-10-29 22:20:10,807 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | rows 37 | bill_id=28 | OP=2MG/OP20261029-000171 | total=2000.00
+2026-10-29 22:20:10,814 | INFO | PARAMJEET PUNDIR | 2026-10-17 | rows 38 | bill_id=29 | OP=2MG/OP20261029-000172 | total=2000.00
+2026-10-29 22:20:10,820 | INFO | RITIKA | 2026-10-17 | rows 39,40 | bill_id=30 | OP=2MG/OP20261029-000173 | total=1600.00
+2026-10-29 22:20:10,824 | INFO | RAJA RANA | 2026-10-19 | rows 41 | bill_id=31 | OP=2MG/OP20261029-000174 | total=1500.00
+2026-10-29 22:20:10,829 | INFO | ANITA SHUKLA | 2026-10-19 | rows 42 | bill_id=32 | OP=2MG/OP20261029-000175 | total=2000.00
+2026-10-29 22:20:10,836 | INFO | RUDRA SONI | 2026-10-19 | rows 43,44 | bill_id=33 | OP=2MG/OP20261029-000176 | total=2100.00
+2026-10-29 22:20:10,844 | INFO | MANSI TANEJA | 2026-10-19 | rows 45 | bill_id=34 | OP=2MG/OP20261029-000177 | total=1500.00
+2026-10-29 22:20:10,848 | INFO | MANISH BAGHEL | 2026-10-19 | rows 46 | bill_id=35 | OP=2MG/OP20261029-000178 | total=2000.00
+2026-10-29 22:20:10,855 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 47 | bill_id=36 | OP=2MG/OP20261029-000179 | total=1500.00
+2026-10-29 22:20:10,859 | INFO | ANCHAL KAPUR | 2026-10-19 | rows 48 | bill_id=37 | OP=2MG/OP20261029-000180 | total=500.00
+2026-10-29 22:20:10,864 | INFO | SUNITA GOSWAMI | 2026-10-19 | rows 49 | bill_id=38 | OP=2MG/OP20261029-000181 | total=1500.00
+2026-10-29 22:20:10,868 | INFO | KRISHAV MOHAN | 2026-10-19 | rows 50,51 | bill_id=39 | OP=2MG/OP20261029-000182 | total=2100.00
+2026-10-29 22:20:10,873 | INFO | RAJA RANA | 2026-10-21 | rows 52 | bill_id=40 | OP=2MG/OP20261029-000183 | total=1500.00
+2026-10-29 22:20:10,880 | INFO | LALITA TIKOO | 2026-10-21 | rows 53 | bill_id=41 | OP=2MG/OP20261029-000184 | total=2000.00
+2026-10-29 22:20:10,882 | INFO | KRISHAV MOHAN | 2026-10-21 | rows 54 | bill_id=42 | OP=2MG/OP20261029-000185 | total=2000.00
+2026-10-29 22:20:10,887 | INFO | SUNITA GOSWAMI | 2026-10-21 | rows 55 | bill_id=43 | OP=2MG/OP20261029-000186 | total=2000.00
+2026-10-29 22:20:10,891 | INFO | CHANDRIKA | 2026-10-21 | rows 56,57 | bill_id=44 | OP=2MG/OP20261029-000187 | total=2000.00
+2026-10-29 22:20:10,895 | INFO | PRADEEP TOGNATTA | 2026-10-22 | rows 58 | bill_id=45 | OP=2MG/OP20261029-000188 | total=1500.00
+2026-10-29 22:20:10,900 | INFO | POONAM AGARWAL | 2026-10-22 | rows 59 | bill_id=46 | OP=2MG/OP20261029-000189 | total=2000.00
+2026-10-29 22:20:10,905 | INFO | PALAK | 2026-10-22 | rows 60,61 | bill_id=47 | OP=2MG/OP20261029-000190 | total=2100.00
+2026-10-29 22:20:10,909 | INFO | SUNITA GOSWAMI | 2026-10-23 | rows 62 | bill_id=48 | OP=2MG/OP20261029-000191 | total=4500.00
+2026-10-29 22:20:10,912 | INFO | RAJA RANA | 2026-10-23 | rows 63 | bill_id=49 | OP=2MG/OP20261029-000192 | total=1500.00
+2026-10-29 22:20:10,917 | INFO | PALAK | 2026-10-23 | rows 64 | bill_id=50 | OP=2MG/OP20261029-000193 | total=2000.00
+2026-10-29 22:20:10,922 | INFO | NISHTHA SAINI | 2026-10-23 | rows 65 | bill_id=51 | OP=2MG/OP20261029-000194 | total=2000.00
+2026-10-29 22:20:10,927 | INFO | SANJAY KUMAR | 2026-10-23 | rows 66 | bill_id=52 | OP=2MG/OP20261029-000195 | total=2000.00
+2026-10-29 22:20:10,932 | INFO | SHIRIN KUMAR | 2026-10-23 | rows 67,68 | bill_id=53 | OP=2MG/OP20261029-000196 | total=2100.00
+2026-10-29 22:20:10,938 | INFO | VIDUSHI | 2026-10-23 | rows 69,70 | bill_id=54 | OP=2MG/OP20261029-000197 | total=2100.00
+2026-10-29 22:20:10,946 | INFO | MUKTA SINGH | 2026-10-24 | rows 71,72 | bill_id=55 | OP=2MG/OP20261029-000198 | total=1700.00
+2026-10-29 22:20:10,950 | INFO | KAMAL SINGH | 2026-10-24 | rows 73 | bill_id=56 | OP=2MG/OP20261029-000199 | total=1600.00
+2026-10-29 22:20:10,954 | INFO | VAIBHAV DAHIYA | 2026-10-24 | rows 74,75 | bill_id=57 | OP=2MG/OP20261029-000200 | total=2000.00
+2026-10-29 22:20:10,961 | INFO | ARPIT TANK | 2026-10-24 | rows 76 | bill_id=58 | OP=2MG/OP20261029-000201 | total=1600.00
+2026-10-29 22:20:10,966 | INFO | SHUBHANKAR GUMMALLA | 2026-10-24 | rows 77 | bill_id=59 | OP=2MG/OP20261029-000202 | total=2000.00
+2026-10-29 22:20:10,967 | INFO | VIKESH | 2026-10-24 | rows 78 | bill_id=60 | OP=2MG/OP20261029-000203 | total=2000.00
+2026-10-29 22:20:10,970 | INFO | ANUPAM BANSAL | 2026-10-24 | rows 79 | bill_id=61 | OP=2MG/OP20261029-000204 | total=2000.00
+2026-10-29 22:20:10,973 | INFO | SUNITA GOSWAMI | 2026-10-24 | rows 80 | bill_id=62 | OP=2MG/OP20261029-000205 | total=1500.00
+2026-10-29 22:20:10,978 | INFO | RISHABH VEDI | 2026-10-24 | rows 81 | bill_id=63 | OP=2MG/OP20261029-000206 | total=1500.00
+2026-10-29 22:20:10,983 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 rows)
+2026-10-29 22:20:10,983 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:20:10,984 | INFO | Finished | planned=63 imported=63 dry_run_ok=0 duplicate_skips=0 failed=0
+2026-10-29 22:29:34,877 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:29:35,061 | INFO | Historical import creator: System (user_id=2, login_id=system)
+2026-10-29 22:29:35,086 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 issues)
+2026-10-29 22:29:35,087 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:29:35,087 | INFO | Finished | planned=63 imported=0 dry_run_ok=0 duplicate_skips=63 failed=0
+2026-10-29 22:31:18,184 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:31:18,251 | INFO | Historical import creator: System (user_id=2, login_id=system)
+2026-10-29 22:31:18,331 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 issues)
+2026-10-29 22:31:18,332 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:31:18,332 | INFO | Finished | planned=63 imported=0 dry_run_ok=63 duplicate_skips=0 failed=0
+2026-10-29 22:31:22,609 | INFO | Workbook rows=80 | highlighted rows=17 | candidate bills=63
+2026-10-29 22:31:22,673 | INFO | Historical import creator: System (user_id=2, login_id=system)
+2026-10-29 22:31:22,682 | INFO | DHARAMBIR | 2026-10-10 | Excel rows 2,3 | bill_id=1 | OP=2MG/OP20261029-000207 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,702 | INFO | ANURATI GUPTA | 2026-10-10 | Excel rows 4 | bill_id=2 | OP=2MG/OP20261029-000208 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,707 | INFO | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6 | bill_id=3 | OP=2MG/OP20261029-000209 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,711 | INFO | YASHIKA SAINI | 2026-10-10 | Excel rows 7 | bill_id=4 | OP=2MG/OP20261029-000210 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,713 | INFO | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8 | bill_id=5 | OP=2MG/OP20261029-000211 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,716 | INFO | RAJA RANA | 2026-10-12 | Excel rows 9 | bill_id=6 | OP=2MG/OP20261029-000212 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,720 | INFO | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11 | bill_id=7 | OP=2MG/OP20261029-000213 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,724 | INFO | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12 | bill_id=8 | OP=2MG/OP20261029-000214 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,727 | INFO | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14 | bill_id=9 | OP=2MG/OP20261029-000215 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,730 | INFO | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16 | bill_id=10 | OP=2MG/OP20261029-000216 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,735 | INFO | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17 | bill_id=11 | OP=2MG/OP20261029-000217 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,737 | INFO | RAJA RANA | 2026-10-14 | Excel rows 18 | bill_id=12 | OP=2MG/OP20261029-000218 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,741 | INFO | JYOTI ARORA | 2026-10-14 | Excel rows 19,20 | bill_id=13 | OP=2MG/OP20261029-000219 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,745 | INFO | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21 | bill_id=14 | OP=2MG/OP20261029-000220 | total=12500.00 | created_by=System
+2026-10-29 22:31:22,748 | INFO | HARDIK GARG | 2026-10-14 | Excel rows 22,23 | bill_id=15 | OP=2MG/OP20261029-000221 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,751 | INFO | HARDIK GARG | 2026-10-14 | Excel rows 24 | bill_id=16 | OP=2MG/OP20261029-000222 | total=1000.00 | created_by=System
+2026-10-29 22:31:22,754 | INFO | HARDIK GARG | 2026-10-15 | Excel rows 25 | bill_id=17 | OP=2MG/OP20261029-000223 | total=1000.00 | created_by=System
+2026-10-29 22:31:22,757 | INFO | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26 | bill_id=18 | OP=2MG/OP20261029-000224 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,761 | INFO | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27 | bill_id=19 | OP=2MG/OP20261029-000225 | total=3000.00 | created_by=System
+2026-10-29 22:31:22,764 | INFO | RAJA RANA | 2026-10-16 | Excel rows 28 | bill_id=20 | OP=2MG/OP20261029-000226 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,766 | INFO | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29 | bill_id=21 | OP=2MG/OP20261029-000227 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,769 | INFO | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30 | bill_id=22 | OP=2MG/OP20261029-000228 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,777 | INFO | SEJAL GUPTA | 2026-10-17 | Excel rows 31 | bill_id=23 | OP=2MG/OP20261029-000229 | total=1600.00 | created_by=System
+2026-10-29 22:31:22,787 | INFO | VIKESH | 2026-10-17 | Excel rows 32,33 | bill_id=24 | OP=2MG/OP20261029-000230 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,798 | INFO | AARADHYA SHARMA | 2026-10-17 | Excel rows 34 | bill_id=25 | OP=2MG/OP20261029-000231 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,806 | INFO | VIKESH | 2026-10-17 | Excel rows 35 | bill_id=26 | OP=2MG/OP20261029-000232 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,813 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36 | bill_id=27 | OP=2MG/OP20261029-000233 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,820 | INFO | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37 | bill_id=28 | OP=2MG/OP20261029-000234 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,826 | INFO | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38 | bill_id=29 | OP=2MG/OP20261029-000235 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,839 | INFO | RITIKA | 2026-10-17 | Excel rows 39,40 | bill_id=30 | OP=2MG/OP20261029-000236 | total=1600.00 | created_by=System
+2026-10-29 22:31:22,844 | INFO | RAJA RANA | 2026-10-19 | Excel rows 41 | bill_id=31 | OP=2MG/OP20261029-000237 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,850 | INFO | ANITA SHUKLA | 2026-10-19 | Excel rows 42 | bill_id=32 | OP=2MG/OP20261029-000238 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,852 | INFO | RUDRA SONI | 2026-10-19 | Excel rows 43,44 | bill_id=33 | OP=2MG/OP20261029-000239 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,856 | INFO | MANSI TANEJA | 2026-10-19 | Excel rows 45 | bill_id=34 | OP=2MG/OP20261029-000240 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,861 | INFO | MANISH BAGHEL | 2026-10-19 | Excel rows 46 | bill_id=35 | OP=2MG/OP20261029-000241 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,865 | INFO | ANCHAL KAPUR | 2026-10-19 | Excel rows 47 | bill_id=36 | OP=2MG/OP20261029-000242 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,868 | INFO | ANCHAL KAPUR | 2026-10-19 | Excel rows 48 | bill_id=37 | OP=2MG/OP20261029-000243 | total=500.00 | created_by=System
+2026-10-29 22:31:22,871 | INFO | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49 | bill_id=38 | OP=2MG/OP20261029-000244 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,875 | INFO | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51 | bill_id=39 | OP=2MG/OP20261029-000245 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,881 | INFO | RAJA RANA | 2026-10-21 | Excel rows 52 | bill_id=40 | OP=2MG/OP20261029-000246 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,890 | INFO | LALITA TIKOO | 2026-10-21 | Excel rows 53 | bill_id=41 | OP=2MG/OP20261029-000247 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,905 | INFO | KRISHAV MOHAN | 2026-10-21 | Excel rows 54 | bill_id=42 | OP=2MG/OP20261029-000248 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,917 | INFO | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55 | bill_id=43 | OP=2MG/OP20261029-000249 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,930 | INFO | CHANDRIKA | 2026-10-21 | Excel rows 56,57 | bill_id=44 | OP=2MG/OP20261029-000250 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,943 | INFO | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58 | bill_id=45 | OP=2MG/OP20261029-000251 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,955 | INFO | POONAM AGARWAL | 2026-10-22 | Excel rows 59 | bill_id=46 | OP=2MG/OP20261029-000252 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,961 | INFO | PALAK | 2026-10-22 | Excel rows 60,61 | bill_id=47 | OP=2MG/OP20261029-000253 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,963 | INFO | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62 | bill_id=48 | OP=2MG/OP20261029-000254 | total=4500.00 | created_by=System
+2026-10-29 22:31:22,966 | INFO | RAJA RANA | 2026-10-23 | Excel rows 63 | bill_id=49 | OP=2MG/OP20261029-000255 | total=1500.00 | created_by=System
+2026-10-29 22:31:22,974 | INFO | PALAK | 2026-10-23 | Excel rows 64 | bill_id=50 | OP=2MG/OP20261029-000256 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,984 | INFO | NISHTHA SAINI | 2026-10-23 | Excel rows 65 | bill_id=51 | OP=2MG/OP20261029-000257 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,989 | INFO | SANJAY KUMAR | 2026-10-23 | Excel rows 66 | bill_id=52 | OP=2MG/OP20261029-000258 | total=2000.00 | created_by=System
+2026-10-29 22:31:22,993 | INFO | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68 | bill_id=53 | OP=2MG/OP20261029-000259 | total=2100.00 | created_by=System
+2026-10-29 22:31:22,997 | INFO | VIDUSHI | 2026-10-23 | Excel rows 69,70 | bill_id=54 | OP=2MG/OP20261029-000260 | total=2100.00 | created_by=System
+2026-10-29 22:31:23,002 | INFO | MUKTA SINGH | 2026-10-24 | Excel rows 71,72 | bill_id=55 | OP=2MG/OP20261029-000261 | total=1700.00 | created_by=System
+2026-10-29 22:31:23,004 | INFO | KAMAL SINGH | 2026-10-24 | Excel rows 73 | bill_id=56 | OP=2MG/OP20261029-000262 | total=1600.00 | created_by=System
+2026-10-29 22:31:23,008 | INFO | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75 | bill_id=57 | OP=2MG/OP20261029-000263 | total=2000.00 | created_by=System
+2026-10-29 22:31:23,011 | INFO | ARPIT TANK | 2026-10-24 | Excel rows 76 | bill_id=58 | OP=2MG/OP20261029-000264 | total=1600.00 | created_by=System
+2026-10-29 22:31:23,014 | INFO | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77 | bill_id=59 | OP=2MG/OP20261029-000265 | total=2000.00 | created_by=System
+2026-10-29 22:31:23,017 | INFO | VIKESH | 2026-10-24 | Excel rows 78 | bill_id=60 | OP=2MG/OP20261029-000266 | total=2000.00 | created_by=System
+2026-10-29 22:31:23,020 | INFO | ANUPAM BANSAL | 2026-10-24 | Excel rows 79 | bill_id=61 | OP=2MG/OP20261029-000267 | total=2000.00 | created_by=System
+2026-10-29 22:31:23,023 | INFO | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80 | bill_id=62 | OP=2MG/OP20261029-000268 | total=1500.00 | created_by=System
+2026-10-29 22:31:23,027 | INFO | RISHABH VEDI | 2026-10-24 | Excel rows 81 | bill_id=63 | OP=2MG/OP20261029-000269 | total=1500.00 | created_by=System
+2026-10-29 22:31:23,033 | INFO | Issue report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv (0 issues)
+2026-10-29 22:31:23,034 | INFO | Import report: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-29 22:31:23,035 | INFO | Finished | planned=63 imported=63 dry_run_ok=0 duplicate_skips=0 failed=0
+2026-10-30 14:55:44,981 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-8D983FF33ADAE644
+2026-10-30 14:55:45,007 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 14:55:45,114 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 14:55:45,117 | INFO | __main__ | DRY RUN OK | DHARAMBIR | 2026-10-10 | Excel rows 2,3
+2026-10-30 14:55:45,117 | INFO | __main__ | DRY RUN OK | ANURATI GUPTA | 2026-10-10 | Excel rows 4
+2026-10-30 14:55:45,119 | INFO | __main__ | DRY RUN OK | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6
+2026-10-30 14:55:45,121 | INFO | __main__ | DRY RUN OK | YASHIKA SAINI | 2026-10-10 | Excel rows 7
+2026-10-30 14:55:45,123 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8
+2026-10-30 14:55:45,124 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-12 | Excel rows 9
+2026-10-30 14:55:45,128 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11
+2026-10-30 14:55:45,130 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12
+2026-10-30 14:55:45,135 | INFO | __main__ | DRY RUN OK | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14
+2026-10-30 14:55:45,137 | INFO | __main__ | DRY RUN OK | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16
+2026-10-30 14:55:45,139 | INFO | __main__ | DRY RUN OK | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17
+2026-10-30 14:55:45,141 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-14 | Excel rows 18
+2026-10-30 14:55:45,143 | INFO | __main__ | DRY RUN OK | JYOTI ARORA | 2026-10-14 | Excel rows 19,20
+2026-10-30 14:55:45,144 | INFO | __main__ | DRY RUN OK | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21
+2026-10-30 14:55:45,145 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 22,23
+2026-10-30 14:55:45,147 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 24
+2026-10-30 14:55:45,148 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-15 | Excel rows 25
+2026-10-30 14:55:45,149 | INFO | __main__ | DRY RUN OK | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26
+2026-10-30 14:55:45,150 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27
+2026-10-30 14:55:45,151 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-16 | Excel rows 28
+2026-10-30 14:55:45,152 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29
+2026-10-30 14:55:45,153 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30
+2026-10-30 14:55:45,154 | INFO | __main__ | DRY RUN OK | SEJAL GUPTA | 2026-10-17 | Excel rows 31
+2026-10-30 14:55:45,156 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 32,33
+2026-10-30 14:55:45,157 | INFO | __main__ | DRY RUN OK | AARADHYA SHARMA | 2026-10-17 | Excel rows 34
+2026-10-30 14:55:45,158 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 35
+2026-10-30 14:55:45,159 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36
+2026-10-30 14:55:45,160 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37
+2026-10-30 14:55:45,161 | INFO | __main__ | DRY RUN OK | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38
+2026-10-30 14:55:45,164 | INFO | __main__ | DRY RUN OK | RITIKA | 2026-10-17 | Excel rows 39,40
+2026-10-30 14:55:45,165 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-19 | Excel rows 41
+2026-10-30 14:55:45,165 | INFO | __main__ | DRY RUN OK | ANITA SHUKLA | 2026-10-19 | Excel rows 42
+2026-10-30 14:55:45,167 | INFO | __main__ | DRY RUN OK | RUDRA SONI | 2026-10-19 | Excel rows 43,44
+2026-10-30 14:55:45,168 | INFO | __main__ | DRY RUN OK | MANSI TANEJA | 2026-10-19 | Excel rows 45
+2026-10-30 14:55:45,170 | INFO | __main__ | DRY RUN OK | MANISH BAGHEL | 2026-10-19 | Excel rows 46
+2026-10-30 14:55:45,171 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 47
+2026-10-30 14:55:45,173 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 48
+2026-10-30 14:55:45,174 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49
+2026-10-30 14:55:45,176 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51
+2026-10-30 14:55:45,177 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-21 | Excel rows 52
+2026-10-30 14:55:45,177 | INFO | __main__ | DRY RUN OK | LALITA TIKOO | 2026-10-21 | Excel rows 53
+2026-10-30 14:55:45,178 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-21 | Excel rows 54
+2026-10-30 14:55:45,179 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55
+2026-10-30 14:55:45,181 | INFO | __main__ | DRY RUN OK | CHANDRIKA | 2026-10-21 | Excel rows 56,57
+2026-10-30 14:55:45,182 | INFO | __main__ | DRY RUN OK | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58
+2026-10-30 14:55:45,184 | INFO | __main__ | DRY RUN OK | POONAM AGARWAL | 2026-10-22 | Excel rows 59
+2026-10-30 14:55:45,185 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-22 | Excel rows 60,61
+2026-10-30 14:55:45,186 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62
+2026-10-30 14:55:45,187 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-23 | Excel rows 63
+2026-10-30 14:55:45,188 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-23 | Excel rows 64
+2026-10-30 14:55:45,190 | INFO | __main__ | DRY RUN OK | NISHTHA SAINI | 2026-10-23 | Excel rows 65
+2026-10-30 14:55:45,192 | INFO | __main__ | DRY RUN OK | SANJAY KUMAR | 2026-10-23 | Excel rows 66
+2026-10-30 14:55:45,196 | INFO | __main__ | DRY RUN OK | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68
+2026-10-30 14:55:45,198 | INFO | __main__ | DRY RUN OK | VIDUSHI | 2026-10-23 | Excel rows 69,70
+2026-10-30 14:55:45,199 | INFO | __main__ | DRY RUN OK | MUKTA SINGH | 2026-10-24 | Excel rows 71,72
+2026-10-30 14:55:45,201 | INFO | __main__ | DRY RUN OK | KAMAL SINGH | 2026-10-24 | Excel rows 73
+2026-10-30 14:55:45,204 | INFO | __main__ | DRY RUN OK | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75
+2026-10-30 14:55:45,206 | INFO | __main__ | DRY RUN OK | ARPIT TANK | 2026-10-24 | Excel rows 76
+2026-10-30 14:55:45,208 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77
+2026-10-30 14:55:45,210 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-24 | Excel rows 78
+2026-10-30 14:55:45,212 | INFO | __main__ | DRY RUN OK | ANUPAM BANSAL | 2026-10-24 | Excel rows 79
+2026-10-30 14:55:45,213 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80
+2026-10-30 14:55:45,215 | INFO | __main__ | DRY RUN OK | RISHABH VEDI | 2026-10-24 | Excel rows 81
+2026-10-30 14:55:45,220 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 14:55:45,222 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 14:55:45,223 | INFO | __main__ | Import completed | total=63 | imported=0 | duplicate_skipped=0 | dry_run_ok=63 | failed=0
+2026-10-30 14:57:36,434 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-5FFF48A52DF1F62D
+2026-10-30 14:57:36,474 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 14:57:36,552 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 14:57:36,559 | INFO | __main__ | DRY RUN OK | DHARAMBIR | 2026-10-10 | Excel rows 2,3
+2026-10-30 14:57:36,559 | INFO | __main__ | DRY RUN OK | ANURATI GUPTA | 2026-10-10 | Excel rows 4
+2026-10-30 14:57:36,562 | INFO | __main__ | DRY RUN OK | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6
+2026-10-30 14:57:36,563 | INFO | __main__ | DRY RUN OK | YASHIKA SAINI | 2026-10-10 | Excel rows 7
+2026-10-30 14:57:36,564 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8
+2026-10-30 14:57:36,564 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-12 | Excel rows 9
+2026-10-30 14:57:36,565 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11
+2026-10-30 14:57:36,565 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12
+2026-10-30 14:57:36,566 | INFO | __main__ | DRY RUN OK | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14
+2026-10-30 14:57:36,567 | INFO | __main__ | DRY RUN OK | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16
+2026-10-30 14:57:36,568 | INFO | __main__ | DRY RUN OK | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17
+2026-10-30 14:57:36,568 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-14 | Excel rows 18
+2026-10-30 14:57:36,569 | INFO | __main__ | DRY RUN OK | JYOTI ARORA | 2026-10-14 | Excel rows 19,20
+2026-10-30 14:57:36,569 | INFO | __main__ | DRY RUN OK | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21
+2026-10-30 14:57:36,570 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 22,23
+2026-10-30 14:57:36,570 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 24
+2026-10-30 14:57:36,571 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-15 | Excel rows 25
+2026-10-30 14:57:36,571 | INFO | __main__ | DRY RUN OK | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26
+2026-10-30 14:57:36,572 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27
+2026-10-30 14:57:36,573 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-16 | Excel rows 28
+2026-10-30 14:57:36,574 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29
+2026-10-30 14:57:36,576 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30
+2026-10-30 14:57:36,577 | INFO | __main__ | DRY RUN OK | SEJAL GUPTA | 2026-10-17 | Excel rows 31
+2026-10-30 14:57:36,578 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 32,33
+2026-10-30 14:57:36,579 | INFO | __main__ | DRY RUN OK | AARADHYA SHARMA | 2026-10-17 | Excel rows 34
+2026-10-30 14:57:36,580 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 35
+2026-10-30 14:57:36,580 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36
+2026-10-30 14:57:36,581 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37
+2026-10-30 14:57:36,581 | INFO | __main__ | DRY RUN OK | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38
+2026-10-30 14:57:36,582 | INFO | __main__ | DRY RUN OK | RITIKA | 2026-10-17 | Excel rows 39,40
+2026-10-30 14:57:36,582 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-19 | Excel rows 41
+2026-10-30 14:57:36,583 | INFO | __main__ | DRY RUN OK | ANITA SHUKLA | 2026-10-19 | Excel rows 42
+2026-10-30 14:57:36,585 | INFO | __main__ | DRY RUN OK | RUDRA SONI | 2026-10-19 | Excel rows 43,44
+2026-10-30 14:57:36,585 | INFO | __main__ | DRY RUN OK | MANSI TANEJA | 2026-10-19 | Excel rows 45
+2026-10-30 14:57:36,586 | INFO | __main__ | DRY RUN OK | MANISH BAGHEL | 2026-10-19 | Excel rows 46
+2026-10-30 14:57:36,586 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 47
+2026-10-30 14:57:36,587 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 48
+2026-10-30 14:57:36,587 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49
+2026-10-30 14:57:36,588 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51
+2026-10-30 14:57:36,589 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-21 | Excel rows 52
+2026-10-30 14:57:36,589 | INFO | __main__ | DRY RUN OK | LALITA TIKOO | 2026-10-21 | Excel rows 53
+2026-10-30 14:57:36,589 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-21 | Excel rows 54
+2026-10-30 14:57:36,590 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55
+2026-10-30 14:57:36,591 | INFO | __main__ | DRY RUN OK | CHANDRIKA | 2026-10-21 | Excel rows 56,57
+2026-10-30 14:57:36,592 | INFO | __main__ | DRY RUN OK | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58
+2026-10-30 14:57:36,592 | INFO | __main__ | DRY RUN OK | POONAM AGARWAL | 2026-10-22 | Excel rows 59
+2026-10-30 14:57:36,593 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-22 | Excel rows 60,61
+2026-10-30 14:57:36,594 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62
+2026-10-30 14:57:36,594 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-23 | Excel rows 63
+2026-10-30 14:57:36,595 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-23 | Excel rows 64
+2026-10-30 14:57:36,596 | INFO | __main__ | DRY RUN OK | NISHTHA SAINI | 2026-10-23 | Excel rows 65
+2026-10-30 14:57:36,597 | INFO | __main__ | DRY RUN OK | SANJAY KUMAR | 2026-10-23 | Excel rows 66
+2026-10-30 14:57:36,598 | INFO | __main__ | DRY RUN OK | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68
+2026-10-30 14:57:36,599 | INFO | __main__ | DRY RUN OK | VIDUSHI | 2026-10-23 | Excel rows 69,70
+2026-10-30 14:57:36,599 | INFO | __main__ | DRY RUN OK | MUKTA SINGH | 2026-10-24 | Excel rows 71,72
+2026-10-30 14:57:36,600 | INFO | __main__ | DRY RUN OK | KAMAL SINGH | 2026-10-24 | Excel rows 73
+2026-10-30 14:57:36,601 | INFO | __main__ | DRY RUN OK | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75
+2026-10-30 14:57:36,602 | INFO | __main__ | DRY RUN OK | ARPIT TANK | 2026-10-24 | Excel rows 76
+2026-10-30 14:57:36,603 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77
+2026-10-30 14:57:36,604 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-24 | Excel rows 78
+2026-10-30 14:57:36,608 | INFO | __main__ | DRY RUN OK | ANUPAM BANSAL | 2026-10-24 | Excel rows 79
+2026-10-30 14:57:36,609 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80
+2026-10-30 14:57:36,610 | INFO | __main__ | DRY RUN OK | RISHABH VEDI | 2026-10-24 | Excel rows 81
+2026-10-30 14:57:36,615 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 14:57:36,617 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 14:57:36,618 | INFO | __main__ | Import completed | total=63 | imported=0 | duplicate_skipped=0 | dry_run_ok=63 | failed=0
+2026-10-30 14:58:04,110 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-5FFF48A52DF1F62D
+2026-10-30 14:58:04,133 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 14:58:04,192 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 14:58:04,226 | INFO | __main__ | DHARAMBIR | 2026-10-10 | Excel rows 2,3 | status=IMPORTED | bill_id=1 | OP=2MG/OP20261030-000270 | total=2100.00
+2026-10-30 14:58:04,231 | INFO | __main__ | ANURATI GUPTA | 2026-10-10 | Excel rows 4 | status=IMPORTED | bill_id=2 | OP=2MG/OP20261030-000271 | total=2000.00
+2026-10-30 14:58:04,243 | INFO | __main__ | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6 | status=IMPORTED | bill_id=3 | OP=2MG/OP20261030-000272 | total=2100.00
+2026-10-30 14:58:04,249 | INFO | __main__ | YASHIKA SAINI | 2026-10-10 | Excel rows 7 | status=IMPORTED | bill_id=4 | OP=2MG/OP20261030-000273 | total=2000.00
+2026-10-30 14:58:04,256 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8 | status=IMPORTED | bill_id=5 | OP=2MG/OP20261030-000274 | total=2000.00
+2026-10-30 14:58:04,272 | INFO | __main__ | RAJA RANA | 2026-10-12 | Excel rows 9 | status=IMPORTED | bill_id=6 | OP=2MG/OP20261030-000275 | total=1500.00
+2026-10-30 14:58:04,280 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11 | status=IMPORTED | bill_id=7 | OP=2MG/OP20261030-000276 | total=2100.00
+2026-10-30 14:58:04,288 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12 | status=IMPORTED | bill_id=8 | OP=2MG/OP20261030-000277 | total=2000.00
+2026-10-30 14:58:04,301 | INFO | __main__ | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14 | status=IMPORTED | bill_id=9 | OP=2MG/OP20261030-000278 | total=2100.00
+2026-10-30 14:58:04,312 | INFO | __main__ | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16 | status=IMPORTED | bill_id=10 | OP=2MG/OP20261030-000279 | total=2000.00
+2026-10-30 14:58:04,318 | INFO | __main__ | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17 | status=IMPORTED | bill_id=11 | OP=2MG/OP20261030-000280 | total=1500.00
+2026-10-30 14:58:04,326 | INFO | __main__ | RAJA RANA | 2026-10-14 | Excel rows 18 | status=IMPORTED | bill_id=12 | OP=2MG/OP20261030-000281 | total=1500.00
+2026-10-30 14:58:04,334 | INFO | __main__ | JYOTI ARORA | 2026-10-14 | Excel rows 19,20 | status=IMPORTED | bill_id=13 | OP=2MG/OP20261030-000282 | total=2000.00
+2026-10-30 14:58:04,340 | INFO | __main__ | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21 | status=IMPORTED | bill_id=14 | OP=2MG/OP20261030-000283 | total=12500.00
+2026-10-30 14:58:04,348 | INFO | __main__ | HARDIK GARG | 2026-10-14 | Excel rows 22,23 | status=IMPORTED | bill_id=15 | OP=2MG/OP20261030-000284 | total=2100.00
+2026-10-30 14:58:04,356 | INFO | __main__ | HARDIK GARG | 2026-10-14 | Excel rows 24 | status=IMPORTED | bill_id=16 | OP=2MG/OP20261030-000285 | total=1000.00
+2026-10-30 14:58:04,362 | INFO | __main__ | HARDIK GARG | 2026-10-15 | Excel rows 25 | status=IMPORTED | bill_id=17 | OP=2MG/OP20261030-000286 | total=1000.00
+2026-10-30 14:58:04,372 | INFO | __main__ | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26 | status=IMPORTED | bill_id=18 | OP=2MG/OP20261030-000287 | total=1500.00
+2026-10-30 14:58:04,381 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27 | status=IMPORTED | bill_id=19 | OP=2MG/OP20261030-000288 | total=3000.00
+2026-10-30 14:58:04,387 | INFO | __main__ | RAJA RANA | 2026-10-16 | Excel rows 28 | status=IMPORTED | bill_id=20 | OP=2MG/OP20261030-000289 | total=1500.00
+2026-10-30 14:58:04,393 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29 | status=IMPORTED | bill_id=21 | OP=2MG/OP20261030-000290 | total=1500.00
+2026-10-30 14:58:04,397 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30 | status=IMPORTED | bill_id=22 | OP=2MG/OP20261030-000291 | total=1500.00
+2026-10-30 14:58:04,405 | INFO | __main__ | SEJAL GUPTA | 2026-10-17 | Excel rows 31 | status=IMPORTED | bill_id=23 | OP=2MG/OP20261030-000292 | total=1600.00
+2026-10-30 14:58:04,410 | INFO | __main__ | VIKESH | 2026-10-17 | Excel rows 32,33 | status=IMPORTED | bill_id=24 | OP=2MG/OP20261030-000293 | total=2000.00
+2026-10-30 14:58:04,417 | INFO | __main__ | AARADHYA SHARMA | 2026-10-17 | Excel rows 34 | status=IMPORTED | bill_id=25 | OP=2MG/OP20261030-000294 | total=2000.00
+2026-10-30 14:58:04,423 | INFO | __main__ | VIKESH | 2026-10-17 | Excel rows 35 | status=IMPORTED | bill_id=26 | OP=2MG/OP20261030-000295 | total=1500.00
+2026-10-30 14:58:04,432 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36 | status=IMPORTED | bill_id=27 | OP=2MG/OP20261030-000296 | total=2000.00
+2026-10-30 14:58:04,438 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37 | status=IMPORTED | bill_id=28 | OP=2MG/OP20261030-000297 | total=2000.00
+2026-10-30 14:58:04,444 | INFO | __main__ | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38 | status=IMPORTED | bill_id=29 | OP=2MG/OP20261030-000298 | total=2000.00
+2026-10-30 14:58:04,452 | INFO | __main__ | RITIKA | 2026-10-17 | Excel rows 39,40 | status=IMPORTED | bill_id=30 | OP=2MG/OP20261030-000299 | total=1600.00
+2026-10-30 14:58:04,460 | INFO | __main__ | RAJA RANA | 2026-10-19 | Excel rows 41 | status=IMPORTED | bill_id=31 | OP=2MG/OP20261030-000300 | total=1500.00
+2026-10-30 14:58:04,466 | INFO | __main__ | ANITA SHUKLA | 2026-10-19 | Excel rows 42 | status=IMPORTED | bill_id=32 | OP=2MG/OP20261030-000301 | total=2000.00
+2026-10-30 14:58:04,473 | INFO | __main__ | RUDRA SONI | 2026-10-19 | Excel rows 43,44 | status=IMPORTED | bill_id=33 | OP=2MG/OP20261030-000302 | total=2100.00
+2026-10-30 14:58:04,478 | INFO | __main__ | MANSI TANEJA | 2026-10-19 | Excel rows 45 | status=IMPORTED | bill_id=34 | OP=2MG/OP20261030-000303 | total=1500.00
+2026-10-30 14:58:04,484 | INFO | __main__ | MANISH BAGHEL | 2026-10-19 | Excel rows 46 | status=IMPORTED | bill_id=35 | OP=2MG/OP20261030-000304 | total=2000.00
+2026-10-30 14:58:04,491 | INFO | __main__ | ANCHAL KAPUR | 2026-10-19 | Excel rows 47 | status=IMPORTED | bill_id=36 | OP=2MG/OP20261030-000305 | total=1500.00
+2026-10-30 14:58:04,494 | INFO | __main__ | ANCHAL KAPUR | 2026-10-19 | Excel rows 48 | status=IMPORTED | bill_id=37 | OP=2MG/OP20261030-000306 | total=500.00
+2026-10-30 14:58:04,502 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49 | status=IMPORTED | bill_id=38 | OP=2MG/OP20261030-000307 | total=1500.00
+2026-10-30 14:58:04,511 | INFO | __main__ | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51 | status=IMPORTED | bill_id=39 | OP=2MG/OP20261030-000308 | total=2100.00
+2026-10-30 14:58:04,517 | INFO | __main__ | RAJA RANA | 2026-10-21 | Excel rows 52 | status=IMPORTED | bill_id=40 | OP=2MG/OP20261030-000309 | total=1500.00
+2026-10-30 14:58:04,522 | INFO | __main__ | LALITA TIKOO | 2026-10-21 | Excel rows 53 | status=IMPORTED | bill_id=41 | OP=2MG/OP20261030-000310 | total=2000.00
+2026-10-30 14:58:04,526 | INFO | __main__ | KRISHAV MOHAN | 2026-10-21 | Excel rows 54 | status=IMPORTED | bill_id=42 | OP=2MG/OP20261030-000311 | total=2000.00
+2026-10-30 14:58:04,535 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55 | status=IMPORTED | bill_id=43 | OP=2MG/OP20261030-000312 | total=2000.00
+2026-10-30 14:58:04,542 | INFO | __main__ | CHANDRIKA | 2026-10-21 | Excel rows 56,57 | status=IMPORTED | bill_id=44 | OP=2MG/OP20261030-000313 | total=2000.00
+2026-10-30 14:58:04,551 | INFO | __main__ | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58 | status=IMPORTED | bill_id=45 | OP=2MG/OP20261030-000314 | total=1500.00
+2026-10-30 14:58:04,556 | INFO | __main__ | POONAM AGARWAL | 2026-10-22 | Excel rows 59 | status=IMPORTED | bill_id=46 | OP=2MG/OP20261030-000315 | total=2000.00
+2026-10-30 14:58:04,563 | INFO | __main__ | PALAK | 2026-10-22 | Excel rows 60,61 | status=IMPORTED | bill_id=47 | OP=2MG/OP20261030-000316 | total=2100.00
+2026-10-30 14:58:04,568 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62 | status=IMPORTED | bill_id=48 | OP=2MG/OP20261030-000317 | total=4500.00
+2026-10-30 14:58:04,571 | INFO | __main__ | RAJA RANA | 2026-10-23 | Excel rows 63 | status=IMPORTED | bill_id=49 | OP=2MG/OP20261030-000318 | total=1500.00
+2026-10-30 14:58:04,579 | INFO | __main__ | PALAK | 2026-10-23 | Excel rows 64 | status=IMPORTED | bill_id=50 | OP=2MG/OP20261030-000319 | total=2000.00
+2026-10-30 14:58:04,586 | INFO | __main__ | NISHTHA SAINI | 2026-10-23 | Excel rows 65 | status=IMPORTED | bill_id=51 | OP=2MG/OP20261030-000320 | total=2000.00
+2026-10-30 14:58:04,590 | INFO | __main__ | SANJAY KUMAR | 2026-10-23 | Excel rows 66 | status=IMPORTED | bill_id=52 | OP=2MG/OP20261030-000321 | total=2000.00
+2026-10-30 14:58:04,596 | INFO | __main__ | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68 | status=IMPORTED | bill_id=53 | OP=2MG/OP20261030-000322 | total=2100.00
+2026-10-30 14:58:04,602 | INFO | __main__ | VIDUSHI | 2026-10-23 | Excel rows 69,70 | status=IMPORTED | bill_id=54 | OP=2MG/OP20261030-000323 | total=2100.00
+2026-10-30 14:58:04,608 | INFO | __main__ | MUKTA SINGH | 2026-10-24 | Excel rows 71,72 | status=IMPORTED | bill_id=55 | OP=2MG/OP20261030-000324 | total=1700.00
+2026-10-30 14:58:04,612 | INFO | __main__ | KAMAL SINGH | 2026-10-24 | Excel rows 73 | status=IMPORTED | bill_id=56 | OP=2MG/OP20261030-000325 | total=1600.00
+2026-10-30 14:58:04,623 | INFO | __main__ | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75 | status=IMPORTED | bill_id=57 | OP=2MG/OP20261030-000326 | total=2000.00
+2026-10-30 14:58:04,628 | INFO | __main__ | ARPIT TANK | 2026-10-24 | Excel rows 76 | status=IMPORTED | bill_id=58 | OP=2MG/OP20261030-000327 | total=1600.00
+2026-10-30 14:58:04,634 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77 | status=IMPORTED | bill_id=59 | OP=2MG/OP20261030-000328 | total=2000.00
+2026-10-30 14:58:04,640 | INFO | __main__ | VIKESH | 2026-10-24 | Excel rows 78 | status=IMPORTED | bill_id=60 | OP=2MG/OP20261030-000329 | total=2000.00
+2026-10-30 14:58:04,646 | INFO | __main__ | ANUPAM BANSAL | 2026-10-24 | Excel rows 79 | status=IMPORTED | bill_id=61 | OP=2MG/OP20261030-000330 | total=2000.00
+2026-10-30 14:58:04,652 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80 | status=IMPORTED | bill_id=62 | OP=2MG/OP20261030-000331 | total=1500.00
+2026-10-30 14:58:04,660 | INFO | __main__ | RISHABH VEDI | 2026-10-24 | Excel rows 81 | status=IMPORTED | bill_id=63 | OP=2MG/OP20261030-000332 | total=1500.00
+2026-10-30 14:58:04,668 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 14:58:04,670 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 14:58:04,670 | INFO | __main__ | Import completed | total=63 | imported=63 | duplicate_skipped=0 | dry_run_ok=0 | failed=0
+2026-10-30 15:05:48,063 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-201285B78D277422
+2026-10-30 15:05:48,084 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 15:05:48,263 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 15:05:48,266 | INFO | __main__ | DRY RUN OK | DHARAMBIR | 2026-10-10 | Excel rows 2,3
+2026-10-30 15:05:48,267 | INFO | __main__ | DRY RUN OK | ANURATI GUPTA | 2026-10-10 | Excel rows 4
+2026-10-30 15:05:48,268 | INFO | __main__ | DRY RUN OK | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6
+2026-10-30 15:05:48,269 | INFO | __main__ | DRY RUN OK | YASHIKA SAINI | 2026-10-10 | Excel rows 7
+2026-10-30 15:05:48,269 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8
+2026-10-30 15:05:48,270 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-12 | Excel rows 9
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,275 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11
+2026-10-30 15:05:48,276 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12
+2026-10-30 15:05:48,279 | INFO | __main__ | DRY RUN OK | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14
+2026-10-30 15:05:48,283 | INFO | __main__ | DRY RUN OK | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16
+2026-10-30 15:05:48,285 | INFO | __main__ | DRY RUN OK | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17
+2026-10-30 15:05:48,289 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-14 | Excel rows 18
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,293 | INFO | __main__ | DRY RUN OK | JYOTI ARORA | 2026-10-14 | Excel rows 19,20
+2026-10-30 15:05:48,294 | INFO | __main__ | DRY RUN OK | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21
+2026-10-30 15:05:48,296 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 22,23
+2026-10-30 15:05:48,298 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 24
+2026-10-30 15:05:48,300 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-15 | Excel rows 25
+2026-10-30 15:05:48,302 | INFO | __main__ | DRY RUN OK | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26
+2026-10-30 15:05:48,304 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27
+2026-10-30 15:05:48,305 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-16 | Excel rows 28
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,309 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29
+2026-10-30 15:05:48,311 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30
+2026-10-30 15:05:48,313 | INFO | __main__ | DRY RUN OK | SEJAL GUPTA | 2026-10-17 | Excel rows 31
+2026-10-30 15:05:48,317 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 32,33
+2026-10-30 15:05:48,318 | INFO | __main__ | DRY RUN OK | AARADHYA SHARMA | 2026-10-17 | Excel rows 34
+2026-10-30 15:05:48,319 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 35
+2026-10-30 15:05:48,320 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36
+2026-10-30 15:05:48,322 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37
+2026-10-30 15:05:48,324 | INFO | __main__ | DRY RUN OK | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38
+2026-10-30 15:05:48,327 | INFO | __main__ | DRY RUN OK | RITIKA | 2026-10-17 | Excel rows 39,40
+2026-10-30 15:05:48,330 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-19 | Excel rows 41
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,334 | INFO | __main__ | DRY RUN OK | ANITA SHUKLA | 2026-10-19 | Excel rows 42
+2026-10-30 15:05:48,337 | INFO | __main__ | DRY RUN OK | RUDRA SONI | 2026-10-19 | Excel rows 43,44
+2026-10-30 15:05:48,338 | INFO | __main__ | DRY RUN OK | MANSI TANEJA | 2026-10-19 | Excel rows 45
+2026-10-30 15:05:48,339 | INFO | __main__ | DRY RUN OK | MANISH BAGHEL | 2026-10-19 | Excel rows 46
+2026-10-30 15:05:48,339 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 47
+2026-10-30 15:05:48,340 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 48
+2026-10-30 15:05:48,342 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49
+2026-10-30 15:05:48,344 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51
+2026-10-30 15:05:48,346 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-21 | Excel rows 52
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,348 | INFO | __main__ | DRY RUN OK | LALITA TIKOO | 2026-10-21 | Excel rows 53
+2026-10-30 15:05:48,350 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-21 | Excel rows 54
+2026-10-30 15:05:48,351 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55
+2026-10-30 15:05:48,353 | INFO | __main__ | DRY RUN OK | CHANDRIKA | 2026-10-21 | Excel rows 56,57
+2026-10-30 15:05:48,354 | INFO | __main__ | DRY RUN OK | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58
+2026-10-30 15:05:48,357 | ERROR | __main__ | Failed to import bill group: POONAM AGARWAL | 2026-10-22 | Excel rows 59
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-EBAEAF91FD78 not found.
+2026-10-30 15:05:48,359 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-22 | Excel rows 60,61
+2026-10-30 15:05:48,360 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62
+2026-10-30 15:05:48,364 | ERROR | __main__ | Failed to import bill group: RAJA RANA | 2026-10-23 | Excel rows 63
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-F06940138778 not found.
+2026-10-30 15:05:48,366 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-23 | Excel rows 64
+2026-10-30 15:05:48,367 | INFO | __main__ | DRY RUN OK | NISHTHA SAINI | 2026-10-23 | Excel rows 65
+2026-10-30 15:05:48,367 | INFO | __main__ | DRY RUN OK | SANJAY KUMAR | 2026-10-23 | Excel rows 66
+2026-10-30 15:05:48,369 | INFO | __main__ | DRY RUN OK | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68
+2026-10-30 15:05:48,372 | INFO | __main__ | DRY RUN OK | VIDUSHI | 2026-10-23 | Excel rows 69,70
+2026-10-30 15:05:48,374 | INFO | __main__ | DRY RUN OK | MUKTA SINGH | 2026-10-24 | Excel rows 71,72
+2026-10-30 15:05:48,377 | INFO | __main__ | DRY RUN OK | KAMAL SINGH | 2026-10-24 | Excel rows 73
+2026-10-30 15:05:48,378 | INFO | __main__ | DRY RUN OK | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75
+2026-10-30 15:05:48,379 | INFO | __main__ | DRY RUN OK | ARPIT TANK | 2026-10-24 | Excel rows 76
+2026-10-30 15:05:48,380 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77
+2026-10-30 15:05:48,380 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-24 | Excel rows 78
+2026-10-30 15:05:48,380 | INFO | __main__ | DRY RUN OK | ANUPAM BANSAL | 2026-10-24 | Excel rows 79
+2026-10-30 15:05:48,381 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80
+2026-10-30 15:05:48,384 | ERROR | __main__ | Failed to import bill group: RISHABH VEDI | 2026-10-24 | Excel rows 81
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\import_historical_op_bills.py", line 1816, in main
+    raise ValueError(
+        f"Patient_ID {supplied_pid} not found."
+    )
+ValueError: Patient_ID PAT-45B4E493A969 not found.
+2026-10-30 15:05:48,393 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 15:05:48,394 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 15:05:48,394 | INFO | __main__ | Import completed | total=63 | imported=0 | duplicate_skipped=0 | dry_run_ok=55 | failed=8
+2026-10-30 15:06:49,661 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-201285B78D277422
+2026-10-30 15:06:49,678 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 15:06:50,243 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 15:06:50,365 | INFO | __main__ | DRY RUN OK | DHARAMBIR | 2026-10-10 | Excel rows 2,3
+2026-10-30 15:06:50,421 | INFO | __main__ | DRY RUN OK | ANURATI GUPTA | 2026-10-10 | Excel rows 4
+2026-10-30 15:06:50,529 | INFO | __main__ | DRY RUN OK | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6
+2026-10-30 15:06:50,587 | INFO | __main__ | DRY RUN OK | YASHIKA SAINI | 2026-10-10 | Excel rows 7
+2026-10-30 15:06:50,648 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8
+2026-10-30 15:06:50,766 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-12 | Excel rows 9
+2026-10-30 15:06:50,882 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11
+2026-10-30 15:06:50,935 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12
+2026-10-30 15:06:51,045 | INFO | __main__ | DRY RUN OK | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14
+2026-10-30 15:06:51,151 | INFO | __main__ | DRY RUN OK | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16
+2026-10-30 15:06:51,205 | INFO | __main__ | DRY RUN OK | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17
+2026-10-30 15:06:51,311 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-14 | Excel rows 18
+2026-10-30 15:06:51,417 | INFO | __main__ | DRY RUN OK | JYOTI ARORA | 2026-10-14 | Excel rows 19,20
+2026-10-30 15:06:51,471 | INFO | __main__ | DRY RUN OK | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21
+2026-10-30 15:06:51,579 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 22,23
+2026-10-30 15:06:51,634 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-14 | Excel rows 24
+2026-10-30 15:06:51,688 | INFO | __main__ | DRY RUN OK | HARDIK GARG | 2026-10-15 | Excel rows 25
+2026-10-30 15:06:51,743 | INFO | __main__ | DRY RUN OK | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26
+2026-10-30 15:06:51,796 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27
+2026-10-30 15:06:51,904 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-16 | Excel rows 28
+2026-10-30 15:06:51,958 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29
+2026-10-30 15:06:52,012 | INFO | __main__ | DRY RUN OK | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30
+2026-10-30 15:06:52,067 | INFO | __main__ | DRY RUN OK | SEJAL GUPTA | 2026-10-17 | Excel rows 31
+2026-10-30 15:06:52,182 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 32,33
+2026-10-30 15:06:52,242 | INFO | __main__ | DRY RUN OK | AARADHYA SHARMA | 2026-10-17 | Excel rows 34
+2026-10-30 15:06:52,297 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-17 | Excel rows 35
+2026-10-30 15:06:52,352 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36
+2026-10-30 15:06:52,405 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37
+2026-10-30 15:06:52,456 | INFO | __main__ | DRY RUN OK | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38
+2026-10-30 15:06:52,563 | INFO | __main__ | DRY RUN OK | RITIKA | 2026-10-17 | Excel rows 39,40
+2026-10-30 15:06:52,672 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-19 | Excel rows 41
+2026-10-30 15:06:52,726 | INFO | __main__ | DRY RUN OK | ANITA SHUKLA | 2026-10-19 | Excel rows 42
+2026-10-30 15:06:52,831 | INFO | __main__ | DRY RUN OK | RUDRA SONI | 2026-10-19 | Excel rows 43,44
+2026-10-30 15:06:52,887 | INFO | __main__ | DRY RUN OK | MANSI TANEJA | 2026-10-19 | Excel rows 45
+2026-10-30 15:06:52,941 | INFO | __main__ | DRY RUN OK | MANISH BAGHEL | 2026-10-19 | Excel rows 46
+2026-10-30 15:06:52,995 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 47
+2026-10-30 15:06:53,050 | INFO | __main__ | DRY RUN OK | ANCHAL KAPUR | 2026-10-19 | Excel rows 48
+2026-10-30 15:06:53,104 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49
+2026-10-30 15:06:53,219 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51
+2026-10-30 15:06:53,333 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-21 | Excel rows 52
+2026-10-30 15:06:53,386 | INFO | __main__ | DRY RUN OK | LALITA TIKOO | 2026-10-21 | Excel rows 53
+2026-10-30 15:06:53,440 | INFO | __main__ | DRY RUN OK | KRISHAV MOHAN | 2026-10-21 | Excel rows 54
+2026-10-30 15:06:53,494 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55
+2026-10-30 15:06:53,602 | INFO | __main__ | DRY RUN OK | CHANDRIKA | 2026-10-21 | Excel rows 56,57
+2026-10-30 15:06:53,657 | INFO | __main__ | DRY RUN OK | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58
+2026-10-30 15:06:53,763 | INFO | __main__ | DRY RUN OK | POONAM AGARWAL | 2026-10-22 | Excel rows 59
+2026-10-30 15:06:53,869 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-22 | Excel rows 60,61
+2026-10-30 15:06:53,923 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62
+2026-10-30 15:06:54,031 | INFO | __main__ | DRY RUN OK | RAJA RANA | 2026-10-23 | Excel rows 63
+2026-10-30 15:06:54,085 | INFO | __main__ | DRY RUN OK | PALAK | 2026-10-23 | Excel rows 64
+2026-10-30 15:06:54,139 | INFO | __main__ | DRY RUN OK | NISHTHA SAINI | 2026-10-23 | Excel rows 65
+2026-10-30 15:06:54,193 | INFO | __main__ | DRY RUN OK | SANJAY KUMAR | 2026-10-23 | Excel rows 66
+2026-10-30 15:06:54,300 | INFO | __main__ | DRY RUN OK | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68
+2026-10-30 15:06:54,410 | INFO | __main__ | DRY RUN OK | VIDUSHI | 2026-10-23 | Excel rows 69,70
+2026-10-30 15:06:54,519 | INFO | __main__ | DRY RUN OK | MUKTA SINGH | 2026-10-24 | Excel rows 71,72
+2026-10-30 15:06:54,577 | INFO | __main__ | DRY RUN OK | KAMAL SINGH | 2026-10-24 | Excel rows 73
+2026-10-30 15:06:54,684 | INFO | __main__ | DRY RUN OK | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75
+2026-10-30 15:06:54,737 | INFO | __main__ | DRY RUN OK | ARPIT TANK | 2026-10-24 | Excel rows 76
+2026-10-30 15:06:54,792 | INFO | __main__ | DRY RUN OK | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77
+2026-10-30 15:06:54,847 | INFO | __main__ | DRY RUN OK | VIKESH | 2026-10-24 | Excel rows 78
+2026-10-30 15:06:54,901 | INFO | __main__ | DRY RUN OK | ANUPAM BANSAL | 2026-10-24 | Excel rows 79
+2026-10-30 15:06:54,955 | INFO | __main__ | DRY RUN OK | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80
+2026-10-30 15:06:55,062 | INFO | __main__ | DRY RUN OK | RISHABH VEDI | 2026-10-24 | Excel rows 81
+2026-10-30 15:06:55,072 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 15:06:55,073 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 15:06:55,074 | INFO | __main__ | Import completed | total=63 | imported=0 | duplicate_skipped=0 | dry_run_ok=63 | failed=0
+2026-10-30 15:07:12,743 | INFO | __main__ | Starting historical OP bill import. Source=HISTOP-201285B78D277422
+2026-10-30 15:07:12,763 | INFO | __main__ | Rows=80 | Yellow rows=17 | Candidate bills=63
+2026-10-30 15:07:13,339 | INFO | __main__ | Using existing System user. ID=2
+2026-10-30 15:07:14,242 | INFO | __main__ | DHARAMBIR | 2026-10-10 | Excel rows 2,3 | status=IMPORTED | bill_id=31 | OP=2MG/OP20261030-000032 | total=2100.00
+2026-10-30 15:07:15,014 | INFO | __main__ | ANURATI GUPTA | 2026-10-10 | Excel rows 4 | status=IMPORTED | bill_id=32 | OP=2MG/OP20261030-000033 | total=2000.00
+2026-10-30 15:07:15,949 | INFO | __main__ | PANKAJ AGARWAL | 2026-10-10 | Excel rows 5,6 | status=IMPORTED | bill_id=33 | OP=2MG/OP20261030-000034 | total=2100.00
+2026-10-30 15:07:16,712 | INFO | __main__ | YASHIKA SAINI | 2026-10-10 | Excel rows 7 | status=IMPORTED | bill_id=34 | OP=2MG/OP20261030-000035 | total=2000.00
+2026-10-30 15:07:17,467 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-10 | Excel rows 8 | status=IMPORTED | bill_id=35 | OP=2MG/OP20261030-000036 | total=2000.00
+2026-10-30 15:07:18,198 | INFO | __main__ | RAJA RANA | 2026-10-12 | Excel rows 9 | status=IMPORTED | bill_id=36 | OP=2MG/OP20261030-000037 | total=1500.00
+2026-10-30 15:07:19,128 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-12 | Excel rows 10,11 | status=IMPORTED | bill_id=37 | OP=2MG/OP20261030-000038 | total=2100.00
+2026-10-30 15:07:19,827 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-12 | Excel rows 12 | status=IMPORTED | bill_id=38 | OP=2MG/OP20261030-000039 | total=2000.00
+2026-10-30 15:07:20,757 | INFO | __main__ | MIRNAL ARORA | 2026-10-12 | Excel rows 13,14 | status=IMPORTED | bill_id=39 | OP=2MG/OP20261030-000040 | total=2100.00
+2026-10-30 15:07:21,690 | INFO | __main__ | BARKHA SHARMA | 2026-10-13 | Excel rows 15,16 | status=IMPORTED | bill_id=40 | OP=2MG/OP20261030-000041 | total=2000.00
+2026-10-30 15:07:22,459 | INFO | __main__ | ANKUR MAHENDRA | 2026-10-13 | Excel rows 17 | status=IMPORTED | bill_id=41 | OP=2MG/OP20261030-000042 | total=1500.00
+2026-10-30 15:07:23,190 | INFO | __main__ | RAJA RANA | 2026-10-14 | Excel rows 18 | status=IMPORTED | bill_id=42 | OP=2MG/OP20261030-000043 | total=1500.00
+2026-10-30 15:07:24,112 | INFO | __main__ | JYOTI ARORA | 2026-10-14 | Excel rows 19,20 | status=IMPORTED | bill_id=43 | OP=2MG/OP20261030-000044 | total=2000.00
+2026-10-30 15:07:24,883 | INFO | __main__ | SANTOSH DEVI JAIN | 2026-10-14 | Excel rows 21 | status=IMPORTED | bill_id=44 | OP=2MG/OP20261030-000045 | total=12500.00
+2026-10-30 15:07:25,814 | INFO | __main__ | HARDIK GARG | 2026-10-14 | Excel rows 22,23 | status=IMPORTED | bill_id=45 | OP=2MG/OP20261030-000046 | total=2100.00
+2026-10-30 15:07:26,470 | INFO | __main__ | HARDIK GARG | 2026-10-14 | Excel rows 24 | status=IMPORTED | bill_id=46 | OP=2MG/OP20261030-000047 | total=1000.00
+2026-10-30 15:07:27,127 | INFO | __main__ | HARDIK GARG | 2026-10-15 | Excel rows 25 | status=IMPORTED | bill_id=47 | OP=2MG/OP20261030-000048 | total=1000.00
+2026-10-30 15:07:27,893 | INFO | __main__ | BUMIKA SHAWNEY | 2026-10-15 | Excel rows 26 | status=IMPORTED | bill_id=48 | OP=2MG/OP20261030-000049 | total=1500.00
+2026-10-30 15:07:28,687 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-15 | Excel rows 27 | status=IMPORTED | bill_id=49 | OP=2MG/OP20261030-000050 | total=3000.00
+2026-10-30 15:07:29,395 | INFO | __main__ | RAJA RANA | 2026-10-16 | Excel rows 28 | status=IMPORTED | bill_id=50 | OP=2MG/OP20261030-000051 | total=1500.00
+2026-10-30 15:07:30,083 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-16 | Excel rows 29 | status=IMPORTED | bill_id=51 | OP=2MG/OP20261030-000052 | total=1500.00
+2026-10-30 15:07:30,740 | INFO | __main__ | PUNEET PAL SINGH | 2026-10-16 | Excel rows 30 | status=IMPORTED | bill_id=52 | OP=2MG/OP20261030-000053 | total=1500.00
+2026-10-30 15:07:31,502 | INFO | __main__ | SEJAL GUPTA | 2026-10-17 | Excel rows 31 | status=IMPORTED | bill_id=53 | OP=2MG/OP20261030-000054 | total=1600.00
+2026-10-30 15:07:32,444 | INFO | __main__ | VIKESH | 2026-10-17 | Excel rows 32,33 | status=IMPORTED | bill_id=54 | OP=2MG/OP20261030-000055 | total=2000.00
+2026-10-30 15:07:33,210 | INFO | __main__ | AARADHYA SHARMA | 2026-10-17 | Excel rows 34 | status=IMPORTED | bill_id=55 | OP=2MG/OP20261030-000056 | total=2000.00
+2026-10-30 15:07:33,872 | INFO | __main__ | VIKESH | 2026-10-17 | Excel rows 35 | status=IMPORTED | bill_id=56 | OP=2MG/OP20261030-000057 | total=1500.00
+2026-10-30 15:07:34,522 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 36 | status=IMPORTED | bill_id=57 | OP=2MG/OP20261030-000058 | total=2000.00
+2026-10-30 15:07:35,180 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-17 | Excel rows 37 | status=IMPORTED | bill_id=58 | OP=2MG/OP20261030-000059 | total=2000.00
+2026-10-30 15:07:35,938 | INFO | __main__ | PARAMJEET PUNDIR | 2026-10-17 | Excel rows 38 | status=IMPORTED | bill_id=59 | OP=2MG/OP20261030-000060 | total=2000.00
+2026-10-30 15:07:36,875 | INFO | __main__ | RITIKA | 2026-10-17 | Excel rows 39,40 | status=IMPORTED | bill_id=60 | OP=2MG/OP20261030-000061 | total=1600.00
+2026-10-30 15:07:37,587 | INFO | __main__ | RAJA RANA | 2026-10-19 | Excel rows 41 | status=IMPORTED | bill_id=61 | OP=2MG/OP20261030-000062 | total=1500.00
+2026-10-30 15:07:38,362 | INFO | __main__ | ANITA SHUKLA | 2026-10-19 | Excel rows 42 | status=IMPORTED | bill_id=62 | OP=2MG/OP20261030-000063 | total=2000.00
+2026-10-30 15:07:39,869 | INFO | __main__ | RUDRA SONI | 2026-10-19 | Excel rows 43,44 | status=IMPORTED | bill_id=63 | OP=2MG/OP20261030-000064 | total=2100.00
+2026-10-30 15:07:40,644 | INFO | __main__ | MANSI TANEJA | 2026-10-19 | Excel rows 45 | status=IMPORTED | bill_id=64 | OP=2MG/OP20261030-000065 | total=1500.00
+2026-10-30 15:07:41,417 | INFO | __main__ | MANISH BAGHEL | 2026-10-19 | Excel rows 46 | status=IMPORTED | bill_id=65 | OP=2MG/OP20261030-000066 | total=2000.00
+2026-10-30 15:07:42,194 | INFO | __main__ | ANCHAL KAPUR | 2026-10-19 | Excel rows 47 | status=IMPORTED | bill_id=66 | OP=2MG/OP20261030-000067 | total=1500.00
+2026-10-30 15:07:42,850 | INFO | __main__ | ANCHAL KAPUR | 2026-10-19 | Excel rows 48 | status=IMPORTED | bill_id=67 | OP=2MG/OP20261030-000068 | total=500.00
+2026-10-30 15:07:43,512 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-19 | Excel rows 49 | status=IMPORTED | bill_id=68 | OP=2MG/OP20261030-000069 | total=1500.00
+2026-10-30 15:07:44,441 | INFO | __main__ | KRISHAV MOHAN | 2026-10-19 | Excel rows 50,51 | status=IMPORTED | bill_id=69 | OP=2MG/OP20261030-000070 | total=2100.00
+2026-10-30 15:07:45,162 | INFO | __main__ | RAJA RANA | 2026-10-21 | Excel rows 52 | status=IMPORTED | bill_id=70 | OP=2MG/OP20261030-000071 | total=1500.00
+2026-10-30 15:07:45,936 | INFO | __main__ | LALITA TIKOO | 2026-10-21 | Excel rows 53 | status=IMPORTED | bill_id=71 | OP=2MG/OP20261030-000072 | total=2000.00
+2026-10-30 15:07:46,594 | INFO | __main__ | KRISHAV MOHAN | 2026-10-21 | Excel rows 54 | status=IMPORTED | bill_id=72 | OP=2MG/OP20261030-000073 | total=2000.00
+2026-10-30 15:07:47,251 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-21 | Excel rows 55 | status=IMPORTED | bill_id=73 | OP=2MG/OP20261030-000074 | total=2000.00
+2026-10-30 15:07:48,182 | INFO | __main__ | CHANDRIKA | 2026-10-21 | Excel rows 56,57 | status=IMPORTED | bill_id=74 | OP=2MG/OP20261030-000075 | total=2000.00
+2026-10-30 15:07:48,959 | INFO | __main__ | PRADEEP TOGNATTA | 2026-10-22 | Excel rows 58 | status=IMPORTED | bill_id=75 | OP=2MG/OP20261030-000076 | total=1500.00
+2026-10-30 15:07:49,674 | INFO | __main__ | POONAM AGARWAL | 2026-10-22 | Excel rows 59 | status=IMPORTED | bill_id=76 | OP=2MG/OP20261030-000077 | total=2000.00
+2026-10-30 15:07:50,785 | INFO | __main__ | PALAK | 2026-10-22 | Excel rows 60,61 | status=IMPORTED | bill_id=77 | OP=2MG/OP20261030-000078 | total=2100.00
+2026-10-30 15:07:51,470 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-23 | Excel rows 62 | status=IMPORTED | bill_id=78 | OP=2MG/OP20261030-000079 | total=4500.00
+2026-10-30 15:07:52,187 | INFO | __main__ | RAJA RANA | 2026-10-23 | Excel rows 63 | status=IMPORTED | bill_id=79 | OP=2MG/OP20261030-000080 | total=1500.00
+2026-10-30 15:07:52,855 | INFO | __main__ | PALAK | 2026-10-23 | Excel rows 64 | status=IMPORTED | bill_id=80 | OP=2MG/OP20261030-000081 | total=2000.00
+2026-10-30 15:07:53,615 | INFO | __main__ | NISHTHA SAINI | 2026-10-23 | Excel rows 65 | status=IMPORTED | bill_id=81 | OP=2MG/OP20261030-000082 | total=2000.00
+2026-10-30 15:07:54,400 | INFO | __main__ | SANJAY KUMAR | 2026-10-23 | Excel rows 66 | status=IMPORTED | bill_id=82 | OP=2MG/OP20261030-000083 | total=2000.00
+2026-10-30 15:07:55,322 | INFO | __main__ | SHIRIN KUMAR | 2026-10-23 | Excel rows 67,68 | status=IMPORTED | bill_id=83 | OP=2MG/OP20261030-000084 | total=2100.00
+2026-10-30 15:07:56,246 | INFO | __main__ | VIDUSHI | 2026-10-23 | Excel rows 69,70 | status=IMPORTED | bill_id=84 | OP=2MG/OP20261030-000085 | total=2100.00
+2026-10-30 15:07:57,168 | INFO | __main__ | MUKTA SINGH | 2026-10-24 | Excel rows 71,72 | status=IMPORTED | bill_id=85 | OP=2MG/OP20261030-000086 | total=1700.00
+2026-10-30 15:07:57,934 | INFO | __main__ | KAMAL SINGH | 2026-10-24 | Excel rows 73 | status=IMPORTED | bill_id=86 | OP=2MG/OP20261030-000087 | total=1600.00
+2026-10-30 15:07:58,862 | INFO | __main__ | VAIBHAV DAHIYA | 2026-10-24 | Excel rows 74,75 | status=IMPORTED | bill_id=87 | OP=2MG/OP20261030-000088 | total=2000.00
+2026-10-30 15:07:59,630 | INFO | __main__ | ARPIT TANK | 2026-10-24 | Excel rows 76 | status=IMPORTED | bill_id=88 | OP=2MG/OP20261030-000089 | total=1600.00
+2026-10-30 15:08:00,281 | INFO | __main__ | SHUBHANKAR GUMMALLA | 2026-10-24 | Excel rows 77 | status=IMPORTED | bill_id=89 | OP=2MG/OP20261030-000090 | total=2000.00
+2026-10-30 15:08:00,942 | INFO | __main__ | VIKESH | 2026-10-24 | Excel rows 78 | status=IMPORTED | bill_id=90 | OP=2MG/OP20261030-000091 | total=2000.00
+2026-10-30 15:08:01,736 | INFO | __main__ | ANUPAM BANSAL | 2026-10-24 | Excel rows 79 | status=IMPORTED | bill_id=91 | OP=2MG/OP20261030-000092 | total=2000.00
+2026-10-30 15:08:02,409 | INFO | __main__ | SUNITA GOSWAMI | 2026-10-24 | Excel rows 80 | status=IMPORTED | bill_id=92 | OP=2MG/OP20261030-000093 | total=1500.00
+2026-10-30 15:08:03,124 | INFO | __main__ | RISHABH VEDI | 2026-10-24 | Excel rows 81 | status=IMPORTED | bill_id=93 | OP=2MG/OP20261030-000094 | total=1500.00
+2026-10-30 15:08:03,130 | INFO | __main__ | Issue report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_issues.csv
+2026-10-30 15:08:03,131 | INFO | __main__ | Import report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\op_import_report.csv
+2026-10-30 15:08:03,131 | INFO | __main__ | Import completed | total=63 | imported=63 | duplicate_skipped=0 | dry_run_ok=0 | failed=0

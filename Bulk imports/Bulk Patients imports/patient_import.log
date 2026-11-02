@@ -1,0 +1,152 @@
+2026-10-30 15:41:30,864 | INFO | Reading Excel: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 15:41:30,885 | INFO | Excel records loaded: 13
+2026-10-30 15:41:30,966 | INFO | Database connection successful.
+2026-10-30 15:41:30,973 | INFO | Existing patients loaded: 0
+2026-10-30 15:41:30,974 | INFO | [DRY RUN] Would insert: AMAIRA | 9811887770
+2026-10-30 15:41:30,974 | INFO | [DRY RUN] Would insert: ASHOK | 9983071117
+2026-10-30 15:41:30,974 | INFO | [DRY RUN] Would insert: INDU BALA | 9811431007
+2026-10-30 15:41:30,974 | INFO | [DRY RUN] Would insert: LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 15:41:30,975 | INFO | [DRY RUN] Would insert: MOHD. SUHAIL | 8168835414
+2026-10-30 15:41:30,976 | INFO | [DRY RUN] Would insert: SUNIL KHATANA | 9996756749
+2026-10-30 15:41:30,976 | INFO | [DRY RUN] Would insert: VRIDHI SHARAM | 9811106322
+2026-10-30 15:41:30,977 | INFO | [DRY RUN] Would insert: ANKUSH | 9313210301
+2026-10-30 15:41:30,977 | INFO | [DRY RUN] Would insert: HARDIK GUPTA | 8851270628
+2026-10-30 15:41:30,979 | INFO | [DRY RUN] Would insert: ISHAN HUDDA | 9811374881
+2026-10-30 15:41:30,979 | INFO | [DRY RUN] Would insert: MITUL | 9868414851
+2026-10-30 15:41:30,980 | INFO | [DRY RUN] Would insert: SANTOSH DEVI JAIN | 9811143393
+2026-10-30 15:41:30,980 | INFO | [DRY RUN] Would insert: VAIBHAV DHAIYA | 9999930484
+2026-10-30 15:41:30,986 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 15:41:30,988 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 15:41:57,194 | INFO | Reading Excel: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 15:41:57,198 | INFO | Excel records loaded: 13
+2026-10-30 15:41:57,671 | INFO | Database connection successful.
+2026-10-30 15:41:57,792 | INFO | Existing patients loaded: 66
+2026-10-30 15:41:57,793 | INFO | [DRY RUN] Would insert: AMAIRA | 9811887770
+2026-10-30 15:41:57,793 | INFO | [DRY RUN] Would insert: ASHOK | 9983071117
+2026-10-30 15:41:57,794 | INFO | [DRY RUN] Would insert: INDU BALA | 9811431007
+2026-10-30 15:41:57,794 | INFO | [DRY RUN] Would insert: LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 15:41:57,794 | INFO | [DRY RUN] Would insert: MOHD. SUHAIL | 8168835414
+2026-10-30 15:41:57,794 | INFO | [DRY RUN] Would insert: SUNIL KHATANA | 9996756749
+2026-10-30 15:41:57,795 | INFO | [DRY RUN] Would insert: VRIDHI SHARAM | 9811106322
+2026-10-30 15:41:57,795 | INFO | [DRY RUN] Would insert: ANKUSH | 9313210301
+2026-10-30 15:41:57,795 | INFO | [DRY RUN] Would insert: HARDIK GUPTA | 8851270628
+2026-10-30 15:41:57,795 | INFO | [DRY RUN] Would insert: ISHAN HUDDA | 9811374881
+2026-10-30 15:41:57,795 | INFO | [DRY RUN] Would insert: MITUL | 9868414851
+2026-10-30 15:41:57,796 | INFO | [DRY RUN] Would insert: SANTOSH DEVI JAIN | 9811143393
+2026-10-30 15:41:57,796 | INFO | [DRY RUN] Would insert: VAIBHAV DHAIYA | 9999930484
+2026-10-30 15:41:57,867 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 15:41:57,872 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 15:42:08,106 | INFO | Reading Excel: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 15:42:08,111 | INFO | Excel records loaded: 13
+2026-10-30 15:42:08,541 | INFO | Database connection successful.
+2026-10-30 15:42:08,653 | INFO | Existing patients loaded: 66
+2026-10-30 15:42:08,654 | INFO | [DRY RUN] Would insert: AMAIRA | 9811887770
+2026-10-30 15:42:08,655 | INFO | [DRY RUN] Would insert: ASHOK | 9983071117
+2026-10-30 15:42:08,656 | INFO | [DRY RUN] Would insert: INDU BALA | 9811431007
+2026-10-30 15:42:08,656 | INFO | [DRY RUN] Would insert: LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 15:42:08,656 | INFO | [DRY RUN] Would insert: MOHD. SUHAIL | 8168835414
+2026-10-30 15:42:08,657 | INFO | [DRY RUN] Would insert: SUNIL KHATANA | 9996756749
+2026-10-30 15:42:08,657 | INFO | [DRY RUN] Would insert: VRIDHI SHARAM | 9811106322
+2026-10-30 15:42:08,658 | INFO | [DRY RUN] Would insert: ANKUSH | 9313210301
+2026-10-30 15:42:08,658 | INFO | [DRY RUN] Would insert: HARDIK GUPTA | 8851270628
+2026-10-30 15:42:08,658 | INFO | [DRY RUN] Would insert: ISHAN HUDDA | 9811374881
+2026-10-30 15:42:08,658 | INFO | [DRY RUN] Would insert: MITUL | 9868414851
+2026-10-30 15:42:08,659 | INFO | [DRY RUN] Would insert: SANTOSH DEVI JAIN | 9811143393
+2026-10-30 15:42:08,659 | INFO | [DRY RUN] Would insert: VAIBHAV DHAIYA | 9999930484
+2026-10-30 15:42:08,715 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 15:42:08,718 | INFO | Report saved: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 16:02:44,892 | INFO | Reading Excel file: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 16:02:44,900 | INFO | Total Excel patient records: 13
+2026-10-30 16:02:44,956 | INFO | Database connection successful.
+2026-10-30 16:02:44,957 | INFO | Existing database patients loaded: 0
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] AMAIRA | 9811887770
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] ASHOK | 9983071117
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] INDU BALA | 9811431007
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] MOHD. SUHAIL | 8168835414
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] SUNIL KHATANA | 9996756749
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] VRIDHI SHARAM | 9811106322
+2026-10-30 16:02:44,958 | INFO | [DRY RUN] ANKUSH | 9313210301
+2026-10-30 16:02:44,959 | INFO | [DRY RUN] HARDIK GUPTA | 8851270628
+2026-10-30 16:02:44,959 | INFO | [DRY RUN] ISHAN HUDDA | 9811374881
+2026-10-30 16:02:44,959 | INFO | [DRY RUN] MITUL | 9868414851
+2026-10-30 16:02:44,959 | INFO | [DRY RUN] SANTOSH DEVI JAIN | 9811143393
+2026-10-30 16:02:44,959 | INFO | [DRY RUN] VAIBHAV DHAIYA | 9999930484
+2026-10-30 16:02:44,961 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 16:02:44,963 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 16:02:55,068 | INFO | Reading Excel file: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 16:02:55,073 | INFO | Total Excel patient records: 13
+2026-10-30 16:02:55,123 | INFO | Database connection successful.
+2026-10-30 16:02:55,124 | INFO | Existing database patients loaded: 0
+2026-10-30 16:02:55,124 | INFO | [DRY RUN] AMAIRA | 9811887770
+2026-10-30 16:02:55,124 | INFO | [DRY RUN] ASHOK | 9983071117
+2026-10-30 16:02:55,124 | INFO | [DRY RUN] INDU BALA | 9811431007
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] MOHD. SUHAIL | 8168835414
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] SUNIL KHATANA | 9996756749
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] VRIDHI SHARAM | 9811106322
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] ANKUSH | 9313210301
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] HARDIK GUPTA | 8851270628
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] ISHAN HUDDA | 9811374881
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] MITUL | 9868414851
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] SANTOSH DEVI JAIN | 9811143393
+2026-10-30 16:02:55,125 | INFO | [DRY RUN] VAIBHAV DHAIYA | 9999930484
+2026-10-30 16:02:55,127 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 16:02:55,129 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 16:06:22,631 | INFO | Reading Excel file: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 16:06:22,636 | INFO | Total Excel patient records: 13
+2026-10-30 16:06:23,123 | INFO | Database connection successful.
+2026-10-30 16:06:23,241 | INFO | Existing database patients loaded: 66
+2026-10-30 16:06:23,242 | INFO | [DRY RUN] AMAIRA | 9811887770
+2026-10-30 16:06:23,242 | INFO | [DRY RUN] ASHOK | 9983071117
+2026-10-30 16:06:23,242 | INFO | [DRY RUN] INDU BALA | 9811431007
+2026-10-30 16:06:23,243 | INFO | [DRY RUN] LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 16:06:23,243 | INFO | [DRY RUN] MOHD. SUHAIL | 8168835414
+2026-10-30 16:06:23,243 | INFO | [DRY RUN] SUNIL KHATANA | 9996756749
+2026-10-30 16:06:23,243 | INFO | [DRY RUN] VRIDHI SHARAM | 9811106322
+2026-10-30 16:06:23,243 | INFO | [DRY RUN] ANKUSH | 9313210301
+2026-10-30 16:06:23,244 | INFO | [DRY RUN] HARDIK GUPTA | 8851270628
+2026-10-30 16:06:23,244 | INFO | [DRY RUN] ISHAN HUDDA | 9811374881
+2026-10-30 16:06:23,244 | INFO | [DRY RUN] MITUL | 9868414851
+2026-10-30 16:06:23,244 | INFO | POSSIBLE_DUPLICATE | SANTOSH DEVI JAIN | 9811143393 | Patient name already exists, but the mobile number is different or blank. Manual verification required.
+2026-10-30 16:06:23,244 | INFO | [DRY RUN] VAIBHAV DHAIYA | 9999930484
+2026-10-30 16:06:23,305 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 16:06:23,306 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 16:07:01,164 | INFO | Reading Excel file: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 16:07:01,170 | INFO | Total Excel patient records: 13
+2026-10-30 16:07:01,232 | INFO | Database connection successful.
+2026-10-30 16:07:01,234 | INFO | Existing database patients loaded: 0
+2026-10-30 16:07:01,239 | INFO | INSERTED | PAT-C78964DE264B | AMAIRA | 9811887770
+2026-10-30 16:07:01,240 | INFO | INSERTED | PAT-DD22584A4F03 | ASHOK | 9983071117
+2026-10-30 16:07:01,242 | INFO | INSERTED | PAT-B46A0C1427A4 | INDU BALA | 9811431007
+2026-10-30 16:07:01,243 | INFO | INSERTED | PAT-3ACC8A73A095 | LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 16:07:01,244 | INFO | INSERTED | PAT-4A7827285EDD | MOHD. SUHAIL | 8168835414
+2026-10-30 16:07:01,246 | INFO | INSERTED | PAT-69A4A0BD0B21 | SUNIL KHATANA | 9996756749
+2026-10-30 16:07:01,248 | INFO | INSERTED | PAT-030FED622517 | VRIDHI SHARAM | 9811106322
+2026-10-30 16:07:01,251 | INFO | INSERTED | PAT-BFE50E72B3DB | ANKUSH | 9313210301
+2026-10-30 16:07:01,253 | INFO | INSERTED | PAT-50171EA2510F | HARDIK GUPTA | 8851270628
+2026-10-30 16:07:01,255 | INFO | INSERTED | PAT-E34C06C1CF6F | ISHAN HUDDA | 9811374881
+2026-10-30 16:07:01,257 | INFO | INSERTED | PAT-E515540C429A | MITUL | 9868414851
+2026-10-30 16:07:01,261 | INFO | INSERTED | PAT-5207A315E69D | SANTOSH DEVI JAIN | 9811143393
+2026-10-30 16:07:01,263 | INFO | INSERTED | PAT-1FCEB45ED41F | VAIBHAV DHAIYA | 9999930484
+2026-10-30 16:07:01,272 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 16:07:01,276 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
+2026-10-30 16:10:09,874 | INFO | Reading Excel file: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\IP MANUAL BILL PATIENT DETAILS.xlsx
+2026-10-30 16:10:09,878 | INFO | Total Excel patient records: 13
+2026-10-30 16:10:10,343 | INFO | Database connection successful.
+2026-10-30 16:10:10,465 | INFO | Existing database patients loaded: 66
+2026-10-30 16:10:10,586 | INFO | INSERTED | PAT-3BAD42EC24E6 | AMAIRA | 9811887770
+2026-10-30 16:10:10,773 | INFO | INSERTED | PAT-7C893B6B5E4D | ASHOK | 9983071117
+2026-10-30 16:10:10,951 | INFO | INSERTED | PAT-5B5F77F3F094 | INDU BALA | 9811431007
+2026-10-30 16:10:11,131 | INFO | INSERTED | PAT-C7576661C8EA | LAKKAULA RAVI KIRAN | 9032314437
+2026-10-30 16:10:11,315 | INFO | INSERTED | PAT-C939650D206B | MOHD. SUHAIL | 8168835414
+2026-10-30 16:10:11,491 | INFO | INSERTED | PAT-2F97866F4DBA | SUNIL KHATANA | 9996756749
+2026-10-30 16:10:11,669 | INFO | INSERTED | PAT-08B33DAABF89 | VRIDHI SHARAM | 9811106322
+2026-10-30 16:10:11,851 | INFO | INSERTED | PAT-7091D17DF61E | ANKUSH | 9313210301
+2026-10-30 16:10:12,027 | INFO | INSERTED | PAT-8964579F7975 | HARDIK GUPTA | 8851270628
+2026-10-30 16:10:12,200 | INFO | INSERTED | PAT-C4AA604E1928 | ISHAN HUDDA | 9811374881
+2026-10-30 16:10:12,376 | INFO | INSERTED | PAT-C31887297772 | MITUL | 9868414851
+2026-10-30 16:10:12,376 | INFO | POSSIBLE_DUPLICATE | SANTOSH DEVI JAIN | 9811143393 | Patient name already exists, but the mobile number is different or blank. Manual verification required.
+2026-10-30 16:10:12,552 | INFO | INSERTED | PAT-CEBE5A6DCA9E | VAIBHAV DHAIYA | 9999930484
+2026-10-30 16:10:12,558 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_report.csv
+2026-10-30 16:10:12,560 | INFO | Report generated: M:\Personal Projects -  Ajay Kumar\HMS\backend\Bulk imports\Bulk Patients imports\patient_import_issues.csv
