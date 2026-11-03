@@ -138,6 +138,8 @@ def list_bills_service(
                         b.discharge_date,
                         b.bed_number,
                         b.rate_category,
+                        b.sponsor_id,
+                        b.sponsor_name_snapshot,
 
                         b.subtotal,
                         b.discount_amount,

@@ -1309,6 +1309,15 @@ def _generate_bill_pdf(bill_id: int, expected_type: str) -> Response:
                 styles,
             ),
             _meta_row(
+                "Sponsor",
+                bill.get("sponsor_name_snapshot") or "-",
+                "",
+                "",
+                "",
+                "",
+                styles,
+            ),
+            _meta_row(
                 "Doctor",
                 bill.get("doctor_name") or "-",
                 "Adm. Date",

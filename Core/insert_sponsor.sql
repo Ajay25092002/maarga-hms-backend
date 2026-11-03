@@ -1,0 +1,30 @@
+INSERT INTO public.sponsors (sponsor_name)
+VALUES
+    ('CASH'),
+    ('ICICI Lombard General Insurance'),
+    ('HDFC ERGO General Insurance'),
+    ('Bajaj General Insurance'),
+    ('Tata AIG General Insurance'),
+    ('SBI General Insurance'),
+    ('Reliance General Insurance (now IndusInd General Insurance)'),
+    ('Go Digit General Insurance'),
+    ('Acko General Insurance'),
+    ('Cholamandalam MS General Insurance'),
+    ('IFFCO Tokio General Insurance'),
+    ('Royal Sundaram General Insurance'),
+    ('Universal Sompo General Insurance'),
+    ('Liberty General Insurance'),
+    ('Shriram General Insurance'),
+    ('National Insurance Company'),
+    ('New India Assurance'),
+    ('Oriental Insurance Company'),
+    ('United India Insurance'),
+    ('Navi General Insurance'),
+    ('Zuno General Insurance'),
+    ('Zurich Kotak General Insurance'),
+    ('Raheja QBE General Insurance'),
+    ('Magma General Insurance'),
+    ('Future Generali India Insurance'),
+    ('Kshema General Insurance')
+ON CONFLICT ((LOWER(BTRIM(sponsor_name))))
+DO NOTHING;

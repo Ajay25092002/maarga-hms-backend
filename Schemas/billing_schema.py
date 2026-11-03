@@ -74,6 +74,8 @@ class CreateBillRequest(BaseModel):
 
     bill_type: Literal["OP", "IP"]
     patient_id: str = Field(min_length=1, max_length=50)
+    sponsor_id: Optional[int] = Field(default=None, gt=0)
+    sponsor_name: Optional[str] = Field(default=None, max_length=255)
 
     bill_date: Optional[datetime] = None
     department: Optional[str] = Field(default=None, max_length=100)
@@ -144,7 +146,7 @@ class CreateBillRequest(BaseModel):
         value = value.strip()
         return value or None
 
-    @field_validator("department", "bed_number", "rate_category")
+    @field_validator("department", "bed_number", "rate_category", "sponsor_name")
     @classmethod
     def normalize_optional_text(
         cls,

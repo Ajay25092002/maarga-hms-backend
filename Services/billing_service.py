@@ -406,6 +406,19 @@ def resolve_item_room_context(cursor, bill_type: str, item, payload):
     }
 
 
+def resolve_sponsor(cursor, sponsor_id, allow_inactive=False):
+    if sponsor_id is None:
+        raise HTTPException(status_code=422, detail="Sponsor is required for billing.")
+    cursor.execute(
+        "SELECT id, sponsor_name, is_active FROM public.sponsors WHERE id = %s",
+        (sponsor_id,),
+    )
+    sponsor = cursor.fetchone()
+    if not sponsor or (not sponsor["is_active"] and not allow_inactive):
+        raise HTTPException(status_code=422, detail="Selected sponsor is unavailable or inactive.")
+    return sponsor
+
+
 def create_bill_service(payload: CreateBillRequest, created_by: int):
     connection = None
 
@@ -438,6 +451,8 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         status_code=404,
                         detail="Patient not found.",
                     )
+
+                sponsor = resolve_sponsor(cursor, payload.sponsor_id)
 
                 # The new bills schema requires a room type for IP
                 # and keeps room_type_id NULL for OP.
@@ -600,11 +615,13 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         discharge_date,
                         bed_number,
                         rate_category,
+                        sponsor_id,
+                        sponsor_name_snapshot,
                         created_by
                     )
                     VALUES (
                         %s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     )
                     RETURNING *
                     """,
@@ -658,6 +675,8 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             if payload.bill_type == "IP"
                             else None
                         ),
+                        sponsor["id"] if sponsor else None,
+                        sponsor["sponsor_name"] if sponsor else None,
                         created_by,
                     ),
                 )
@@ -858,42 +877,15 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 #         raise HTTPException(status_code=409, detail="This OP bill cannot be edited because it has been fully paid.")
 
                 
-                # TEMPORARY: Allow editing discharged IP bills for selected patients.
-                TEMP_IP_EDIT_PATIENT_IDS = {
-                    "PAT-5B5F77F3F094",
-                    "PAT-3E2E434879E3",
-                    "PAT-C31887297772",
-                    "PAT-7091D17DF61E",
-                }
-
-                # Lock editing once an OP bill is fully paid, or an IP bill
-                # is discharged unless the patient is in the temporary whitelist.
-
+                # Restore the standard production rule: discharged IP bills are locked.
                 if (
                     str(bill.get("bill_type") or "").upper() == "IP"
                     and bill.get("discharge_date")
                 ):
-                    cursor.execute(
-                        """
-                        SELECT patient_id
-                        FROM public.patients
-                        WHERE id = %s
-                        """,
-                        (bill["patient_db_id"],),
+                    raise HTTPException(
+                        status_code=409,
+                        detail="This IP bill cannot be edited after the discharge date has been recorded.",
                     )
-                    patient_for_edit = cursor.fetchone()
-
-                    patient_id = (
-                        str(patient_for_edit["patient_id"])
-                        if patient_for_edit
-                        else ""
-                    )
-
-                    if patient_id not in TEMP_IP_EDIT_PATIENT_IDS:
-                        raise HTTPException(
-                            status_code=409,
-                            detail="This IP bill cannot be edited after the discharge date has been recorded."
-                        )
 
                 if str(bill.get("bill_type") or "").upper() == "OP":
                     cursor.execute(
@@ -1029,6 +1021,12 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         ),
                     )
 
+                sponsor = resolve_sponsor(
+                    cursor,
+                    payload.sponsor_id,
+                    allow_inactive=(payload.sponsor_id == bill.get("sponsor_id")),
+                )
+
                 cursor.execute("""
                     UPDATE public.bills SET
                         -- The original bill creation timestamp is immutable.
@@ -1038,6 +1036,7 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         discount_amount = %s, total_amount = %s, notes = %s,
                         admission_date = %s, discharge_date = %s, bed_number = %s,
                         rate_category = %s,
+                        sponsor_id = %s, sponsor_name_snapshot = %s,
                         updated_by = %s,
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = %s
@@ -1054,6 +1053,12 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     payload.discharge_date if payload.bill_type == "IP" else None,
                     payload.bed_number if payload.bill_type == "IP" else None,
                     payload.rate_category if payload.bill_type == "IP" else bill.get("rate_category"),
+                    sponsor["id"],
+                    (
+                        bill.get("sponsor_name_snapshot")
+                        if bill.get("sponsor_id") == sponsor["id"] and bill.get("sponsor_name_snapshot")
+                        else sponsor["sponsor_name"]
+                    ),
                     updated_by, bill_id,
                 ))
                 updated_bill = cursor.fetchone()

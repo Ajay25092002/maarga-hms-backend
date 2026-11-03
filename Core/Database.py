@@ -533,6 +533,39 @@ def initialize_database():
             
 
                 # ==========================================================
+                # SPONSOR MASTER (additive migration; existing bills remain valid)
+                # ==========================================================
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS public.sponsors (
+                        id BIGSERIAL PRIMARY KEY,
+                        sponsor_name VARCHAR(255) NOT NULL,
+                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+                cursor.execute("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS uq_sponsors_name_ci
+                    ON public.sponsors (LOWER(BTRIM(sponsor_name)));
+                """)
+                cursor.execute("""
+                    ALTER TABLE public.bills
+                    ADD COLUMN IF NOT EXISTS sponsor_id BIGINT
+                        REFERENCES public.sponsors(id) ON DELETE RESTRICT,
+                    ADD COLUMN IF NOT EXISTS sponsor_name_snapshot VARCHAR(255);
+                """)
+                cursor.execute("""
+                    UPDATE public.bills AS b
+                    SET sponsor_name_snapshot = s.sponsor_name
+                    FROM public.sponsors AS s
+                    WHERE b.sponsor_id = s.id
+                      AND (
+                          b.sponsor_name_snapshot IS NULL
+                          OR BTRIM(b.sponsor_name_snapshot) = ''
+                      );
+                """)
+
+                # ==========================================================
 
                 # AUTOMATIC OP/IP BILL NUMBER GENERATION
 
