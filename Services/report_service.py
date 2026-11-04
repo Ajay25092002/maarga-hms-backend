@@ -2,6 +2,7 @@
 """Read-only reporting queries for OP/IP Billing."""
 
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from psycopg2.extras import RealDictCursor
 
@@ -840,6 +841,127 @@ def _fetch_accrued_revenue_report(
         connection.close()
 
 
+
+def _fetch_ip_billing_report(
+    filters: dict[str, Any],
+    page: int,
+    page_size: int,
+    export_all: bool = False,
+):
+    """Return one row per IP bill service item, filtered only by service_date."""
+    date_from = filters.get("date_from")
+    date_to = filters.get("date_to")
+    if not date_from or not date_to:
+        raise ValueError("Both start date and end date are required for the IP billing report.")
+    if date_from > date_to:
+        raise ValueError("Start date must be on or before end date.")
+
+    base = """
+        SELECT
+            bi.service_date AS report_date,
+            'IP'::varchar AS "Bill Type",
+            b.bill_number AS "Bill Number",
+            b.ip_number AS "IP Number",
+            b.bill_date AS "Bill Date",
+            COALESCE(NULLIF(BTRIM(b.sponsor_name_snapshot), ''), '—') AS "Sponsor Name",
+
+            p.id AS "Patient ID",
+            p.patient_id AS "Patient Unique Number",
+            p.name AS "Patient Name",
+            p.gender AS "Gender",
+            CASE
+                WHEN p.date_of_birth IS NOT NULL
+                THEN EXTRACT(YEAR FROM AGE(bi.service_date, p.date_of_birth))::integer
+                ELSE NULL
+            END AS "Age",
+            p.mobile AS "Mobile Number",
+
+            bi.service_date AS "Service Date",
+            bi.service_group_name AS "Service Group",
+            bi.service_name AS "Service Name",
+            bi.quantity AS "Quantity",
+            bi.rate AS "Rate",
+            bi.amount AS "Gross Amount",
+            bi.discount_amount AS "Discount Amount",
+            bi.gst_amount AS "GST Amount",
+            bi.net_amount AS "Net Amount",
+
+            b.department AS "Department",
+            COALESCE(NULLIF(BTRIM(b.doctor_name), ''), '—') AS "Doctor Name",
+            b.admission_date::date AS "Admission Date",
+            b.discharge_date::date AS "Discharge Date",
+            COALESCE(NULLIF(BTRIM(bi.room_type_name), ''), NULLIF(BTRIM(b.room_type_name), ''), rt.name, '—') AS "Room Type",
+            COALESCE(NULLIF(BTRIM(bi.bed_number), ''), NULLIF(BTRIM(b.bed_number), ''), '—') AS "Bed Number",
+            b.notes AS "Bill Notes"
+
+        FROM public.bill_items bi
+        JOIN public.bills b
+            ON b.id = bi.bill_id
+        JOIN public.patients p
+            ON p.id = b.patient_db_id
+        LEFT JOIN public.room_types rt
+            ON rt.id = b.room_type_id
+        WHERE
+            b.bill_type = 'IP'
+            AND bi.service_date >= %s::date
+            AND bi.service_date <= %s::date
+    """
+
+    params: list[Any] = [date_from, date_to]
+    filtered_query = f"SELECT * FROM ({base}) report_rows"
+    if filters.get("search"):
+        filtered_query += " WHERE CAST(row_to_json(report_rows) AS TEXT) ILIKE %s"
+        params.append(f"%{filters['search']}%")
+
+    connection = get_db_connection()
+    try:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            summary_query = f"""
+                SELECT
+                    COUNT(*) AS total,
+                    COALESCE(SUM("Gross Amount"), 0) AS gross_amount,
+                    COALESCE(SUM("Discount Amount"), 0) AS discount_amount,
+                    COALESCE(SUM("GST Amount"), 0) AS gst_amount,
+                    COALESCE(SUM("Net Amount"), 0) AS net_amount
+                FROM ({filtered_query}) ip_rows
+            """
+            cursor.execute(summary_query, params)
+            summary = cursor.fetchone()
+            total = int(summary["total"] or 0)
+            totals = {
+                "Gross Amount": round(float(summary["gross_amount"] or 0), 2),
+                "Discount Amount": round(float(summary["discount_amount"] or 0), 2),
+                "GST Amount": round(float(summary["gst_amount"] or 0), 2),
+                "Net Amount": round(float(summary["net_amount"] or 0), 2),
+            }
+
+            data_query = (
+                filtered_query
+                + ' ORDER BY "Service Date" ASC, "Bill Number" ASC, "Service Name" ASC'
+            )
+            data_params = list(params)
+            if not export_all:
+                data_query += " LIMIT %s OFFSET %s"
+                data_params.extend([page_size, (page - 1) * page_size])
+
+            cursor.execute(data_query, data_params)
+            items = [serialize_row(row) for row in cursor.fetchall()]
+
+            return {
+                "report_type": "ip-billing",
+                "report_name": REPORTS["ip-billing"],
+                "items": items,
+                "total": total,
+                "page": page,
+                "page_size": total if export_all else page_size,
+                "totals": totals,
+                "date_from": date_from,
+                "date_to": date_to,
+            }
+    finally:
+        connection.close()
+
+
 def fetch_report(
     report_type: str,
     filters: dict[str, Any],
@@ -854,6 +976,9 @@ def fetch_report(
         if not filters.get("year") or not filters.get("month"):
             raise ValueError("Year and month are required for the accrued revenue report.")
         return _fetch_accrued_revenue_report(filters, page, page_size, export_all)
+
+    if report_type == "ip-billing":
+        return _fetch_ip_billing_report(filters, page, page_size, export_all)
 
     base = BASE_SELECTS[report_type]
     where = []
@@ -984,5 +1109,267 @@ def fetch_report(
                 "totals": totals,
             }
 
+    finally:
+        connection.close()
+
+
+def _build_streaming_report_query(report_type: str, filters: dict[str, Any]):
+    """Build the same filtered, ordered dataset used by fetch_report, without pagination."""
+    if report_type == "ip-billing":
+        date_from = filters.get("date_from")
+        date_to = filters.get("date_to")
+        if not date_from or not date_to:
+            raise ValueError("Both start date and end date are required for the IP billing report.")
+        if date_from > date_to:
+            raise ValueError("Start date must be on or before end date.")
+        base = """
+            SELECT
+                bi.service_date AS report_date,
+                'IP'::varchar AS "Bill Type",
+                b.bill_number AS "Bill Number",
+                b.ip_number AS "IP Number",
+                b.bill_date AS "Bill Date",
+                COALESCE(NULLIF(BTRIM(b.sponsor_name_snapshot), ''), '—') AS "Sponsor Name",
+                p.id AS "Patient ID",
+                p.patient_id AS "Patient Unique Number",
+                p.name AS "Patient Name",
+                p.gender AS "Gender",
+                CASE WHEN p.date_of_birth IS NOT NULL
+                    THEN EXTRACT(YEAR FROM AGE(bi.service_date, p.date_of_birth))::integer
+                    ELSE NULL END AS "Age",
+                p.mobile AS "Mobile Number",
+                bi.service_date AS "Service Date",
+                bi.service_group_name AS "Service Group",
+                bi.service_name AS "Service Name",
+                bi.quantity AS "Quantity",
+                bi.rate AS "Rate",
+                bi.amount AS "Gross Amount",
+                bi.discount_amount AS "Discount Amount",
+                bi.gst_amount AS "GST Amount",
+                bi.net_amount AS "Net Amount",
+                b.department AS "Department",
+                COALESCE(NULLIF(BTRIM(b.doctor_name), ''), '—') AS "Doctor Name",
+                b.admission_date::date AS "Admission Date",
+                b.discharge_date::date AS "Discharge Date",
+                COALESCE(NULLIF(BTRIM(bi.room_type_name), ''), NULLIF(BTRIM(b.room_type_name), ''), rt.name, '—') AS "Room Type",
+                COALESCE(NULLIF(BTRIM(bi.bed_number), ''), NULLIF(BTRIM(b.bed_number), ''), '—') AS "Bed Number",
+                b.notes AS "Bill Notes"
+            FROM public.bill_items bi
+            JOIN public.bills b ON b.id = bi.bill_id
+            JOIN public.patients p ON p.id = b.patient_db_id
+            LEFT JOIN public.room_types rt ON rt.id = b.room_type_id
+            WHERE b.bill_type = 'IP'
+              AND bi.service_date >= %s::date
+              AND bi.service_date <= %s::date
+        """
+        params: list[Any] = [date_from, date_to]
+        query = f"SELECT * FROM ({base}) report_rows"
+        if filters.get("search"):
+            query += " WHERE CAST(row_to_json(report_rows) AS TEXT) ILIKE %s"
+            params.append(f"%{filters['search']}%")
+        query += ' ORDER BY "Service Date" ASC, "Bill Number" ASC, "Service Name" ASC'
+        return query, params, None
+
+    if report_type == "accrued-revenue":
+        if not filters.get("year") or not filters.get("month"):
+            raise ValueError("Year and month are required for the accrued revenue report.")
+        year, month = int(filters["year"]), int(filters["month"])
+        start_date = f"{year:04d}-{month:02d}-01"
+        end_date = f"{year + 1:04d}-01-01" if month == 12 else f"{year:04d}-{month + 1:02d}-01"
+        based_on = filters.get("based_on") or "patient-wise"
+        if based_on not in {"patient-wise", "bill-wise"}:
+            raise ValueError("Based on must be patient-wise or bill-wise.")
+        item_filters = ["bi.service_date >= %s::date", "bi.service_date < %s::date"]
+        params = [start_date, end_date]
+        bill_type = filters.get("bill_type")
+        if based_on == "bill-wise" and bill_type:
+            item_filters.append("b.bill_type = %s")
+            params.append(str(bill_type).upper())
+        item_where = " AND ".join(item_filters)
+        if based_on == "bill-wise":
+            base = f"""
+                WITH service_items AS (
+                    SELECT bi.bill_id, bi.service_date, bi.service_name,
+                        bi.amount, bi.discount_amount, bi.net_amount,
+                        b.bill_number, b.bill_type, b.op_number, b.ip_number,
+                        b.bill_date, b.admission_date, b.discharge_date,
+                        p.patient_id, p.name AS patient_name, p.mobile, p.gender
+                    FROM public.bill_items bi
+                    JOIN public.bills b ON b.id = bi.bill_id
+                    JOIN public.patients p ON p.id = b.patient_db_id
+                    WHERE {item_where}
+                )
+                SELECT MAX(service_date) AS report_date,
+                    bill_number AS "Bill Number", bill_type AS "Bill Type",
+                    CASE WHEN bill_type = 'OP' THEN op_number ELSE ip_number END AS "OP/IP Number",
+                    patient_id AS "Patient Number", patient_name AS "Patient Name",
+                    mobile AS "Mobile", gender AS "Gender", bill_date AS "Bill Date",
+                    admission_date::date AS "Admission Date", discharge_date::date AS "Discharge Date",
+                    STRING_AGG(DISTINCT service_name || ' (' || TO_CHAR(service_date, 'DD Mon YYYY') || ')',
+                        ', ' ORDER BY service_name || ' (' || TO_CHAR(service_date, 'DD Mon YYYY') || ')') AS "Services",
+                    COUNT(*) AS "Service Item Count",
+                    COALESCE(SUM(amount), 0) AS "Amount",
+                    COALESCE(SUM(discount_amount), 0) AS "Discount",
+                    COALESCE(SUM(net_amount), 0) AS "Net Amount"
+                FROM service_items
+                GROUP BY bill_id, bill_number, bill_type, op_number, ip_number,
+                    patient_id, patient_name, mobile, gender, bill_date, admission_date, discharge_date
+            """
+        else:
+            base = f"""
+                WITH service_items AS (
+                    SELECT bi.bill_id, bi.service_date, bi.amount, bi.discount_amount, bi.net_amount,
+                        b.bill_number, p.id AS patient_db_id, p.patient_id,
+                        p.name AS patient_name, p.mobile, p.gender
+                    FROM public.bill_items bi
+                    JOIN public.bills b ON b.id = bi.bill_id
+                    JOIN public.patients p ON p.id = b.patient_db_id
+                    WHERE {item_where}
+                )
+                SELECT MAX(service_date) AS report_date,
+                    patient_id AS "Patient Number", patient_name AS "Patient Name",
+                    mobile AS "Mobile", gender AS "Gender",
+                    COUNT(DISTINCT bill_id) AS "Number of Bills",
+                    STRING_AGG(DISTINCT bill_number, ', ' ORDER BY bill_number) AS "Bill Numbers",
+                    COALESCE(SUM(amount), 0) AS "Amount",
+                    COALESCE(SUM(discount_amount), 0) AS "Discount",
+                    COALESCE(SUM(net_amount), 0) AS "Net Amount"
+                FROM service_items
+                GROUP BY patient_db_id, patient_id, patient_name, mobile, gender
+            """
+        query = f"SELECT * FROM ({base}) report_rows"
+        if filters.get("search"):
+            query += " WHERE CAST(row_to_json(report_rows) AS TEXT) ILIKE %s"
+            params.append(f"%{filters['search']}%")
+        query += " ORDER BY report_date DESC NULLS LAST"
+        return query, params, based_on
+
+    base = BASE_SELECTS[report_type]
+    where = []
+    params: list[Any] = []
+    if filters.get("date_from"):
+        where.append("report_date::date >= %s::date")
+        params.append(filters["date_from"])
+    if filters.get("date_to"):
+        where.append("report_date::date <= %s::date")
+        params.append(filters["date_to"])
+    if filters.get("bill_type") and report_type in {
+        "cash-collection", "refunds", "outstanding", "service-wise", "service-group-wise"
+    }:
+        where.append('"Bill Type" = %s')
+        params.append(filters["bill_type"].upper())
+    if filters.get("payment_method") and report_type == "cash-collection":
+        where.append('LOWER("Payment Method") = LOWER(%s)')
+        params.append(filters["payment_method"])
+    if filters.get("staff") and report_type == "cash-collection":
+        where.append('"Collected By" ILIKE %s')
+        params.append(f"%{filters['staff']}%")
+    if filters.get("source") and report_type in {"patient-registration", "source-of-lead"}:
+        where.append('"Source of Lead" = %s')
+        params.append(filters["source"])
+    if filters.get("service") and report_type == "service-wise":
+        where.append('"Service Name" ILIKE %s')
+        params.append(f"%{filters['service']}%")
+    if filters.get("service_group") and report_type in {"service-wise", "service-group-wise"}:
+        where.append('"Service Group" ILIKE %s')
+        params.append(f"%{filters['service_group']}%")
+    if filters.get("status") and report_type == "admission-discharge":
+        if filters["status"] == "admitted":
+            where.append('"Status" = %s')
+            params.append("Currently Admitted")
+        elif filters["status"] == "discharged":
+            where.append('"Status" = %s')
+            params.append("Discharged")
+    if filters.get("search"):
+        where.append("CAST(row_to_json(report_rows) AS TEXT) ILIKE %s")
+        params.append(f"%{filters['search']}%")
+    query = f"SELECT * FROM ({base}) report_rows"
+    if where:
+        query += " WHERE " + " AND ".join(where)
+    query += " ORDER BY report_date DESC NULLS LAST"
+    return query, params, None
+
+
+def _csv_cell(value, column_name: str):
+    """Format database values consistently with the previous browser CSV export."""
+    from datetime import date, datetime
+    from decimal import Decimal
+
+    if value is None:
+        return ""
+    is_date_only = column_name.strip().lower() in {"admission date", "discharge date"}
+    if isinstance(value, datetime):
+        if is_date_only:
+            return value.strftime("%d/%m/%Y")
+        # Database timestamps are displayed in India time in the previous export.
+        if value.tzinfo is not None:
+            value = value.astimezone(ZoneInfo("Asia/Kolkata"))
+        return value.strftime("%d/%m/%Y, %I:%M %p")
+    if isinstance(value, date):
+        return value.strftime("%d/%m/%Y")
+    if isinstance(value, Decimal):
+        return str(value)
+    return str(value)
+
+
+def stream_report_csv(report_type: str, filters: dict[str, Any]):
+    """Yield a UTF-8-BOM CSV using a server-side cursor and bounded fetch batches."""
+    import csv
+    import io
+    from psycopg2.extras import RealDictCursor
+
+    if report_type not in REPORTS:
+        raise ValueError("Unknown report type.")
+    query, params, accrued_based_on = _build_streaming_report_query(report_type, filters)
+
+    connection = get_db_connection()
+    try:
+        # Accrued revenue previously appended a monthly total row; preserve that output.
+        accrued_totals = None
+        if report_type == "accrued-revenue":
+            summary_query = f"""
+                SELECT COALESCE(SUM("Amount"), 0) AS amount,
+                       COALESCE(SUM("Discount"), 0) AS discount,
+                       COALESCE(SUM("Net Amount"), 0) AS net_amount
+                FROM ({query}) accrued_rows
+            """
+            with connection.cursor() as summary_cursor:
+                summary_cursor.execute(summary_query, params)
+                accrued_totals = summary_cursor.fetchone()
+
+        cursor = connection.cursor(name=f"report_csv_{id(connection)}", cursor_factory=RealDictCursor)
+        cursor.itersize = 1000
+        cursor.execute(query, params)
+
+        def csv_line(values):
+            buffer = io.StringIO()
+            writer = csv.writer(buffer, lineterminator="\r\n")
+            writer.writerow(values)
+            return buffer.getvalue()
+
+        # Named/server-side cursors do not expose column metadata immediately
+        # after DECLARE on all psycopg2/PostgreSQL combinations. Fetch the first
+        # batch before reading cursor.description; this still keeps memory
+        # bounded to one batch and also works when the query returns no rows.
+        batch = cursor.fetchmany(1000)
+        description = cursor.description
+        if description is None:
+            raise RuntimeError("The report query did not return a result set.")
+        columns = [desc.name for desc in description if desc.name != "report_date"]
+
+        yield "\ufeff" + csv_line(columns)
+        while batch:
+            for row in batch:
+                yield csv_line([_csv_cell(row.get(column), column) for column in columns])
+            batch = cursor.fetchmany(1000)
+
+        if accrued_totals is not None and columns:
+            total_row = {column: "" for column in columns}
+            total_row[columns[0]] = "MONTHLY TOTAL"
+            total_row["Amount"] = accrued_totals["amount"] or 0
+            total_row["Discount"] = accrued_totals["discount"] or 0
+            total_row["Net Amount"] = accrued_totals["net_amount"] or 0
+            yield csv_line([_csv_cell(total_row.get(column), column) for column in columns])
+        cursor.close()
     finally:
         connection.close()

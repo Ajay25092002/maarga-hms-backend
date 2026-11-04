@@ -4,10 +4,11 @@ from zoneinfo import ZoneInfo
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from psycopg2 import Error as PsycopgError
 
 from Router.Login import get_current_user
-from Services.report_service import REPORTS, fetch_report
+from Services.report_service import REPORTS, fetch_report, stream_report_csv
 
 router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
@@ -26,6 +27,79 @@ def report_catalog(current=Depends(get_current_user)):
     if permissions.get("reports.view") is not True and permissions.get("reports.download") is not True:
         raise HTTPException(status_code=403, detail="You do not have permission to access reports.")
     return [{"key": key, "label": label} for key, label in REPORTS.items()]
+
+
+
+
+@router.get("/{report_type}/export")
+def export_report_csv(
+    report_type: str,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+    search: Optional[str] = Query(default=None, max_length=150),
+    source: Optional[str] = Query(default=None, max_length=50),
+    bill_type: Optional[str] = Query(default=None, pattern="^(OP|IP)$"),
+    payment_method: Optional[str] = Query(default=None, max_length=50),
+    staff: Optional[str] = Query(default=None, max_length=150),
+    service: Optional[str] = Query(default=None, max_length=150),
+    service_group: Optional[str] = Query(default=None, max_length=150),
+    status_filter: Optional[str] = Query(default=None, alias="status", max_length=30),
+    year: Optional[int] = Query(default=None, ge=2000, le=2100),
+    month: Optional[int] = Query(default=None, ge=1, le=12),
+    based_on: Optional[str] = Query(default=None, pattern="^(patient-wise|bill-wise)$"),
+    current=Depends(get_current_user),
+):
+    permissions = current.get("user", {}).get("permissions", {})
+    if permissions.get("reports.download") is not True:
+        raise HTTPException(status_code=403, detail="You do not have permission to download reports.")
+    if report_type not in REPORTS:
+        raise HTTPException(status_code=404, detail="Report not found.")
+
+    today_india = datetime.now(ZoneInfo("Asia/Kolkata")).date()
+    if report_type == "accrued-revenue":
+        if year is None or month is None:
+            raise HTTPException(status_code=422, detail="Both year and month are required for the accrued revenue report.")
+        if (year, month) > (today_india.year, today_india.month):
+            raise HTTPException(status_code=422, detail="Future report months are not allowed.")
+        if based_on is None:
+            based_on = "patient-wise"
+    else:
+        if date_from is None or date_to is None:
+            raise HTTPException(status_code=422, detail="Both date_from and date_to are required for a report.")
+        if date_from > date_to:
+            raise HTTPException(status_code=422, detail="Start date must be on or before end date.")
+        if date_from > today_india or date_to > today_india:
+            raise HTTPException(status_code=422, detail="Future report dates are not allowed.")
+
+    filters = {
+        "date_from": date_from.isoformat() if date_from else None,
+        "date_to": date_to.isoformat() if date_to else None,
+        "search": search.strip() if search else None,
+        "source": source,
+        "bill_type": bill_type,
+        "payment_method": payment_method,
+        "staff": staff.strip() if staff else None,
+        "service": service.strip() if service else None,
+        "service_group": service_group.strip() if service_group else None,
+        "status": status_filter,
+        "year": year,
+        "month": month,
+        "based_on": based_on,
+    }
+    try:
+        safe_name = "".join(ch.lower() if ch.isalnum() else "-" for ch in REPORTS[report_type]).strip("-")
+        return StreamingResponse(
+            stream_report_csv(report_type, filters),
+            media_type="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": f'attachment; filename="{safe_name}-report.csv"',
+                "Cache-Control": "no-store",
+            },
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except PsycopgError:
+        raise HTTPException(status_code=500, detail="Unable to generate this report. Please try again.") from None
 
 
 @router.get("/{report_type}")
