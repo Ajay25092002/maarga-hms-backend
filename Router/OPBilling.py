@@ -5,6 +5,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends, Header, HTTPException, Path, Query, status
 
 from Router.Login import get_current_user
+from Core.billing_config import is_temporarily_editable_ip_bill
 from Schemas.billing_schema import (
     CreateBillRequest,
     UpdateBillRequest,
@@ -272,6 +273,21 @@ def get_bill(
         if not allowed:
             from fastapi import HTTPException
             raise HTTPException(status_code=403, detail="You do not have permission to view this IP bill.")
+
+        has_ip_edit = (
+            permissions.get("bills.ip.edit") is True
+            if isinstance(permissions, dict)
+            else "bills.ip.edit" in permissions
+        )
+        discharged = bool(bill.get("discharge_date"))
+        temporary_access = (
+            discharged
+            and is_temporarily_editable_ip_bill(bill.get("ip_number"))
+        )
+        # This is a UI hint only. The PUT endpoint and service independently
+        # enforce the edit permission and discharge-date allowlist.
+        bill["can_edit"] = bool(has_ip_edit and (not discharged or temporary_access))
+        bill["temporary_edit_access"] = bool(has_ip_edit and temporary_access)
     return bill
 
 

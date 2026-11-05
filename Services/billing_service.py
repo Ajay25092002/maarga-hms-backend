@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
 
 from Core.logger import get_logger
+from Core.billing_config import is_temporarily_editable_ip_bill
 from Services.ip_room_history_service import (
     create_initial_ip_room_assignment,
     sync_ip_room_assignment,
@@ -881,6 +882,7 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 if (
                     str(bill.get("bill_type") or "").upper() == "IP"
                     and bill.get("discharge_date")
+                    and not is_temporarily_editable_ip_bill(bill.get("ip_number"))
                 ):
                     raise HTTPException(
                         status_code=409,
