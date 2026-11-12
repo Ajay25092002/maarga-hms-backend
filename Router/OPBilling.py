@@ -3,6 +3,7 @@ from datetime import date
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Path, Query, status
+from fastapi.responses import StreamingResponse
 
 from Router.Login import get_current_user
 from Core.billing_config import is_temporarily_editable_ip_bill
@@ -16,6 +17,7 @@ from Services.bill_query_service import (
     get_bill_service,
     list_bills_service,
     list_bill_creators_service,
+    stream_bills_csv,
 )
 from Services.payment_service import record_payment_service
 from Services.ip_room_history_service import list_ip_room_history
@@ -92,6 +94,65 @@ def list_bills(
         date_from=date_from,
         date_to=date_to,
         billed_by=billed_by,
+    )
+
+
+
+
+@router.get("/export")
+def export_bills_csv(
+    bill_type: Literal["OP", "IP"] = Query(...),
+    search: Optional[str] = Query(default=None, max_length=100),
+    status_filter: Optional[str] = Query(default=None, alias="status"),
+    date_filter: Optional[str] = Query(default=None),
+    date_from: Optional[date] = Query(default=None),
+    date_to: Optional[date] = Query(default=None),
+    billed_by: Optional[int] = Query(default=None, ge=1),
+    current_user: dict = Depends(get_current_user),
+):
+    """Download all IP/OP bills matching the billing-list filters."""
+    permissions = current_user.get("user", {}).get("permissions", {}) or {}
+
+    def has_permission(permission):
+        return (
+            permissions.get(permission) is True
+            if isinstance(permissions, dict)
+            else permission in permissions
+        )
+
+    if bill_type == "IP":
+        allowed = has_permission("bills.ip.view") or has_permission("nurse.view")
+    else:
+        allowed = has_permission("bills.op.view")
+
+    if not allowed:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to download these billing records.",
+        )
+
+    if date_from and date_to and date_from > date_to:
+        raise HTTPException(
+            status_code=422,
+            detail="date_from cannot be later than date_to.",
+        )
+
+    filename = "ip-bills" if bill_type == "IP" else "op-bills"
+    return StreamingResponse(
+        stream_bills_csv(
+            bill_type=bill_type,
+            search=search,
+            status_filter=status_filter,
+            date_filter=date_filter,
+            date_from=date_from,
+            date_to=date_to,
+            billed_by=billed_by,
+        ),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}.csv"',
+            "Cache-Control": "no-store",
+        },
     )
 
 

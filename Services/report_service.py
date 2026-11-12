@@ -59,6 +59,7 @@ BASE_SELECTS = {
                 b.op_number,
                 b.patient_db_id,
                 b.bill_date,
+                b.created_at,
                 b.total_amount,
                 b.created_by,
 
@@ -172,7 +173,7 @@ BASE_SELECTS = {
         )
 
         SELECT
-            bf.bill_date AS report_date,
+            bf.created_at AS report_date,
             bf.bill_number AS "Bill Number",
             bf.op_number AS "OP Number",
             p.patient_id AS "Patient Number",
@@ -210,197 +211,6 @@ BASE_SELECTS = {
                 WHEN ot.transaction_row = 1
                 THEN bf.outstanding_amount
             END AS "Outstanding Amount",
-
-            CASE
-                WHEN COALESCE(bf.total_amount, 0) <= 0
-                    THEN 'Paid'
-                WHEN bf.gross_paid <= 0
-                    THEN 'Unpaid'
-                WHEN bf.gross_paid < bf.total_amount
-                    THEN 'Partially Paid'
-                ELSE 'Paid'
-            END AS "Payment Status",
-
-            COALESCE(u.full_name, '—') AS "Billed By",
-            ot.recorded_at AS "Transaction Recorded At"
-
-        FROM ordered_transactions ot
-        JOIN bill_financials bf
-            ON bf.bill_id = ot.bill_id
-        JOIN public.patients p
-            ON p.id = bf.patient_db_id
-        LEFT JOIN public.users u
-            ON u.id = bf.created_by
-    """,
-
-    "ip-billing": """
-        WITH bill_financials AS (
-            SELECT
-                b.id AS bill_id,
-                b.bill_number,
-                b.ip_number,
-                b.patient_db_id,
-                b.bill_date,
-                b.admission_date,
-                b.discharge_date,
-                b.total_amount,
-                b.created_by,
-
-                COALESCE(pay.gross_paid, 0) AS gross_paid,
-                COALESCE(ref.total_refunded, 0) AS total_refunded,
-
-                GREATEST(
-                    COALESCE(pay.gross_paid, 0)
-                    - COALESCE(ref.total_refunded, 0),
-                    0
-                ) AS net_paid,
-
-                GREATEST(
-                    COALESCE(b.total_amount, 0)
-                    - COALESCE(pay.gross_paid, 0),
-                    0
-                ) AS outstanding_amount,
-
-                GREATEST(
-                    COALESCE(pay.gross_paid, 0)
-                    - COALESCE(ref.total_refunded, 0)
-                    - COALESCE(b.total_amount, 0),
-                    0
-                ) AS deposit_balance
-
-            FROM public.bills b
-
-            LEFT JOIN (
-                SELECT
-                    bill_id,
-                    SUM(amount) AS gross_paid
-                FROM public.bill_payments
-                GROUP BY bill_id
-            ) pay ON pay.bill_id = b.id
-
-            LEFT JOIN (
-                SELECT
-                    bill_id,
-                    SUM(refund_amount) AS total_refunded
-                FROM public.payment_refunds
-                GROUP BY bill_id
-            ) ref ON ref.bill_id = b.id
-
-            WHERE b.bill_type = 'IP'
-        ),
-
-        transactions AS (
-            SELECT
-                bp.bill_id,
-                bp.payment_date AS transaction_date,
-                'Payment'::text AS transaction_type,
-                bp.receipt_number AS transaction_reference,
-                bp.payment_method AS payment_mode,
-                bp.amount AS payment_amount,
-                NULL::numeric AS refund_amount,
-                bp.created_at AS recorded_at
-            FROM public.bill_payments bp
-            JOIN bill_financials bf
-                ON bf.bill_id = bp.bill_id
-
-            UNION ALL
-
-            SELECT
-                pr.bill_id,
-                pr.created_at AS transaction_date,
-                'Refund'::text AS transaction_type,
-                pr.refund_number AS transaction_reference,
-                NULL::varchar AS payment_mode,
-                NULL::numeric AS payment_amount,
-                pr.refund_amount AS refund_amount,
-                pr.created_at AS recorded_at
-            FROM public.payment_refunds pr
-            JOIN bill_financials bf
-                ON bf.bill_id = pr.bill_id
-
-            UNION ALL
-
-            SELECT
-                bf.bill_id,
-                bf.bill_date AS transaction_date,
-                'Payment'::text AS transaction_type,
-                NULL::varchar AS transaction_reference,
-                NULL::varchar AS payment_mode,
-                NULL::numeric AS payment_amount,
-                NULL::numeric AS refund_amount,
-                bf.bill_date AS recorded_at
-            FROM bill_financials bf
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM public.bill_payments bp
-                WHERE bp.bill_id = bf.bill_id
-            )
-            AND NOT EXISTS (
-                SELECT 1
-                FROM public.payment_refunds pr
-                WHERE pr.bill_id = bf.bill_id
-            )
-        ),
-
-        ordered_transactions AS (
-            SELECT
-                t.*,
-                ROW_NUMBER() OVER (
-                    PARTITION BY t.bill_id
-                    ORDER BY
-                        t.transaction_date,
-                        t.transaction_type,
-                        t.transaction_reference NULLS FIRST
-                ) AS transaction_row
-            FROM transactions t
-        )
-
-        SELECT
-            bf.bill_date AS report_date,
-            bf.bill_number AS "Bill Number",
-            bf.ip_number AS "IP Number",
-            p.patient_id AS "Patient Number",
-            p.name AS "Patient Name",
-            bf.bill_date AS "Bill Date",
-            bf.admission_date::date AS "Admission Date",
-            bf.discharge_date::date AS "Discharge Date",
-
-            ot.transaction_date AS "Transaction Date/Time",
-            ot.transaction_type AS "Transaction Type",
-            ot.transaction_reference AS "Receipt / Refund ID",
-            ot.payment_mode AS "Payment Mode",
-            ot.payment_amount AS "Payment Amount",
-            ot.refund_amount AS "Refund Amount",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.total_amount
-            END AS "Total Bill Amount",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.gross_paid
-            END AS "Amount Paid",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.total_refunded
-            END AS "Total Refunded",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.net_paid
-            END AS "Net Paid",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.outstanding_amount
-            END AS "Outstanding Amount",
-
-            CASE
-                WHEN ot.transaction_row = 1
-                THEN bf.deposit_balance
-            END AS "Debit Balance",
 
             CASE
                 WHEN COALESCE(bf.total_amount, 0) <= 0
@@ -478,6 +288,7 @@ BASE_SELECTS = {
             SELECT
                 b.id AS bill_id,
                 b.bill_date,
+                b.created_at,
                 b.bill_number,
                 b.bill_type,
                 b.op_number,
@@ -522,7 +333,7 @@ BASE_SELECTS = {
         )
 
         SELECT
-            bf.bill_date AS report_date,
+            bf.created_at AS report_date,
             bf.bill_number AS "Bill Number",
             bf.bill_type AS "Bill Type",
 
@@ -559,7 +370,7 @@ BASE_SELECTS = {
 
     "service-wise": """
         SELECT
-            b.bill_date::date AS report_date,
+            b.created_at::date AS report_date,
             b.bill_type AS "Bill Type",
             bi.service_name AS "Service Name",
             bi.service_group_name AS "Service Group",
@@ -570,7 +381,7 @@ BASE_SELECTS = {
         JOIN public.bills b
             ON b.id = bi.bill_id
         GROUP BY
-            b.bill_date::date,
+            b.created_at::date,
             b.bill_type,
             bi.service_name,
             bi.service_group_name
@@ -578,7 +389,7 @@ BASE_SELECTS = {
 
     "service-group-wise": """
         SELECT
-            b.bill_date::date AS report_date,
+            b.created_at::date AS report_date,
             b.bill_type AS "Bill Type",
             bi.service_group_name AS "Service Group",
             COUNT(DISTINCT bi.service_name) AS "Number of Services",
@@ -589,46 +400,67 @@ BASE_SELECTS = {
         JOIN public.bills b
             ON b.id = bi.bill_id
         GROUP BY
-            b.bill_date::date,
+            b.created_at::date,
             b.bill_type,
             bi.service_group_name
     """,
 
     "admission-discharge": """
         SELECT
-            COALESCE(
-                b.admission_date,
-                b.discharge_date,
-                b.bill_date
-            ) AS report_date,
+            b.admission_date AS report_date,
+            'Admission'::text AS "Event Type",
+            b.admission_date::date AS "Event Date",
             b.bill_number AS "Bill Number",
             b.ip_number AS "IP Number",
             p.patient_id AS "Patient Number",
             p.name AS "Patient Name",
             b.admission_date::date AS "Admission Date",
             b.discharge_date::date AS "Discharge Date",
-
             CASE
                 WHEN b.discharge_date IS NULL
                     THEN 'Currently Admitted'
                 ELSE 'Discharged'
-            END AS "Status",
-
+            END AS "Patient Status",
             CASE
-                WHEN b.admission_date IS NOT NULL
-                 AND b.discharge_date IS NOT NULL
+                WHEN b.discharge_date IS NOT NULL
                     THEN GREATEST(
                         0,
-                        b.discharge_date::date
-                        - b.admission_date::date
+                        b.discharge_date::date - b.admission_date::date
                     )
                 ELSE NULL
             END AS "Length of Stay (Days)"
-
         FROM public.bills b
         JOIN public.patients p
             ON p.id = b.patient_db_id
         WHERE b.bill_type = 'IP'
+          AND b.admission_date IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            b.discharge_date AS report_date,
+            'Discharge'::text AS "Event Type",
+            b.discharge_date::date AS "Event Date",
+            b.bill_number AS "Bill Number",
+            b.ip_number AS "IP Number",
+            p.patient_id AS "Patient Number",
+            p.name AS "Patient Name",
+            b.admission_date::date AS "Admission Date",
+            b.discharge_date::date AS "Discharge Date",
+            'Discharged'::text AS "Patient Status",
+            CASE
+                WHEN b.admission_date IS NOT NULL
+                    THEN GREATEST(
+                        0,
+                        b.discharge_date::date - b.admission_date::date
+                    )
+                ELSE NULL
+            END AS "Length of Stay (Days)"
+        FROM public.bills b
+        JOIN public.patients p
+            ON p.id = b.patient_db_id
+        WHERE b.bill_type = 'IP'
+          AND b.discharge_date IS NOT NULL
     """,
 
     "source-of-lead": """
@@ -984,6 +816,8 @@ def fetch_report(
     where = []
     params: list[Any] = []
 
+    # Admission & Discharge is event-based: each row represents exactly one
+    # admission or discharge event, and report_date is that event's own date.
     if filters.get("date_from"):
         where.append("report_date::date >= %s::date")
         params.append(filters["date_from"])
@@ -1032,12 +866,12 @@ def fetch_report(
         params.append(f"%{filters['service_group']}%")
 
     if filters.get("status") and report_type == "admission-discharge":
-        if filters["status"] == "admitted":
-            where.append('"Status" = %s')
-            params.append("Currently Admitted")
-        elif filters["status"] == "discharged":
-            where.append('"Status" = %s')
-            params.append("Discharged")
+        if filters["status"] == "admission":
+            where.append('"Event Type" = %s')
+            params.append("Admission")
+        elif filters["status"] == "discharge":
+            where.append('"Event Type" = %s')
+            params.append("Discharge")
 
     if filters.get("search"):
         where.append("CAST(row_to_json(report_rows) AS TEXT) ILIKE %s")
@@ -1058,6 +892,36 @@ def fetch_report(
             cursor.execute(count_query, params)
             total = cursor.fetchone()["total"]
 
+            numeric_keys = [
+                "Bill Amount",
+                "Total Bill Amount",
+                "Amount Paid",
+                "Total Refunded",
+                "Net Paid",
+                "Deposit Balance",
+                "Outstanding Amount",
+                "Payment Amount",
+                "Refund Amount",
+                "Total Billed Amount",
+                "Debit Balance",
+            ]
+            cursor.execute(f"SELECT * FROM ({query}) report_rows LIMIT 0", params)
+            available_columns = {description[0] for description in cursor.description}
+            total_columns = [key for key in numeric_keys if key in available_columns]
+            totals = {}
+            if total_columns:
+                aggregate_select = ", ".join(
+                    f'SUM(COALESCE("{key}", 0)) AS "{key}"'
+                    for key in total_columns
+                )
+                totals_query = f"SELECT {aggregate_select} FROM ({query}) report_rows"
+                cursor.execute(totals_query, params)
+                totals_row = cursor.fetchone()
+                totals = {
+                    key: round(float(totals_row[key] or 0), 2)
+                    for key in total_columns
+                }
+
             query_params = list(params)
 
             if not export_all:
@@ -1072,32 +936,6 @@ def fetch_report(
                 serialize_row(row)
                 for row in cursor.fetchall()
             ]
-
-            numeric_keys = [
-                "Bill Amount",
-                "Total Bill Amount",
-                "Amount Paid",
-                "Total Refunded",
-                "Net Paid",
-                "Deposit Balance",
-                "Outstanding Amount",
-                "Payment Amount",
-                "Refund Amount",
-                "Total Billed Amount",
-                "Debit Balance",
-            ]
-
-            totals = {}
-
-            for key in numeric_keys:
-                if items and key in items[0]:
-                    totals[key] = round(
-                        sum(
-                            float(item.get(key) or 0)
-                            for item in items
-                        ),
-                        2,
-                    )
 
             return {
                 "report_type": report_type,
@@ -1247,6 +1085,9 @@ def _build_streaming_report_query(report_type: str, filters: dict[str, Any]):
     base = BASE_SELECTS[report_type]
     where = []
     params: list[Any] = []
+
+    # Each Admission & Discharge row is a single event, so the common
+    # report_date filter applies to that event's date in both JSON and CSV.
     if filters.get("date_from"):
         where.append("report_date::date >= %s::date")
         params.append(filters["date_from"])
@@ -1274,12 +1115,12 @@ def _build_streaming_report_query(report_type: str, filters: dict[str, Any]):
         where.append('"Service Group" ILIKE %s')
         params.append(f"%{filters['service_group']}%")
     if filters.get("status") and report_type == "admission-discharge":
-        if filters["status"] == "admitted":
-            where.append('"Status" = %s')
-            params.append("Currently Admitted")
-        elif filters["status"] == "discharged":
-            where.append('"Status" = %s')
-            params.append("Discharged")
+        if filters["status"] == "admission":
+            where.append('"Event Type" = %s')
+            params.append("Admission")
+        elif filters["status"] == "discharge":
+            where.append('"Event Type" = %s')
+            params.append("Discharge")
     if filters.get("search"):
         where.append("CAST(row_to_json(report_rows) AS TEXT) ILIKE %s")
         params.append(f"%{filters['search']}%")

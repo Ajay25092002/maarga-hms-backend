@@ -621,7 +621,7 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                         created_by
                     )
                     VALUES (
-                        %s, %s, CURRENT_TIMESTAMP, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s, %s, %s, %s,
                         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     )
                     RETURNING *
@@ -629,6 +629,11 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                     (
                         payload.bill_type,
                         patient["id"],
+                        (
+                            payload.discharge_date
+                            if payload.bill_type == "IP"
+                            else None
+                        ),
                         payload.department,
                         (
                             payload.room_type_id
@@ -1036,7 +1041,13 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                         doctor_id = %s, doctor_name = %s,
                         psychologist_id = %s, psychologist_name = %s, subtotal = %s,
                         discount_amount = %s, total_amount = %s, notes = %s,
-                        admission_date = %s, discharge_date = %s, bed_number = %s,
+                        admission_date = %s, discharge_date = %s,
+                        bill_date = CASE
+                            WHEN bill_type = 'IP' THEN %s
+                            WHEN bill_date IS NULL AND %s >= %s THEN CURRENT_TIMESTAMP
+                            ELSE bill_date
+                        END,
+                        bed_number = %s,
                         rate_category = %s,
                         sponsor_id = %s, sponsor_name_snapshot = %s,
                         updated_by = %s,
@@ -1053,6 +1064,9 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     subtotal, bill_discount, total_amount, payload.notes,
                     payload.admission_date if payload.bill_type == "IP" else None,
                     payload.discharge_date if payload.bill_type == "IP" else None,
+                    payload.discharge_date if payload.bill_type == "IP" else None,
+                    gross_paid,
+                    total_amount,
                     payload.bed_number if payload.bill_type == "IP" else None,
                     payload.rate_category if payload.bill_type == "IP" else bill.get("rate_category"),
                     sponsor["id"],

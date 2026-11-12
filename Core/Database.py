@@ -530,6 +530,14 @@ def initialize_database():
                 """)
 
 
+                cursor.execute("""
+                    ALTER TABLE public.bills
+                    ALTER COLUMN bill_date DROP NOT NULL,
+                    ALTER COLUMN bill_date DROP DEFAULT;
+                """)
+
+
+
             
 
                 # ==========================================================

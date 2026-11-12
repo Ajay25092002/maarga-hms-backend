@@ -129,9 +129,30 @@ def record_payment_service(
                     ),
                 )
 
-                payment = serialize_row(dict(cursor.fetchone()))
+                payment_row = dict(cursor.fetchone())
+                payment_timestamp = payment_row["payment_date"]
+                payment = serialize_row(payment_row)
 
                 new_gross_paid = gross_paid + payload.amount
+
+                # OP bill_date is the timestamp of the payment that first
+                # takes the bill from not-fully-paid to fully paid. The bill
+                # row is already locked above, so concurrent payments cannot
+                # assign competing finalization timestamps.
+                if (
+                    str(bill.get("bill_type", "")).upper() == "OP"
+                    and gross_paid < total
+                    and new_gross_paid >= total
+                ):
+                    cursor.execute(
+                        """
+                        UPDATE public.bills
+                        SET bill_date = %s
+                        WHERE id = %s
+                          AND bill_date IS NULL
+                        """,
+                        (payment_timestamp, bill_id),
+                    )
                 new_net_paid = max(new_gross_paid - total_refunded, Decimal("0.00"))
                 new_outstanding = max(Decimal("0.00"), total - new_gross_paid)
 

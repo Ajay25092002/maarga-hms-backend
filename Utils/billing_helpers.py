@@ -312,11 +312,11 @@ def build_bill_filters(
     )
 
     if start_datetime:
-        conditions.append("b.bill_date >= %s")
+        conditions.append("b.created_at >= %s")
         parameters.append(start_datetime)
 
     if end_datetime:
-        conditions.append("b.bill_date < %s")
+        conditions.append("b.created_at < %s")
         parameters.append(end_datetime)
 
     # Filter payment status from original payments; refunds do not reopen bills.

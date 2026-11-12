@@ -83,8 +83,10 @@ def get_dashboard(request: Request):
                         WHERE bill_type = 'IP'
                     ) AS ip_bills_today
                 FROM public.bills
-                WHERE bill_date >= CURRENT_DATE
-                  AND bill_date < CURRENT_DATE + INTERVAL '1 day'
+                -- Dashboard bill counts are based on when bill records
+                -- were created, independent of whether bill_date is assigned.
+                WHERE created_at >= CURRENT_DATE
+                  AND created_at < CURRENT_DATE + INTERVAL '1 day'
                 """
             )
 
@@ -249,8 +251,8 @@ def get_dashboard(request: Request):
                     ) AS ip_bill_amount
                 FROM days d
                 LEFT JOIN public.bills b
-                    ON b.bill_date >= d.day
-                   AND b.bill_date < d.day + INTERVAL '1 day'
+                    ON b.created_at >= d.day
+                   AND b.created_at < d.day + INTERVAL '1 day'
                 GROUP BY d.day
                 ORDER BY d.day
                 """
@@ -321,7 +323,7 @@ def get_dashboard(request: Request):
                 JOIN public.patients p ON p.id = b.patient_db_id
                 LEFT JOIN ({payment_totals_sql}) pay ON pay.bill_id = b.id
                 LEFT JOIN ({refund_totals_sql}) ref ON ref.bill_id = b.id
-                ORDER BY b.bill_date DESC, b.id DESC
+                ORDER BY b.created_at DESC, b.id DESC
                 LIMIT 10
                 """
             )

@@ -1,3 +1,5 @@
+import csv
+import io
 import psycopg2
 from fastapi import HTTPException
 from psycopg2.extras import RealDictCursor
@@ -472,3 +474,173 @@ def get_bill_service(bill_id: int):
     finally:
         if connection is not None:
             connection.close()
+
+
+def stream_bills_csv(
+    bill_type,
+    search=None,
+    status_filter=None,
+    date_filter=None,
+    date_from=None,
+    date_to=None,
+    billed_by=None,
+):
+    """
+    Stream every bill matching the billing-list filters as CSV.
+
+    Uses a named PostgreSQL cursor and fetchmany(1000), so exporting a
+    large result set does not load the complete dataset into application
+    memory. The filter builder is shared with the paginated bill list.
+    """
+    if bill_type not in {"IP", "OP"}:
+        raise HTTPException(status_code=422, detail="bill_type must be IP or OP.")
+
+    connection = None
+    cursor = None
+
+    headers = [
+        "Bill Number",
+        "Bill Type",
+        "Bill Date",
+        "Created On",
+        "Billed By",
+        "Patient Name",
+        "Patient ID / UHID",
+        "Mobile",
+        "Doctor",
+        "Psychologist",
+        "Admission Date",
+        "Discharge Date",
+        "Room Type",
+        "Bed Number",
+        "Total Amount",
+        "Payments Received",
+        "Refund Amount",
+        "Net Paid",
+        "Deposit Balance",
+        "Outstanding",
+        "Payment Status",
+        "Refund Status",
+    ]
+
+    def csv_line(values):
+        buffer = io.StringIO()
+        writer = csv.writer(buffer, lineterminator="\r\n")
+        writer.writerow(values)
+        return buffer.getvalue()
+
+    try:
+        connection = get_db_connection()
+
+        # Run compatibility setup before opening the named streaming cursor.
+        with connection.cursor() as setup_cursor:
+            ensure_payment_table(setup_cursor)
+        connection.commit()
+
+        where_clause, parameters = build_bill_filters(
+            search=search,
+            bill_type=bill_type,
+            payment_status=status_filter,
+            date_filter=date_filter,
+            date_from=date_from,
+            date_to=date_to,
+            billed_by=billed_by,
+        )
+
+        query = f"""
+            SELECT
+                b.bill_number,
+                b.bill_type,
+                b.bill_date,
+                b.created_at,
+                bill_creator.full_name AS created_by_name,
+                p.name AS patient_name,
+                p.patient_id,
+                p.mobile,
+                b.doctor_name,
+                b.psychologist_name,
+                b.admission_date,
+                b.discharge_date,
+                b.room_type_name,
+                b.bed_number,
+                COALESCE(b.total_amount, 0) AS total_amount,
+                COALESCE(payments.amount_paid, 0) AS total_payments,
+                COALESCE(refunds.total_refunds, 0) AS total_refunds,
+                {NET_PAID_SQL} AS net_paid,
+                CASE WHEN b.bill_type = 'IP'
+                    THEN {DEPOSIT_BALANCE_SQL}
+                    ELSE 0
+                END AS deposit_balance,
+                {OUTSTANDING_SQL} AS outstanding_amount,
+                CASE
+                    WHEN COALESCE(b.total_amount, 0) <= 0 THEN 'Paid'
+                    WHEN {GROSS_PAID_SQL} >= COALESCE(b.total_amount, 0) THEN 'Paid'
+                    WHEN {GROSS_PAID_SQL} > 0 THEN 'Partially Paid'
+                    ELSE 'Unpaid'
+                END AS payment_status,
+                CASE
+                    WHEN COALESCE(refunds.total_refunds, 0) <= 0 THEN 'Not Refunded'
+                    WHEN COALESCE(refunds.total_refunds, 0) >= COALESCE(payments.amount_paid, 0) THEN 'Fully Refunded'
+                    ELSE 'Partially Refunded'
+                END AS refund_status
+            {BILL_FROM_SQL}
+            {where_clause}
+            ORDER BY b.created_at DESC, b.id DESC
+        """
+
+        cursor = connection.cursor(
+            name=f"billing_export_{id(connection)}",
+            cursor_factory=RealDictCursor,
+        )
+        cursor.itersize = 1000
+        cursor.execute(query, tuple(parameters))
+
+        yield "\ufeff" + csv_line(headers)
+
+        while True:
+            batch = cursor.fetchmany(1000)
+            if not batch:
+                break
+
+            for row in batch:
+                yield csv_line([
+                    row.get("bill_number"),
+                    row.get("bill_type"),
+                    row.get("bill_date"),
+                    row.get("created_at"),
+                    row.get("created_by_name"),
+                    row.get("patient_name"),
+                    row.get("patient_id"),
+                    row.get("mobile"),
+                    row.get("doctor_name"),
+                    row.get("psychologist_name"),
+                    row.get("admission_date"),
+                    row.get("discharge_date"),
+                    row.get("room_type_name"),
+                    row.get("bed_number"),
+                    row.get("total_amount"),
+                    row.get("total_payments"),
+                    row.get("total_refunds"),
+                    row.get("net_paid"),
+                    row.get("deposit_balance"),
+                    row.get("outstanding_amount"),
+                    row.get("payment_status"),
+                    row.get("refund_status"),
+                ])
+
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("Unable to stream billing CSV export.")
+        raise
+    finally:
+        if cursor is not None:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+        if connection is not None:
+            try:
+                connection.close()
+            except Exception:
+                pass
