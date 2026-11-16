@@ -17,7 +17,10 @@ from pydantic import (
 class BillItemInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    
+    # Present only when editing an existing bill item. New rows send null.
+    # The service validates that this ID belongs to the bill being edited.
+    item_id: Optional[int] = Field(default=None, gt=0)
+
     service_id: int = Field(gt=0)
     service_date: Optional[date] = None
     special_note: Optional[str] = Field(default=None, max_length=2000)

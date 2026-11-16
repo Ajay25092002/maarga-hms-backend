@@ -42,6 +42,21 @@ def money(value):
     )
 
 
+def calculate_room_rent_gst(daily_rate, quantity):
+    """Calculate 5% GST when an individual day's room rent exceeds ₹5,000.
+
+    The room-rent rate is treated as the per-day rate and quantity as
+    the number of billed days at that same rate.
+    """
+    rate = Decimal(str(daily_rate or 0))
+    days = Decimal(str(quantity or 0))
+
+    if rate <= Decimal("5000") or days <= Decimal("0"):
+        return Decimal("0.00")
+
+    return money(rate * days * Decimal("0.05"))
+
+
 def resolve_service_price(
     cursor,
     service_id: int,
@@ -531,7 +546,11 @@ def create_bill_service(payload: CreateBillRequest, created_by: int):
                             ),
                         )
 
-                    gst_amount = requested_gst if gst_eligible else Decimal("0.00")
+                    gst_amount = (
+                        calculate_room_rent_gst(rate, quantity)
+                        if gst_eligible
+                        else Decimal("0.00")
+                    )
 
 
                     if item_discount > amount:
@@ -826,6 +845,18 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 old_bill_for_audit = dict(bill)
                 old_items_for_audit = fetch_bill_items_for_audit(cursor, bill_id)
 
+                # Keep a trusted snapshot of existing bill-item GST values.
+                # The frontend sends item_id only for rows loaded from this bill.
+                cursor.execute(
+                    "SELECT id, gst_amount FROM public.bill_items WHERE bill_id = %s",
+                    (bill_id,),
+                )
+                existing_item_gst_by_id = {
+                    int(row["id"]): money(row["gst_amount"] or 0)
+                    for row in cursor.fetchall()
+                }
+                seen_existing_item_ids = set()
+
                 # Automated IP service rows are system-managed. They must remain
                 # present with the same service, service date and quantity; the
                 # discount and (Room Rent only) GST may still be edited.
@@ -942,6 +973,26 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                 gst_total = Decimal("0.00")
                 prepared_items = []
                 for item in payload.items:
+                    # Existing rows carry item_id from the edit form. Validate the
+                    # ID against this bill and preserve the GST stored in the DB.
+                    # New rows have item_id=None and receive the current GST rule.
+                    existing_item_id = getattr(item, "item_id", None)
+                    existing_item_gst = None
+                    if existing_item_id is not None:
+                        existing_item_id = int(existing_item_id)
+                        if existing_item_id not in existing_item_gst_by_id:
+                            raise HTTPException(
+                                status_code=422,
+                                detail="A bill item does not belong to this bill or no longer exists.",
+                            )
+                        if existing_item_id in seen_existing_item_ids:
+                            raise HTTPException(
+                                status_code=422,
+                                detail="The same existing bill item was submitted more than once.",
+                            )
+                        seen_existing_item_ids.add(existing_item_id)
+                        existing_item_gst = existing_item_gst_by_id[existing_item_id]
+
                     item_room = resolve_item_room_context(cursor, payload.bill_type, item, payload)
                     resolved = resolve_service_price(
                         cursor=cursor,
@@ -986,7 +1037,15 @@ def update_bill_service(bill_id: int, payload, updated_by: int):
                     requested_gst = money(item.gst_amount)
                     if not gst_eligible and requested_gst > 0:
                         raise HTTPException(status_code=422, detail="GST is allowed only for IP Room Rent under Accommodation Charges.")
-                    gst = requested_gst if gst_eligible else Decimal("0.00")
+                    if gst_eligible and existing_item_id is not None:
+                        # Historical row: preserve its previously saved GST,
+                        # even if its date/rate/quantity is edited.
+                        gst = existing_item_gst
+                    elif gst_eligible:
+                        # New row: apply the current automatic room-rent rule.
+                        gst = calculate_room_rent_gst(rate, quantity)
+                    else:
+                        gst = Decimal("0.00")
                     if discount > amount:
                         raise HTTPException(status_code=422, detail=f"Discount exceeds the amount for '{resolved['service_name']}'.")
                     net = money(amount - discount)
