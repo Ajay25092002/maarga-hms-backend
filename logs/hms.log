@@ -1,0 +1,38 @@
+2026-11-20 17:59:58 | ERROR    | Services.payment_pdf_service | Unable to generate payment receipt PDF for payment 3
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\payment_pdf_service.py", line 610, in generate_payment_receipt_pdf
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<57 lines>...
+        (payment_id,),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.sponsor does not exist
+LINE 23:                     p.sponsor AS patient_sponsor,
+                             ^
+
+2026-11-20 18:00:02 | ERROR    | Services.payment_pdf_service | Unable to generate payment receipt PDF for payment 3
+Traceback (most recent call last):
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\Services\payment_pdf_service.py", line 610, in generate_payment_receipt_pdf
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        """
+        ^^^
+    ...<57 lines>...
+        (payment_id,),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "M:\Personal Projects -  Ajay Kumar\HMS\backend\stark\Lib\site-packages\psycopg2\extras.py", line 236, in execute
+    return super().execute(query, vars)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column p.sponsor does not exist
+LINE 23:                     p.sponsor AS patient_sponsor,
+                             ^
+
